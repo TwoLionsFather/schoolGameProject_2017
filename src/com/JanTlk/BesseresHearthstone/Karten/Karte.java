@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -21,12 +22,13 @@ public class Karte extends JPanel
 	
 	private  String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
-	private int mana;		//kosten für ausspielen der Karte
+	private int mana;		//kosten bei Ausspielen der Karte
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
-	private int leben;	//Leben, 0 Leben = Karte tot
+	private int leben;		//Leben, 0 Leben = Karte tot
 	
-	private BufferedImage textur;		//aussehen der Karte (hoffentlich)
+	private BufferedImage textur;
+	private Rectangle bounds;
 	
 	/**
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
@@ -50,6 +52,9 @@ public class Karte extends JPanel
 		this.leben = leben;		
 	}
 	
+	/**
+	 * currently a wildcard
+	 */
 	public void tick()
 	{
 		
@@ -135,8 +140,18 @@ public class Karte extends JPanel
 		return cardLabel;
 	}
 	
+	/**
+	 * this should be used to draw a Card with Graphics class
+	 * @param x position of the top left corner
+	 * @param y position of the corner
+	 * @param g this is what the card gets drawn on
+	 */
 	public void drawCard(int x, int y, Graphics g)
 	{
+		bounds = new Rectangle(x, y
+								, textur.getWidth()
+								, textur.getHeight());
+		
 		g.drawImage(textur, x, y, null);
 		
 		g.setColor(Color.red);
@@ -208,6 +223,14 @@ public class Karte extends JPanel
 
 	public void setSchaden(int schaden) {
 		this.schaden = schaden;
+	}
+
+	public Rectangle getBounds() {
+		return bounds;
+	}
+
+	public void setBounds(Rectangle bounds) {
+		this.bounds = bounds;
 	}
 	
 	
