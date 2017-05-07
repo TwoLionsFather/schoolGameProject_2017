@@ -8,6 +8,12 @@ import javax.imageio.ImageIO;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
+/**
+ * In this class every card should be added to the game and to a deck
+ * this deck will get added to a Spielfeld, which will then take controll of the deck
+ * @author Gaming
+ *
+ */
 public class DeckHandler {
 
 	private Deck player;

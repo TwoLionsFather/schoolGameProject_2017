@@ -27,6 +27,10 @@ public class Karte extends JPanel
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private int leben;		//Leben, 0 Leben = Karte tot
 	
+	/**
+	 * textur will get standardiced Graphic from a composed image, when set up
+	 * bounds will hopefully be used to check if the card got clicked on
+	 */
 	private BufferedImage textur;
 	private Rectangle bounds;
 	
