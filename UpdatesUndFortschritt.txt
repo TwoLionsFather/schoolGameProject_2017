@@ -1,4 +1,4 @@
-Day 1 (27.4.):
+﻿Day 1 (27.4.):
 Idee für Hearthstone ähnliches Spiel
 Basis Struktur Überlegungen erstellung eines Konzepts
 Programm Gerüst aufgebaut (main Methode, Fenster und Karte)

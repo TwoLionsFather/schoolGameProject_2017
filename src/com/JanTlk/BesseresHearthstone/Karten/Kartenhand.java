@@ -71,13 +71,6 @@ public class Kartenhand
 			zuMischen.remove(randomZahl);					//entfernt die Karte aus dem Stapel
 		}
 		
-		
-		//WIP
-		//Id so setzten, dass ID auf Karte gespeichert Wird
-		for(int i = 0; i < temp.size(); i++) 
-		{
-			temp.get(i).setId(i);							//setzt die ID zur Kartenerkennung
-		}
 
 		return temp;
 	}
