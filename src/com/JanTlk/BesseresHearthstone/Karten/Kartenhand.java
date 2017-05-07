@@ -15,6 +15,12 @@ import java.util.Random;
  * Die addKarteAblageMethode nimmt tote Karten entgegen
  */
 
+/**
+ * ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ * Not used
+ * @author Gaming
+ *
+ */
 public class Kartenhand 				
 {
 

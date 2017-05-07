@@ -6,3 +6,11 @@ Programm Gerüst aufgebaut (main Methode, Fenster und Karte)
 Day 2 (29.4.):
 Basis für Spielstruktur 
 Karten und Kartenhand Klasse gebaut und zerstört
+
+Day 3 & 4 (6. & 7.5.)
+Projekt wird nun mit Git verwaltet
+auf Gihub geladen
+Darstellung von Karten erfolgreich verbessert
+Fehler in Main Methode repariert
+
+Ende dieses Logs, da der Rest von Git verwaltet wir, bb
