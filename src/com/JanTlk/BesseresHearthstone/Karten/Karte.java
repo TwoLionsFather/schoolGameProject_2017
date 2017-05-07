@@ -73,8 +73,8 @@ public class Karte extends JPanel
 		cardLabel.setSize(100, 164);
 		
 		
-		//contentPane.add(cardLabel);
-		contentPane.add(firstTestCard.cardToJLabel());
+		
+		contentPane.add(cardLabel);
 		window.add(contentPane);
 	}
 	
@@ -96,10 +96,22 @@ public class Karte extends JPanel
 						g.drawImage(textur, 0, 0, null);
 						
 						g.setColor(Color.red);
-						g.setFont(new Font("CardInfo", Font.BOLD, 9));
-						g.drawString(Karte.this.toString()
-									, 0									//X Koordinate
-									, textur.getHeight() + 10);			//Y Koordinate
+						g.setFont(new Font("Damage", Font.BOLD, 15));
+						g.drawString("" + Karte.this.getSchaden()
+									, 15
+									, textur.getHeight() - 15);
+						
+						g.setColor(Color.green);
+						g.setFont(new Font("Live", Font.BOLD, 15));
+						g.drawString("" + Karte.this.getLeben()
+									, textur.getWidth() - 23
+									, textur.getHeight() - 15);
+						
+						g.setColor(Color.black);
+						g.setFont(new Font("CardInfo", Font.BOLD, 11));
+						g.drawString(Karte.this.getName()
+									, 22
+									, 22);
 					}
 				};		
 				
