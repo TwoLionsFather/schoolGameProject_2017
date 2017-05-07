@@ -12,9 +12,6 @@ public class Spielfeld
 	
 	public Spielfeld()
 	{
-		dPL = new Deck();
-		dPC = new Deck();
-		
 		DeckHandler dH = new DeckHandler();	
 		
 		dPL = dH.getPlayerDeck();

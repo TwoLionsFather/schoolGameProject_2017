@@ -7,7 +7,6 @@ import java.awt.image.BufferStrategy;
 
 public class Hearthstone extends Canvas implements Runnable 
 {
-	//benötigt um Kommunikation zwischen den richtigen Klassen sicher zu stellen
 	private static final long serialVersionUID = 406005602200328868L;
 	
 	public static final String TITEL = "Hearthstone";
@@ -22,6 +21,7 @@ public class Hearthstone extends Canvas implements Runnable
 	public Hearthstone()
 	{		
 		spielfeld = new Spielfeld();
+		
 		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
@@ -78,6 +78,9 @@ public class Hearthstone extends Canvas implements Runnable
 		stop();	
 	}
 	
+	/**
+	 * currently just a wildcard
+	 */
 	public void tick()
 	{
 		//spielfeld.tick();
