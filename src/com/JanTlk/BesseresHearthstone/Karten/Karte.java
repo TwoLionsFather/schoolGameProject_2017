@@ -1,9 +1,14 @@
 package com.JanTlk.BesseresHearthstone.Karten;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Karte extends JPanel
@@ -17,7 +22,6 @@ public class Karte extends JPanel
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private int leben;	//Leben, 0 Leben = Karte tot
 	
-	private Rectangle bounds;
 	private BufferedImage textur;		//aussehen der Karte (hoffentlich)
 	
 	public Karte(String name			//Konstruktor um Karte Werte beim anlegen zu zu weisen
@@ -35,18 +39,55 @@ public class Karte extends JPanel
 		this.textur = textur;
 	}
 	
-	public void render(Graphics g)
+	public void tick()
 	{
-		JPanel 
+		
 	}
 	
-	public void tick(boolean clicked)
+	/**
+	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
+	 * if clicked on the Label the Card clicked on will identify itself for development purpose
+	 * @return
+	 */
+	public JLabel cardToJLabel()
+	{		
+		JLabel cardLabel = new JLabel()
+				{
+					private static final long serialVersionUID = -3561533864873217494L;
+
+					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
+					protected void paintChildren(Graphics g)
+					{
+						super.paintChildren(g);						
+						g.drawImage(textur, 0, 0, null);
+						
+						g.setColor(Color.red);
+						g.setFont(new Font("CardInfo", Font.BOLD, 9));
+						g.drawString(toString()
+									, 0									//X Koordinate
+									, textur.getHeight() + 10);			//Y Koordinate
+					}
+				};		
+				
+				/**
+				 * fügt JLabel der Karte einen MouseListener hinzu
+				 * da nicht alle MausFunktionen geutzt werden wird ein Adapter benutzt
+				 */
+				cardLabel.addMouseListener(new MouseAdapter() 
+				{
+					public void mouseClicked(MouseEvent e)
+					{
+						System.out.println("Ich bin " + name);
+					}
+				});
+		
+		return cardLabel;
+	}
+	
+	public String toString()
 	{
-		if(clicked)
-		{
-			bounds.x = 100;//(Mouseposition neu relativ zu Karte x ) 
-			bounds.y = 100;
-		}
+		String kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
+		return kartenInfo;
 	}
 	
 	public Typ getTyp() {		//Wenn die Karte gespielt wird, überprüfe ob Zauber oder Monster

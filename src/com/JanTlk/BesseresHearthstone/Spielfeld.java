@@ -22,13 +22,13 @@ public class Spielfeld
 		for(int i = 0; i < dPL.getAnzKarten(); i++)
 		{
 			Karte tempKarte = dPL.getKarten().get(i);
-			tempKarte.render(g);
+			System.out.println(tempKarte.toString());
 		}
 		
 		for(int i = 0; i < dPC.getAnzKarten(); i++)
 		{
 			Karte tempKarte = dPC.getKarten().get(i);
-			tempKarte.render(g);
+			System.out.println(tempKarte.toString());
 		}
 	}
 
@@ -38,7 +38,7 @@ public class Spielfeld
 		for(int i = 0; i < dPL.getAnzKarten(); i++)
 		{
 			Karte tempKarte = dPL.getKarten().get(i);
-			tempKarte.tick(false);
+			tempKarte.tick();
 		}
 	}
 	
