@@ -1,0 +1,34 @@
+﻿KlassenListe
+------------
+Hearthstone//	äquivalent zu StartHearthstone (startet Spiel
+												, Threads
+												, Tickt und rendert mit Gameloop)
+																								
+Fenster//		öffnet das JFrame Fenster sorgt für Größe u.a. Einstellungen
+
+Game//			ActionListener um Ende der Runde mit zu bekommen,
+				Zug:	Mana um 1 erhöhen
+						Karte auf die Hand ziehen
+						Auf auswahl einer Karte urch Player warten
+
+KartenHandler//	Karte auf Stapel -> Kann gezogen werden, wird nicht gerendert, steht KI nicht zur Verfügung
+				Karte auf Ablage -> Hat <= 0 Lebenspunkte und ist daher tot						
+
+Karte//			Werte einer Karte und Textur
+				Position (x/y), Grafik, manakosten, Zauber oder Monster, Leben, Angriff
+
+Menü//			Auswahl zwischen Spiel und Ende der Anwendung; (optional) Einstellungen/Wiederholungen/HighScores 				
+
+Spielfeld//		Leben und Mana verwaltung (Leben der Spielers
+										, Manakosten von Manapool abziehen
+										, jede Runde Mana erhöhen)
+										
+				, Kartenauslage (Welche Karte auf welchem Feld
+								, Zauberkarten/Battlecry effekte
+								, tote Karten entfernen)
+				, Runde beenden um Zug zu beenden -> Rundenverwaltung
+
+KI//			legt Karte nach Mana bis keine mehr spielen kann
+
+
+-Weitere Ideen für Konzept einfügen-
