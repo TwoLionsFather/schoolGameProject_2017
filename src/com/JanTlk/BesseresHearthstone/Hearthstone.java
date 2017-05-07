@@ -4,10 +4,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.util.LinkedList;
-
-import com.JanTlk.BesseresHearthstone.Karten.Karte;
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
 public class Hearthstone extends Canvas implements Runnable 
 {
@@ -23,20 +19,13 @@ public class Hearthstone extends Canvas implements Runnable
 	
 	private boolean running = false;
 	
-	//public Hearthstone(Deck d1, Deck d2)
 	public Hearthstone()
-	{
-		LinkedList <Karte> kartenPL = new LinkedList<Karte>();
-		kartenPL.add(new Karte("Mullbomber", Typ.Zauber, 0, 10, 10, null));
-		
-		LinkedList <Karte> kartenPC = new LinkedList<Karte>();
-		kartenPC.add(new Karte("Mullbomber", Typ.Zauber, 0, 10, 10, null));
-		
-		Deck d1 = new Deck(kartenPL);
-		Deck d2 = new Deck(kartenPC);
-		//Fenster anlegen: this bezieht sich auf das Spiel was angezeigt werden soll
+	{		
+		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);
-		spielfeld = new Spielfeld(d1, d2);
+		
+		DeckHandler dH = new DeckHandler();
+		spielfeld = new Spielfeld();
 	}
 	
 	public void run() 
@@ -52,7 +41,6 @@ public class Hearthstone extends Canvas implements Runnable
 		int tps = 0;
 		boolean canRender = false;
 		
-		//still not perfectly smooth
 		while(running)
 		{
 			long now = System.nanoTime();
@@ -72,7 +60,6 @@ public class Hearthstone extends Canvas implements Runnable
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -103,7 +90,7 @@ public class Hearthstone extends Canvas implements Runnable
 		BufferStrategy bs = this.getBufferStrategy();
 		if(bs == null)
 		{
-			this.createBufferStrategy(3); // 2 - 4 Ruckel > Performance
+			this.createBufferStrategy(3); //3 bilder Buffern
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
@@ -111,21 +98,19 @@ public class Hearthstone extends Canvas implements Runnable
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
 		
-		spielfeld.render(g);
-		
 		g.dispose();
 		bs.show();
 	}
+
 	
-	//Todo: Threads herrausfinden Was Wie Warum
-	public void start() //startet neuen Prozess um diese Klasse zu bearbeiten?
+	public void start() 
 	{
 		thread = new Thread(this);
 		thread.start();
 		running = true;
 	}
 	
-	public synchronized void stop() //beendet Prozess
+	public synchronized void stop()
 	{
 		try{
 			thread.join();
@@ -137,8 +122,6 @@ public class Hearthstone extends Canvas implements Runnable
 	
 	public static void main(String[] args) 
 	{
-		
-		//new Hearthstone(dPlayer, dPC);
 		new Hearthstone();
 	}
 }
