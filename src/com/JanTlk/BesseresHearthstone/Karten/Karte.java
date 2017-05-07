@@ -28,19 +28,26 @@ public class Karte extends JPanel
 	
 	private BufferedImage textur;		//aussehen der Karte (hoffentlich)
 	
-	public Karte(String name			//Konstruktor um Karte Werte beim anlegen zu zu weisen
+	/**
+	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
+	 * @param name Sets the name of the Card
+	 * @param typ It is either a Spell or a monster
+	 * @param mana How much this card will cost when played
+	 * @param schaden How much Damage the card deals when attacking another one
+	 * @param leben How much damage a card can take before beeing moved to the graveyard :(
+	 * @param textur Needs to follow a specific blueprint, A Bufferd Image that stores the Cards image
+	 */
+	public Karte(String name
 				, Typ typ
 				, int mana
 				, int schaden
-				, int leben
-				, BufferedImage textur) 
+				, int leben) 
 	{
 		this.name = name;
 		this.typ = typ;
 		this.mana = mana;
 		this.schaden = schaden;
 		this.leben = leben;
-		this.textur = textur;
 	}
 	
 	public void tick()
@@ -55,7 +62,8 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 5, 25, 3, ImageIO.read(new File("CardBluePrint.png")));
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 5, 25, 3);
+		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 		
 		
 		//Create JFrame to display the Card
@@ -68,11 +76,8 @@ public class Karte extends JPanel
 		//Creates JPanel to display card
 		JPanel contentPane = new JPanel(new BorderLayout());
 		
-		//Create JLable like a stickynote with the Card on the content Pane
 		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize(100, 164);
-		
-		
+		cardLabel.setSize(100, 164);		
 		
 		contentPane.add(cardLabel);
 		window.add(contentPane);
@@ -134,6 +139,11 @@ public class Karte extends JPanel
 	{
 		String kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
 		return kartenInfo;
+	}
+	
+	public void setCardImage(BufferedImage textur)
+	{
+		this.textur = textur;
 	}
 	
 	public Typ getTyp() {		//Wenn die Karte gespielt wird, überprüfe ob Zauber oder Monster
