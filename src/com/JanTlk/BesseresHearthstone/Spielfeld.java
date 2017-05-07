@@ -10,10 +10,14 @@ public class Spielfeld
 	private Deck dPL;
 	private Deck dPC;
 	
+	public Spielfeld()
+	{
+		
+	}
+	
 	
 	public void render(Graphics g) 
 	{
-		//anzeige Spielerkarten
 		for(int i = 0; i < dPL.getAnzKarten(); i++)
 		{
 			Karte tempKarte = dPL.getKarten().get(i);
