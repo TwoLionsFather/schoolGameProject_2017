@@ -1,13 +1,17 @@
 package com.JanTlk.BesseresHearthstone.Karten;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -45,6 +49,36 @@ public class Karte extends JPanel
 	}
 	
 	/**
+	 * Mainmethod for Testing only!
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException 
+	{
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 5, 25, 3, ImageIO.read(new File("CardBluePrint.png")));
+		
+		
+		//Create JFrame to display the Card
+		JFrame window = new JFrame("Display for a Card Object");
+		window.setSize(1280, 780);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setVisible(true);
+		
+		
+		//Creates JPanel to display card
+		JPanel contentPane = new JPanel(new BorderLayout());
+		
+		//Create JLable like a stickynote with the Card on the content Pane
+		JLabel cardLabel = firstTestCard.cardToJLabel();
+		cardLabel.setSize(100, 164);
+		
+		
+		//contentPane.add(cardLabel);
+		contentPane.add(firstTestCard.cardToJLabel());
+		window.add(contentPane);
+	}
+	
+	/**
 	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
 	 * if clicked on the Label the Card clicked on will identify itself for development purpose
 	 * @return
@@ -63,7 +97,7 @@ public class Karte extends JPanel
 						
 						g.setColor(Color.red);
 						g.setFont(new Font("CardInfo", Font.BOLD, 9));
-						g.drawString(toString()
+						g.drawString(Karte.this.toString()
 									, 0									//X Koordinate
 									, textur.getHeight() + 10);			//Y Koordinate
 					}
