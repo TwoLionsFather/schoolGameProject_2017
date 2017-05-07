@@ -5,9 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
-import com.JanTlk.BesseresHearthstone.Karten.Karte;
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
-
 public class Hearthstone extends Canvas implements Runnable 
 {
 	//benötigt um Kommunikation zwischen den richtigen Klassen sicher zu stellen
@@ -24,11 +21,11 @@ public class Hearthstone extends Canvas implements Runnable
 	
 	public Hearthstone()
 	{		
+		spielfeld = new Spielfeld();
 		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);
 		
-		DeckHandler dH = new DeckHandler();
-		spielfeld = new Spielfeld();
+		DeckHandler dH = new DeckHandler();		
 	}
 	
 	public void run() 
@@ -85,7 +82,7 @@ public class Hearthstone extends Canvas implements Runnable
 	
 	public void tick()
 	{
-		spielfeld.tick();
+		//spielfeld.tick();
 	}
 	
 	public void render()
@@ -100,6 +97,8 @@ public class Hearthstone extends Canvas implements Runnable
 		
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+		
+		spielfeld.render(g);
 		
 		g.dispose();
 		bs.show();

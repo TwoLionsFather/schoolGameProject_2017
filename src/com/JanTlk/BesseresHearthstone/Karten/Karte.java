@@ -47,7 +47,7 @@ public class Karte extends JPanel
 		this.typ = typ;
 		this.mana = mana;
 		this.schaden = schaden;
-		this.leben = leben;
+		this.leben = leben;		
 	}
 	
 	public void tick()
@@ -135,6 +135,29 @@ public class Karte extends JPanel
 		return cardLabel;
 	}
 	
+	public void drawCard(int x, int y, Graphics g)
+	{
+		g.drawImage(textur, x, y, null);
+		
+		g.setColor(Color.red);
+		g.setFont(new Font("Damage", Font.BOLD, 15));
+		g.drawString("" + Karte.this.getSchaden()
+					, 15 + x
+					, textur.getHeight() - 15 + y);
+		
+		g.setColor(Color.green);
+		g.setFont(new Font("Live", Font.BOLD, 15));
+		g.drawString("" + Karte.this.getLeben()
+					, textur.getWidth() - 23 + x
+					, textur.getHeight() - 15 + y);
+		
+		g.setColor(Color.black);
+		g.setFont(new Font("CardInfo", Font.BOLD, 11));
+		g.drawString(Karte.this.getName()
+					, 22 + x
+					, 22 + y);
+	}
+	
 	public String toString()
 	{
 		String kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
@@ -143,6 +166,7 @@ public class Karte extends JPanel
 	
 	public void setCardImage(BufferedImage textur)
 	{
+		
 		this.textur = textur;
 	}
 	
@@ -186,8 +210,5 @@ public class Karte extends JPanel
 		this.schaden = schaden;
 	}
 	
-	public void setTexture(BufferedImage texture) {
-		
-	}
 	
 }
