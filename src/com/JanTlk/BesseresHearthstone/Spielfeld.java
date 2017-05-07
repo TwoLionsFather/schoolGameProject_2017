@@ -1,13 +1,8 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Graphics;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
 public class Spielfeld 
 {
@@ -20,25 +15,10 @@ public class Spielfeld
 		dPL = new Deck();
 		dPC = new Deck();
 		
-		//used to debug
-		Karte tempK = new Karte("FireStarter", Typ.Monster, 5, 25, 3);
-		Karte tempK2 = new Karte("MotherOfD", Typ.Monster, 5, 25, 25);
-		Karte tempK3 = new Karte("BigBuuudy", Typ.Monster, 5, 5, 53);
-		Karte tempK4 = new Karte("ManyOfAss", Typ.Monster, 5, 23, 23);
+		DeckHandler dH = new DeckHandler();	
 		
-		try {
-			tempK.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
-			tempK2.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
-			tempK3.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
-			tempK4.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		dPL.addKarte(tempK);
-		dPL.addKarte(tempK2);
-		dPL.addKarte(tempK3);
-		dPL.addKarte(tempK4);
+		dPL = dH.getPlayerDeck();
+		dPC = dH.getPCDeck();
 	}
 	
 	/**

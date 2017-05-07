@@ -11,10 +11,10 @@ public class Hearthstone extends Canvas implements Runnable
 	private static final long serialVersionUID = 406005602200328868L;
 	
 	public static final String TITEL = "Hearthstone";
-	public static final float BREITE = 900; //1920 für Fullscreen
+	public static final float BREITE = 1200; //1920 für Fullscreen
 	public static final float HOEHE = (BREITE / 4) * 3; //3/4 der Breite -> Höhe
 	
-	private Thread thread; //neuen Thread anlegen mit dem das Spiel laufen soll
+	private Thread thread;
 	private Spielfeld spielfeld;
 	
 	private boolean running = false;
@@ -23,9 +23,7 @@ public class Hearthstone extends Canvas implements Runnable
 	{		
 		spielfeld = new Spielfeld();
 		//window init
-		new Fenster(BREITE, HOEHE, TITEL, this);
-		
-		DeckHandler dH = new DeckHandler();		
+		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
 	
 	public void run() 
