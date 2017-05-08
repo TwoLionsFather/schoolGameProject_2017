@@ -30,9 +30,8 @@ public class DeckHandler {
 		
 		
 		try {
-			for(int i = 0; i < player.getAnzKarten(); i++)
+			for(Karte tempK : player.getKarten())
 			{
-				Karte tempK = player.getKarten().get(i);
 				tempK.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 			}				
 		} catch (IOException e) {
@@ -42,12 +41,14 @@ public class DeckHandler {
 		pc = player;
 	}
 
-	public Deck getPlayerDeck() {
+	public Deck getPlayerDeck() 
+	{
 		// TODO Auto-generated method stub
 		return player;
 	}
 
-	public Deck getPCDeck() {
+	public Deck getPCDeck() 
+	{
 		// TODO Auto-generated method stub
 		return pc;
 	}

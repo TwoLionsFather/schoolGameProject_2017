@@ -26,6 +26,9 @@ public class Hearthstone extends Canvas implements Runnable
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
 	
+	/**
+	 * Gameloop that ticks and renders 60 times per secound
+	 */
 	public void run() 
 	{
 		this.requestFocus();

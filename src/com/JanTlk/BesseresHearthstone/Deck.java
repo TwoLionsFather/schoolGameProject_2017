@@ -17,6 +17,11 @@ public class Deck {
 	{
 		return karten;
 	}
+	
+	public Karte[] getKartenArray()
+	{
+		return karten.toArray(new Karte[getAnzKarten()]);
+	}
 
 	public void setKarten(LinkedList<Karte> karten) 
 	{

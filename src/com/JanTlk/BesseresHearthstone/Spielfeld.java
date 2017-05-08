@@ -10,6 +10,8 @@ public class Spielfeld
 	private Deck dPL;
 	private Deck dPC;
 	
+	private int kartenCount;
+	
 	public Spielfeld()
 	{
 		DeckHandler dH = new DeckHandler();	
@@ -24,17 +26,17 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{
-		for(int i = 0; i < dPL.getAnzKarten(); i++)
+		for(Karte tempKarte : dPL.getKarten())
 		{
-			Karte tempKarte = dPL.getKarten().get(i);
-			tempKarte.drawCard(0 + i * 105, 200, g);
+			tempKarte.drawCard(0 + 55 * kartenCount++, 200, g);
 		}
+		kartenCount = 0;
 		
-		for(int i = 0; i < dPC.getAnzKarten(); i++)
+		for(Karte tempKarte : dPC.getKarten())
 		{
-			Karte tempKarte = dPC.getKarten().get(i);
-			tempKarte.drawCard(0 + i * 105, 0, g);
+			tempKarte.drawCard(0 + 55 * kartenCount++, 0, g);
 		}
+		kartenCount = 0;
 	}
 
 	public void tick() 
