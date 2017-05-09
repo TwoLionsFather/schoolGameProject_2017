@@ -61,16 +61,16 @@ public class Spielfeld
 			{
 				if(player)
 				{
-					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPL.getAnzKarten() * dPL.getKarten().get(0).getBounds().getWidth() / 2) + 55 * kartenCount++)
-							, (int) (Hearthstone.HOEHE - (Hearthstone.HOEHE / 5))
-							, g);
+					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPL.getAnzKarten() * (dPL.getKarten().get(0).getBounds().getWidth() - 50) / 2) + 55 * kartenCount++)
+									, (int) (Hearthstone.HOEHE - (Hearthstone.HOEHE / 5))
+									, g);
 				}
 				
 				else 
 				{
-					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPC.getAnzKarten() * dPC.getKarten().get(0).getBounds().getWidth() / 2) + 55 * kartenCount++)
-								, 0
-								, g);
+					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPC.getAnzKarten() * (dPC.getKarten().get(0).getBounds().getWidth() - 50) / 2) + 55 * kartenCount++)
+									, 0
+									, g);
 				}
 			}
 			

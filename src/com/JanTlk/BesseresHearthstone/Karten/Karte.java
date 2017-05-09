@@ -74,7 +74,7 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 3, 25, 95);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Zauber, 3, 25, 95);
 		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 		
 		
@@ -168,21 +168,34 @@ public class Karte extends JPanel
 					, textur.getHeight() - 15 + y);
 		
 		g.setColor(Color.green);
-		g.setFont(new Font("Live", Font.BOLD, 15));
-		g.drawString("" + Karte.this.getLeben()
-					, textur.getWidth() - 23 + x
-					, textur.getHeight() - 15 + y);
 		
-		g.setColor(Color.black);
-		g.setFont(new Font("CardInfo", Font.BOLD, 11));
-		g.drawString(Karte.this.getName()
-					, 22 + x
-					, 22 + y);
+		if(this.typ == Typ.Monster)
+		{
+			g.setFont(new Font("Live", Font.BOLD, 15));
+			g.drawString("" + Karte.this.getLeben()
+						, textur.getWidth() - 23 + x
+						, textur.getHeight() - 15 + y);
+			
+			g.setColor(Color.black);
+			g.setFont(new Font("CardInfo", Font.BOLD, 11));
+			g.drawString(Karte.this.getName()
+						, 22 + x
+						, 22 + y);
+		}
+		
 	}
 	
+	/**
+	 * used to identify a Card with name and dmg/live if given
+	 */
 	public String toString()
 	{
-		String kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
+		String kartenInfo = "";
+		if(this.typ == Typ.Monster)
+			kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
+		else
+			kartenInfo = String.format("%s ist ein Zauber mit STARKEM Effekt!!", name);
+			
 		return kartenInfo;
 	}
 	
