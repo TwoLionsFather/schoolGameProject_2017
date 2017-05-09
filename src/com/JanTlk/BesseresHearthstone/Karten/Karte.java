@@ -26,7 +26,9 @@ public class Karte extends JPanel
 	private int mana;		//kosten bei Ausspielen der Karte
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
+	private int schadenInit;
 	private int leben;		//Leben, 0 Leben = Karte tot
+	private int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
 	
 	/**
@@ -43,7 +45,6 @@ public class Karte extends JPanel
 	 * @param mana How much this card will cost when played
 	 * @param schaden How much Damage the card deals when attacking another one
 	 * @param leben How much damage a card can take before beeing moved to the graveyard :(
-	 * @param textur Needs to follow a specific blueprint, A Bufferd Image that stores the Cards image
 	 */
 	public Karte(String name
 				, Typ typ
@@ -55,7 +56,9 @@ public class Karte extends JPanel
 		this.typ = typ;
 		this.mana = mana;
 		this.schaden = schaden;
+		this.schadenInit = schaden;
 		this.leben = leben;	
+		this.lebenInit = leben;
 		this.setStatus(Status.Hand);
 	}
 	
@@ -74,7 +77,7 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Zauber, 3, 25, 95);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 2, 2, 9);
 		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 		
 		
@@ -98,7 +101,7 @@ public class Karte extends JPanel
 	/**
 	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
 	 * if clicked on the Label the Card clicked on will identify itself for development purpose
-	 * @return
+	 * @return a JLabel that can be put on a JPanel for simple display and debug purpose
 	 */
 	public JLabel cardToJLabel()
 	{		
@@ -112,17 +115,29 @@ public class Karte extends JPanel
 						super.paintChildren(g);						
 						g.drawImage(textur, 0, 0, null);
 						
-						g.setColor(Color.red);
-						g.setFont(new Font("Damage", Font.BOLD, 15));
-						g.drawString("" + Karte.this.getSchaden()
-									, 15
-									, textur.getHeight() - 15);
+						if(Karte.this.getTyp() == Typ.Monster)
+						{
+							g.setColor(checkForChange(schadenInit, schaden));			
+							g.setFont(new Font("Damage", Font.BOLD, 15));
+							g.drawString("" + Karte.this.getSchaden()
+										, (Karte.this.getSchaden() < 10) ? 20 : 15
+										, textur.getHeight() - 16);
+							
+							g.setColor(checkForChange(lebenInit, leben));	
+							g.setFont(new Font("Live", Font.BOLD, 15));
+							g.drawString("" + Karte.this.getLeben()
+										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27)
+										, textur.getHeight() - 16);
+						}	
 						
-						g.setColor(Color.green);
-						g.setFont(new Font("Live", Font.BOLD, 15));
-						g.drawString("" + Karte.this.getLeben()
-									, textur.getWidth() - 25
-									, textur.getHeight() - 15);
+						/**
+						 * this needs some adjustment and a place in the blueprint
+						 */						
+						g.setColor(Color.blue);
+						g.setFont(new Font("Mana", Font.PLAIN, 11));
+						g.drawString("" + Karte.this.getMana()
+									, (Karte.this.getMana() < 10) ? 8 : 4
+									, 22);
 						
 						g.setColor(Color.black);
 						g.setFont(new Font("CardInfo", Font.BOLD, 11));
@@ -161,28 +176,36 @@ public class Karte extends JPanel
 		
 		g.drawImage(textur, x, y, null);
 		
-		g.setColor(Color.red);
-		g.setFont(new Font("Damage", Font.BOLD, 15));
-		g.drawString("" + Karte.this.getSchaden()
-					, 15 + x
-					, textur.getHeight() - 15 + y);
-		
-		g.setColor(Color.green);
-		
 		if(this.typ == Typ.Monster)
 		{
-			g.setFont(new Font("Live", Font.BOLD, 15));
-			g.drawString("" + Karte.this.getLeben()
-						, textur.getWidth() - 23 + x
+			g.setColor(checkForChange(schadenInit, schaden));			
+			g.setFont(new Font("Damage", Font.BOLD, 15));
+			g.drawString("" + Karte.this.getSchaden()
+						, ((Karte.this.getSchaden() < 10) ? 20 : 15) + x
 						, textur.getHeight() - 15 + y);
 			
-			g.setColor(Color.black);
-			g.setFont(new Font("CardInfo", Font.BOLD, 11));
-			g.drawString(Karte.this.getName()
-						, 22 + x
-						, 22 + y);
+			
+			g.setColor(checkForChange(lebenInit, leben));			
+			g.setFont(new Font("Live", Font.BOLD, 15));
+			g.drawString("" + Karte.this.getLeben()
+						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + x
+						, textur.getHeight() - 15 + y);
 		}
 		
+		/**
+		 * this needs some adjustment and a place in the blueprint
+		 */						
+		g.setColor(Color.blue);
+		g.setFont(new Font("Mana", Font.PLAIN, 11));
+		g.drawString("" + Karte.this.getMana()
+					, x + ((Karte.this.getMana() < 10) ? 8 : 4)
+					, y + 22);
+			
+		g.setColor(Color.black);
+		g.setFont(new Font("CardInfo", Font.BOLD, 11));
+		g.drawString(Karte.this.getName()
+					, 22 + x
+					, 22 + y);		
 	}
 	
 	/**
@@ -199,6 +222,27 @@ public class Karte extends JPanel
 		return kartenInfo;
 	}
 	
+	/**
+	 * Methode checks what Color to use based on a change in Value (green - up; red - down)
+	 * @param init the initial value that the current one is checked with
+	 * @param now the value that gets checked for change
+	 * @return returs either red, green or black Color code
+	 */
+	private Color checkForChange(int init, int now)
+	{
+		if(now < init)
+			return Color.red;
+		
+		else if (now > init)
+			return Color.green;
+		else 
+			return Color.black;
+	}
+	
+	/**
+	 * this sets up the grafik, if not setup by this, the graphic will be null
+	 * @param textur the Buffered image used as texture when displaying the card
+	 */
 	public void setCardImage(BufferedImage textur)
 	{
 		bounds = new Rectangle(-1, -1	//at the point of setting Graphics, one shouldn't be drawing it
@@ -207,7 +251,11 @@ public class Karte extends JPanel
 		this.textur = textur;
 	}
 	
-	public Typ getTyp() {		//Wenn die Karte gespielt wird, überprüfe ob Zauber oder Monster
+	/**
+	 * A Monster Card has different functionality then a spell card
+	 * @return enum with the typ that card is
+	 */
+	public Typ getTyp() {
 		return typ;
 	}
 
