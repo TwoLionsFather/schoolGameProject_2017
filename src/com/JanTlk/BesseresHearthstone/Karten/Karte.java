@@ -26,6 +26,7 @@ public class Karte extends JPanel
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private int leben;		//Leben, 0 Leben = Karte tot
+	private Status status; //this will be used to decide how the card gets handeled
 	
 	/**
 	 * textur will get standardiced Graphic from a composed image, when set up
@@ -53,7 +54,8 @@ public class Karte extends JPanel
 		this.typ = typ;
 		this.mana = mana;
 		this.schaden = schaden;
-		this.leben = leben;		
+		this.leben = leben;	
+		this.setStatus(Status.Hand);
 	}
 	
 	/**
@@ -77,7 +79,7 @@ public class Karte extends JPanel
 		
 		//Create JFrame to display the Card
 		JFrame window = new JFrame("Display for a Card Object");
-		window.setSize(1280, 780);
+		window.setSize(200, 240);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		
@@ -227,6 +229,14 @@ public class Karte extends JPanel
 
 	public void setSchaden(int schaden) {
 		this.schaden = schaden;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
 	public Rectangle getBounds() {
