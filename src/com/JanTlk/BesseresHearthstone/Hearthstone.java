@@ -21,6 +21,7 @@ public class Hearthstone extends Canvas implements Runnable
 	public Hearthstone()
 	{		
 		spielfeld = new Spielfeld();
+		spielfeld.render();
 		
 		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);	
@@ -109,7 +110,7 @@ public class Hearthstone extends Canvas implements Runnable
 	}
 
 	
-	public void start() 
+	public synchronized void start() 
 	{
 		thread = new Thread(this);
 		thread.start();

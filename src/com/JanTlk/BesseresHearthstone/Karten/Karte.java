@@ -20,6 +20,9 @@ public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
 	
+	public static final float hoehe = 100;
+	public static final float breite = 164;
+	
 	private  String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
 	private int mana;		//kosten bei Ausspielen der Karte
@@ -86,7 +89,7 @@ public class Karte extends JPanel
 		JPanel contentPane = new JPanel(new BorderLayout());
 		
 		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize(100, 164);		
+		cardLabel.setSize((int) hoehe, (int) breite);		
 		
 		contentPane.add(cardLabel);
 		window.add(contentPane);
