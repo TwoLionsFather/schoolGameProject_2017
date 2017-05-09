@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -18,15 +19,22 @@ import javax.swing.JPanel;
 public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
+
 	
 	private  String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
-	private int mana;		//kosten für ausspielen der Karte
+	private int mana;		//kosten bei Ausspielen der Karte
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
-	private int leben;	//Leben, 0 Leben = Karte tot
+	private int leben;		//Leben, 0 Leben = Karte tot
+	private Status status; //this will be used to decide how the card gets handeled
 	
-	private BufferedImage textur;		//aussehen der Karte (hoffentlich)
+	/**
+	 * textur will get standardiced Graphic from a composed image, when set up
+	 * bounds will hopefully be used to check if the card got clicked on
+	 */
+	private BufferedImage textur;
+	private Rectangle bounds;
 	
 	/**
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
@@ -47,9 +55,13 @@ public class Karte extends JPanel
 		this.typ = typ;
 		this.mana = mana;
 		this.schaden = schaden;
-		this.leben = leben;
+		this.leben = leben;	
+		this.setStatus(Status.Hand);
 	}
 	
+	/**
+	 * currently a wildcard
+	 */
 	public void tick()
 	{
 		
@@ -62,13 +74,13 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 5, 25, 3);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 3, 25, 95);
 		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 		
 		
 		//Create JFrame to display the Card
-		JFrame window = new JFrame("Display for a Card Object");
-		window.setSize(1280, 780);
+		JFrame window = new JFrame("Display");
+		window.setSize(300, 400);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		
@@ -77,7 +89,7 @@ public class Karte extends JPanel
 		JPanel contentPane = new JPanel(new BorderLayout());
 		
 		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize(100, 164);		
+		cardLabel.setSize((int) 100, (int) 164);	
 		
 		contentPane.add(cardLabel);
 		window.add(contentPane);
@@ -93,7 +105,7 @@ public class Karte extends JPanel
 		JLabel cardLabel = new JLabel()
 				{
 					private static final long serialVersionUID = -3561533864873217494L;
-
+					
 					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
 					protected void paintChildren(Graphics g)
 					{
@@ -109,7 +121,7 @@ public class Karte extends JPanel
 						g.setColor(Color.green);
 						g.setFont(new Font("Live", Font.BOLD, 15));
 						g.drawString("" + Karte.this.getLeben()
-									, textur.getWidth() - 23
+									, textur.getWidth() - 25
 									, textur.getHeight() - 15);
 						
 						g.setColor(Color.black);
@@ -135,6 +147,39 @@ public class Karte extends JPanel
 		return cardLabel;
 	}
 	
+	/**
+	 * this should be used to draw a Card with Graphics class
+	 * @param x position of the top left corner
+	 * @param y position of the corner
+	 * @param g this is what the card gets drawn on
+	 */
+	public void drawCard(int x, int y, Graphics g)
+	{
+		bounds = new Rectangle(x, y
+								, textur.getWidth()
+								, textur.getHeight());
+		
+		g.drawImage(textur, x, y, null);
+		
+		g.setColor(Color.red);
+		g.setFont(new Font("Damage", Font.BOLD, 15));
+		g.drawString("" + Karte.this.getSchaden()
+					, 15 + x
+					, textur.getHeight() - 15 + y);
+		
+		g.setColor(Color.green);
+		g.setFont(new Font("Live", Font.BOLD, 15));
+		g.drawString("" + Karte.this.getLeben()
+					, textur.getWidth() - 23 + x
+					, textur.getHeight() - 15 + y);
+		
+		g.setColor(Color.black);
+		g.setFont(new Font("CardInfo", Font.BOLD, 11));
+		g.drawString(Karte.this.getName()
+					, 22 + x
+					, 22 + y);
+	}
+	
 	public String toString()
 	{
 		String kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
@@ -143,6 +188,9 @@ public class Karte extends JPanel
 	
 	public void setCardImage(BufferedImage textur)
 	{
+		bounds = new Rectangle(-1, -1	//at the point of setting Graphics, one shouldn't be drawing it
+							, textur.getWidth()
+							, textur.getHeight());
 		this.textur = textur;
 	}
 	
@@ -185,9 +233,22 @@ public class Karte extends JPanel
 	public void setSchaden(int schaden) {
 		this.schaden = schaden;
 	}
-	
-	public void setTexture(BufferedImage texture) {
-		
+
+	public Status getStatus() {
+		return status;
 	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public Rectangle getBounds() {
+		return bounds;
+	}
+
+	public void setBounds(Rectangle bounds) {
+		this.bounds = bounds;
+	}
+	
 	
 }

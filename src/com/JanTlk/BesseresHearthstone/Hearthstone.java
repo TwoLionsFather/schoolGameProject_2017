@@ -7,27 +7,28 @@ import java.awt.image.BufferStrategy;
 
 public class Hearthstone extends Canvas implements Runnable 
 {
-	//benötigt um Kommunikation zwischen den richtigen Klassen sicher zu stellen
 	private static final long serialVersionUID = 406005602200328868L;
 	
 	public static final String TITEL = "Hearthstone";
-	public static final float BREITE = 900; //1920 für Fullscreen
-	public static final float HOEHE = (BREITE / 4) * 3; //3/4 der Breite -> Höhe
+	public static final float BREITE = 1280; 			// 1920 für Fullscreen
+	public static final float HOEHE = BREITE / 4 * 3; 	// 3/4 der Breite -> Höhe
 	
-	private Thread thread; //neuen Thread anlegen mit dem das Spiel laufen soll
+	private Thread thread;
 	private Spielfeld spielfeld;
 	
 	private boolean running = false;
 	
 	public Hearthstone()
 	{		
-		//window init
-		new Fenster(BREITE, HOEHE, TITEL, this);
-		
-		DeckHandler dH = new DeckHandler();
 		spielfeld = new Spielfeld();
+		
+		//window init
+		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
 	
+	/**
+	 * Gameloop that ticks and renders 60 times per secound
+	 */
 	public void run() 
 	{
 		this.requestFocus();
@@ -80,9 +81,12 @@ public class Hearthstone extends Canvas implements Runnable
 		stop();	
 	}
 	
+	/**
+	 * currently just a wildcard
+	 */
 	public void tick()
 	{
-		spielfeld.tick();
+		//spielfeld.tick();
 	}
 	
 	public void render()
@@ -97,6 +101,8 @@ public class Hearthstone extends Canvas implements Runnable
 		
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+		
+		spielfeld.render(g);
 		
 		g.dispose();
 		bs.show();

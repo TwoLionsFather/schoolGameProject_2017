@@ -8,11 +8,6 @@ public class Deck {
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	
-	public Deck(LinkedList<Karte> karten)
-	{
-		this.setKarten(karten);
-	}
-	
 	public int getAnzKarten() 
 	{
 		return karten.size();
@@ -22,9 +17,19 @@ public class Deck {
 	{
 		return karten;
 	}
+	
+	public Karte[] getKartenArray()
+	{
+		return karten.toArray(new Karte[getAnzKarten()]);
+	}
 
 	public void setKarten(LinkedList<Karte> karten) 
 	{
 		this.karten = karten;
+	}
+	
+	public void addKarte(Karte karte)
+	{
+		this.karten.add(karte);
 	}
 }
