@@ -27,11 +27,6 @@ public class DeckHandler {
 		player.addKarte(new Karte("MotherOfD", Typ.Monster, 5, 25, 25));
 		player.addKarte(new Karte("BigBuuudy", Typ.Monster, 5, 5, 53));
 		player.addKarte(new Karte("ManyOfAss", Typ.Monster, 5, 23, 23));
-		player.addKarte(new Karte("ManyOfAss", Typ.Monster, 5, 23, 23));
-		player.addKarte(new Karte("FireStarter", Typ.Monster, 5, 25, 3));
-		player.addKarte(new Karte("MotherOfD", Typ.Monster, 5, 25, 25));
-		player.addKarte(new Karte("BigBuuudy", Typ.Monster, 5, 5, 53));
-		player.addKarte(new Karte("ManyOfAss", Typ.Monster, 5, 23, 23));
 		
 		try {
 			for(Karte tempK : player.getKarten())
