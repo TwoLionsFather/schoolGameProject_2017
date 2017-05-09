@@ -10,8 +10,8 @@ public class Hearthstone extends Canvas implements Runnable
 	private static final long serialVersionUID = 406005602200328868L;
 	
 	public static final String TITEL = "Hearthstone";
-	public static final float BREITE = 1200; //1920 für Fullscreen
-	public static final float HOEHE = (BREITE / 4) * 3; //3/4 der Breite -> Höhe
+	public static final float BREITE = 1280; //1920 für Fullscreen
+	public static final float HOEHE = BREITE / 4 * 3; //3/4 der Breite -> Höhe
 	
 	private Thread thread;
 	private Spielfeld spielfeld;

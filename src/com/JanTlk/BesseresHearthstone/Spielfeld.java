@@ -1,5 +1,7 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.LinkedList;
 import java.util.Random;
@@ -12,10 +14,6 @@ public class Spielfeld
 
 	private Deck dPL;
 	private Deck dPC;
-	
-	private int kartenCount;
-	private int abblageCount;
-	private int stapelCount;
 	
 	public Spielfeld()
 	{
@@ -34,6 +32,10 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{
+		int kartenCount = 0;
+		int abblageCount = 0;
+		int stapelCount = 0;
+		
 		for(Karte tempKarte : dPL.getKarten())
 		{
 			if(tempKarte.getStatus() == Status.Abblage)
@@ -57,6 +59,17 @@ public class Spielfeld
 								, g);
 			}			
 		}
+		
+		g.setColor(Color.red);
+		g.setFont(new Font("Info", Font.BOLD , 10));
+		g.drawString("" + stapelCount
+					, 20
+					, (int) Hearthstone.HOEHE - 40);
+		
+		g.drawString("" + abblageCount
+				, (int) Hearthstone.BREITE - 25
+				, (int) Hearthstone.HOEHE - 40);
+		
 		kartenCount = 0;
 		abblageCount = 0;
 		stapelCount = 0;
@@ -74,8 +87,8 @@ public class Spielfeld
 			}
 			else if(tempKarte.getStatus() == Status.Hand)
 			{
-				tempKarte.drawCard(55 * kartenCount++
-								, 200
+				tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPC.getAnzKarten() * dPC.getKarten().get(0).getBounds().getWidth() / 2) + 55 * kartenCount++)
+								, (int) (Hearthstone.HOEHE - (Hearthstone.HOEHE / 5))
 								, g);
 			}
 			else if(tempKarte.getStatus() == Status.Feld)
@@ -85,7 +98,19 @@ public class Spielfeld
 								, g);
 			}
 		}
+		g.setColor(Color.blue);
+		g.setFont(new Font("Info", Font.BOLD , 10));
+		g.drawString("" + stapelCount
+					, 15
+					, 15);
+		
+		g.drawString("" + abblageCount
+				, (int) Hearthstone.BREITE - 25
+				, 15);
+		
 		kartenCount = 0;
+		abblageCount = 0;
+		stapelCount = 0;
 	}
 
 	public void tick() 

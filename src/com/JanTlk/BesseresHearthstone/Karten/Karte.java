@@ -78,8 +78,8 @@ public class Karte extends JPanel
 		
 		
 		//Create JFrame to display the Card
-		JFrame window = new JFrame("Display for a Card Object");
-		window.setSize(200, 240);
+		JFrame window = new JFrame("Display");
+		window.setSize(300, 400);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		
