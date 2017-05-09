@@ -22,6 +22,11 @@ public class Hearthstone extends Canvas implements Runnable
 	{		
 		spielfeld = new Spielfeld();
 		
+		/*
+		 * MouseListener:
+		 * if in Rectangle und nicht in Recktangle nächster Karte...
+		 */
+		
 		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}

@@ -85,7 +85,7 @@ public class Spielfeld
 		g.setFont(new Font("Info", Font.BOLD , 12));
 		if(player)
 		{
-			g.setColor(Color.blue);
+			g.setColor(Color.green);
 			g.drawString("" + stapelCount
 					, 20
 					, (int) Hearthstone.HOEHE - 40);
