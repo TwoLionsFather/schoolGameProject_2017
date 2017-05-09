@@ -43,13 +43,11 @@ public class DeckHandler {
 
 	public Deck getPlayerDeck() 
 	{
-		// TODO Auto-generated method stub
 		return player;
 	}
 
 	public Deck getPCDeck() 
 	{
-		// TODO Auto-generated method stub
 		return pc;
 	}
 }

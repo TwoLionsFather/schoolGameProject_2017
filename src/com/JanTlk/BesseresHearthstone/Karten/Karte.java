@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
+
 	
 	private  String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
@@ -73,7 +74,7 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 5, 25, 3);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 3, 25, 95);
 		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
 		
 		
@@ -88,7 +89,7 @@ public class Karte extends JPanel
 		JPanel contentPane = new JPanel(new BorderLayout());
 		
 		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize(100, 164);		
+		cardLabel.setSize((int) 100, (int) 164);	
 		
 		contentPane.add(cardLabel);
 		window.add(contentPane);
@@ -104,7 +105,7 @@ public class Karte extends JPanel
 		JLabel cardLabel = new JLabel()
 				{
 					private static final long serialVersionUID = -3561533864873217494L;
-
+					
 					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
 					protected void paintChildren(Graphics g)
 					{
@@ -120,7 +121,7 @@ public class Karte extends JPanel
 						g.setColor(Color.green);
 						g.setFont(new Font("Live", Font.BOLD, 15));
 						g.drawString("" + Karte.this.getLeben()
-									, textur.getWidth() - 23
+									, textur.getWidth() - 25
 									, textur.getHeight() - 15);
 						
 						g.setColor(Color.black);
@@ -187,7 +188,9 @@ public class Karte extends JPanel
 	
 	public void setCardImage(BufferedImage textur)
 	{
-		
+		bounds = new Rectangle(-1, -1	//at the point of setting Graphics, one shouldn't be drawing it
+							, textur.getWidth()
+							, textur.getHeight());
 		this.textur = textur;
 	}
 	
