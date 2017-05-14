@@ -3,6 +3,9 @@ package com.JanTlk.BesseresHearthstone;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Random;
@@ -142,6 +145,57 @@ public class Spielfeld
 			linkedList.remove(randomZahl);					//entfernt die Karte aus dem Stapel
 		}
 		return temp;
+	}
+
+	/**
+	 * This is used to check if a valid card has been clicked on and is responsible for updating its position
+	 * @param arg0 a Mouse event to get the starting (and finishing) Coordinates 
+	 */
+	public void moveCard(MouseEvent arg0) 
+	{
+		Point cEvent = arg0.getPoint();
+		
+		for(int i = 0; i < dPL.getAnzKarten(); i++)
+		{
+			Karte tKarte = dPL.getKarten().get(i);
+			Karte nKarte = null;
+			
+			if(i < dPL.getAnzKarten() - 1)
+			{
+				nKarte = dPL.getKarten().get(i + 1);
+			}
+			
+			if(inBounds(cEvent, tKarte.getBounds()))
+			{
+				System.out.println("2 TestErfolgreich " + tKarte.toString());
+				if(! (inBounds(cEvent, nKarte.getBounds())))
+				{
+					System.out.println("TestErfolgreich " + tKarte.toString());
+				}
+			}
+		}
+		
+	}
+	
+	/**
+	 * This is used to check if the recorded Point of the moujseevent is within the boarders of a card's Rectangle
+	 * @param toTest the point of the mouseevent
+	 * @param borders borders of card or onscreen rectangel
+	 * @return true if the point is in the boarders of the rectangle
+	 */
+	private boolean inBounds(Point toTest, Rectangle borders)
+	{
+
+		if(toTest.getX() > borders.getX()
+		&& toTest.getX() < borders.getX() + borders.getWidth())
+		{
+			if(toTest.getY() > borders.getY()
+					&& toTest.getY() < borders.getY() + borders.getHeight())
+			{
+				return true;
+			}	
+		}
+		return false;
 	}
 	
 }

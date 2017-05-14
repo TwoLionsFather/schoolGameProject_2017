@@ -21,6 +21,9 @@ public class Hearthstone extends Canvas implements Runnable
 	public Hearthstone()
 	{		
 		spielfeld = new Spielfeld();
+		MousInput mouseStuff = new MousInput(spielfeld);
+		this.addMouseMotionListener(mouseStuff);
+		this.addMouseListener(mouseStuff);
 		
 		/*
 		 * MouseListener:
