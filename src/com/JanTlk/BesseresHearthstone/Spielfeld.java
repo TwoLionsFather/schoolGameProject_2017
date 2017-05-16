@@ -205,6 +205,7 @@ public class Spielfeld
 	public boolean cardAt(MouseEvent arg0) 
 	{
 		Point cEvent = arg0.getPoint();
+		int highestID = -1;
 		
 		for(int i = 0; i < dPL.getAnzKarten(); i++)
 		{
@@ -212,34 +213,17 @@ public class Spielfeld
 			
 			if(inBounds(cEvent, tKarte.getBounds())) 
 			{
-				int highestID = -1;
-				
-				try {					
-					for(int oI = i + 1; oI < dPL.getAnzKarten(); oI++)
-					{
-						if(inBounds(cEvent, dPL.getKarten().get(oI).getBounds())) 
-						{
-							oI = highestID;
-						}	
-					}
-				}catch(java.lang.IndexOutOfBoundsException e) {
-					System.err.println("last Card checked");
-				}
-				
-				if(highestID == -1)
-				{
-					idxMovedC = i;
-				}
-				
-				else 
-				{
-					idxMovedC = highestID;
-				}
-				
-				return true;
+				highestID = i;
 			}
 		}
-		return false;
+		
+		if(highestID == -1)
+		{
+			return false;
+		}
+		
+		idxMovedC = highestID;
+		return true;
 	}
 	
 }
