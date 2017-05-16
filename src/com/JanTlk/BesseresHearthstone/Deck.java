@@ -17,10 +17,12 @@ public class Deck {
 	{
 		return karten;
 	}
-	
-	public Karte[] getKartenArray()
+
+	public void cardPlayed(int idxMovedC) 
 	{
-		return karten.toArray(new Karte[getAnzKarten()]);
+		Karte playedC = karten.get(idxMovedC);
+		this.karten.remove(idxMovedC);
+		this.karten.add(playedC);	
 	}
 
 	public void setKarten(LinkedList<Karte> karten) 

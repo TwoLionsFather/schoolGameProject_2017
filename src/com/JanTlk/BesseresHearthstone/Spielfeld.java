@@ -42,6 +42,9 @@ public class Spielfeld
 		drawDeck(dPC, g, true);
 	}
 
+	/**
+	 * wildcard
+	 */
 	public void tick() 
 	{
 		
@@ -156,12 +159,16 @@ public class Spielfeld
 	 */
 	public void moveCard(int[] xyChange) 
 	{
-		System.out.println(dPL.getKarten().get(idxMovedC).toString());
+		Karte movedC = dPL.getKarten().get(idxMovedC);
+		
+		System.out.println(movedC.toString());
 		System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
 		
 		
-		dPL.getKarten().get(idxMovedC).setChange(xyChange);
-		dPL.getKarten().get(idxMovedC).setStatus(Status.Feld);
+		movedC.setChange(xyChange);
+		movedC.setStatus(Status.Feld);
+		
+		dPL.cardPlayed(idxMovedC);
 	}
 	
 	/**
@@ -172,6 +179,11 @@ public class Spielfeld
 	 */
 	private boolean inBounds(Point toTest, Rectangle borders)
 	{
+		if(borders == null)
+		{
+			return false;
+		}
+		
 		if(toTest.getX() > borders.getX()
 		&& toTest.getX() < borders.getX() + borders.getWidth())
 		{
@@ -180,13 +192,13 @@ public class Spielfeld
 			{
 				return true;
 			}	
-		}
+		}		
 		return false;
 	}
 
 	
 	/**
-	 * to check if there is a card at the clicked point
+	 * to check if there is a card at the clicked point, saves index of card on top
 	 * @param arg0 the mousevent that needs to be checked
 	 * @return true if the event happened on a card
 	 */
@@ -198,9 +210,32 @@ public class Spielfeld
 		{
 			Karte tKarte = dPL.getKarten().get(i);
 			
-			if(inBounds(cEvent, tKarte.getBounds()))
+			if(inBounds(cEvent, tKarte.getBounds())) 
 			{
-				idxMovedC = i;
+				int highestID = -1;
+				
+				try {					
+					for(int oI = i + 1; oI < dPL.getAnzKarten(); oI++)
+					{
+						if(inBounds(cEvent, dPL.getKarten().get(oI).getBounds())) 
+						{
+							oI = highestID;
+						}	
+					}
+				}catch(java.lang.IndexOutOfBoundsException e) {
+					System.err.println("last Card checked");
+				}
+				
+				if(highestID == -1)
+				{
+					idxMovedC = i;
+				}
+				
+				else 
+				{
+					idxMovedC = highestID;
+				}
+				
 				return true;
 			}
 		}

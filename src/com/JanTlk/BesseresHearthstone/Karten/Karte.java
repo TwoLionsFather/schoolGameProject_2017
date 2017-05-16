@@ -176,7 +176,8 @@ public class Karte extends JPanel
 		{
 			x = (int) bounds.getX();
 			y = (int) bounds.getY();
-		}		
+		}
+		
 		else 
 		{
 			bounds = new Rectangle(x, y
@@ -186,6 +187,9 @@ public class Karte extends JPanel
 		
 		g.drawImage(textur, x, y, null);
 		
+		/**
+		 * if using different Graphics for the card the values below might get changed
+		 */
 		if(this.typ == Typ.Monster)
 		{
 			g.setColor(checkForChange(schadenInit, schaden));			
