@@ -21,10 +21,19 @@ public class Spielfeld
 	private Deck dPC;
 	private int idxMovedC;
 	
+	Rectangle [][] kartenFelder;
+	Karte [][] kartenAufFelder;
 	
 	public Spielfeld(Component c)
 	{		
 		DeckHandler dH = new DeckHandler(c);	
+		
+		kartenFelder = new Rectangle [9][2];
+		kartenAufFelder = new Karte [9][2];
+		
+		/**
+		 * Kartenfelder anlegen
+		 */
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
@@ -41,6 +50,8 @@ public class Spielfeld
 	{
 		drawDeck(dPL, g, true);
 		drawDeck(dPC, g, false);
+		
+		//Felder als dünne linie zeichnen
 	}
 
 	/**

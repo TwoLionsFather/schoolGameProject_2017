@@ -5,8 +5,9 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-public class Fenster extends Canvas {
-	
+public class Fenster extends Canvas 
+{
+
 	private static final long serialVersionUID = 8837313394937421756L;
 
 	public Fenster(float breite, float hoehe, String titel, Hearthstone spiel)

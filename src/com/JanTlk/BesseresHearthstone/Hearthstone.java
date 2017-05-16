@@ -11,8 +11,8 @@ import javax.imageio.ImageIO;
 
 public class Hearthstone extends Canvas
 {
-	private static final long serialVersionUID = 406005602200328868L;
-	
+	private static final long serialVersionUID = 2288248461332515463L;
+
 	public static final String TITEL = "Hearthstone";
 	public static final float BREITE = 1280; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 4 * 3; 	// 3/4 der Breite -> Höhe
