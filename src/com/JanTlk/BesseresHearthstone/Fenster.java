@@ -25,6 +25,7 @@ public class Fenster extends Canvas {
 		frame.setLocationRelativeTo(null);
 		frame.add(spiel);		
 		frame.setVisible(true);		
+		//spiel.render();
 		spiel.start();
 	}
 }

@@ -171,7 +171,6 @@ public class Karte extends JPanel
 	 */
 	public void drawCard(int x, int y, Graphics g)
 	{
-
 		if(moved)
 		{
 			x = (int) bounds.getX();
@@ -222,6 +221,26 @@ public class Karte extends JPanel
 					, 22 + y);	
 		
 		moved = false;
+	}
+	
+	/**
+	 * clones a card, creating a new Karte object in the process
+	 */
+	public Karte clone()
+	{
+		Karte newK = new Karte(this.name, this.typ, this.mana, this.schaden, this.leben);
+		newK.setCardImage(this.texturClone());
+		return newK;
+	}
+	
+	private BufferedImage texturClone()
+	{
+		BufferedImage newBI = new BufferedImage(textur.getWidth(), textur.getHeight(), textur.getType());
+	   
+		Graphics g = newBI.getGraphics();
+	    g.drawImage(textur, 0, 0, null);
+	    g.dispose();
+	    return newBI;	
 	}
 	
 	/**

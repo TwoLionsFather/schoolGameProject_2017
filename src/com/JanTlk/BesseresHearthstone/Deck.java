@@ -8,6 +8,16 @@ public class Deck {
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	
+	public Deck clone()
+	{
+		Deck newD = new Deck();
+		for(Karte temp : karten)
+		{
+			newD.addKarte(temp.clone());
+		}
+		return newD;
+	}
+	
 	public int getAnzKarten() 
 	{
 		return karten.size();

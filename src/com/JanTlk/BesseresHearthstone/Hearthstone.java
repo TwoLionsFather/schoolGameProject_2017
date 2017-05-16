@@ -35,7 +35,7 @@ public class Hearthstone extends Canvas implements Runnable
 		}
 		
 		spielfeld = new Spielfeld();
-		MousInput mouseStuff = new MousInput(spielfeld, this);
+		MousInput mouseStuff = new MousInput(spielfeld);
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
 
@@ -115,12 +115,14 @@ public class Hearthstone extends Canvas implements Runnable
 			this.createBufferStrategy(3); //3 bilder Buffern
 			return;
 		}
+		
 		Graphics g = bs.getDrawGraphics();
 		
+		
+		//Graphics g = this.getGraphics();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
 		g.drawImage(backGround, 0, 0, null);
-		
 		
 		spielfeld.render(g);
 		

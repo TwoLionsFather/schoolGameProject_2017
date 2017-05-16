@@ -37,7 +37,7 @@ public class DeckHandler {
 			e.printStackTrace();
 		}
 		
-		pc = player;
+		pc = player.clone();
 	}
 
 	public Deck getPlayerDeck() 

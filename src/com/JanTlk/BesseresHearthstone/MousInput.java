@@ -8,17 +8,14 @@ import java.awt.event.MouseMotionListener;
 public class MousInput implements MouseMotionListener, MouseListener
 {
 	private Spielfeld spielfeld;
-	private Hearthstone hS;
-	
-	private int[] xyChange;
+	private int[] xyChange;		//alternativ als Point
 	private Point oldPoint = null;
 	
 	
 	
-	public MousInput(Spielfeld spielfeld, Hearthstone hS) 
+	public MousInput(Spielfeld spielfeld) 
 	{
 		this.spielfeld = spielfeld;
-		this.hS = hS;
 		xyChange = new int[2];
 	}
 	
@@ -27,10 +24,10 @@ public class MousInput implements MouseMotionListener, MouseListener
 	{
 		if(oldPoint != null)
 		{
-			Point temp = arg0.getPoint();
-		
-			xyChange[0] += (int) (temp.getX() - oldPoint.getX());
-			xyChange[1] += (int) (temp.getY() - oldPoint.getY());
+			Point temp = arg0.getPoint();			
+			
+			xyChange[0] += (int) (temp.getX() - oldPoint.getX()); //x
+			xyChange[1] += (int) (temp.getY() - oldPoint.getY()); //y
 			
 			oldPoint = temp;
 			arg0.consume();

@@ -38,8 +38,8 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{
-		drawDeck(dPL, g, false);
-		drawDeck(dPC, g, true);
+		drawDeck(dPL, g, true);
+		drawDeck(dPC, g, false);
 	}
 
 	/**
@@ -55,9 +55,9 @@ public class Spielfeld
 	 * uses the Graphics class to do so
 	 * @param deck the deck of cards that needs to get drawn
 	 * @param g the Graphics parameter used to draw the cards on
-	 * @param pc this ich true if the card belongs to the pc, if a card does not belong to the pc
+	 * @param player this ich true if the card belongs to the pc, if a card does not belong to the pc
 	 */
-	private void drawDeck(Deck deck, Graphics g, boolean pc)
+	private void drawDeck(Deck deck, Graphics g, boolean player)
 	{
 		int kartenCount = 0;
 		int abblageCount = 0;
@@ -75,7 +75,7 @@ public class Spielfeld
 			
 			else if(tempKarte.getStatus() == Status.Hand)
 			{
-				if(pc)
+				if(player)
 				{
 					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 
 																	- (dPL.getAnzKarten() * (dPL.getKarten().get(0).getBounds().getWidth() - 50) / 2)
@@ -101,7 +101,7 @@ public class Spielfeld
 		}
 		
 		g.setFont(new Font("Info", Font.BOLD , 12));
-		if(pc)
+		if(player)
 		{
 			g.setColor(Color.green);
 			g.drawString("" + stapelCount
@@ -164,7 +164,6 @@ public class Spielfeld
 		System.out.println(movedC.toString());
 		System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
 		
-		
 		movedC.setChange(xyChange);
 		movedC.setStatus(Status.Feld);
 		
@@ -184,16 +183,10 @@ public class Spielfeld
 			return false;
 		}
 		
-		if(toTest.getX() > borders.getX()
-		&& toTest.getX() < borders.getX() + borders.getWidth())
-		{
-			if(toTest.getY() > borders.getY()
-			&& toTest.getY() < (borders.getY() + borders.getHeight()))
-			{
-				return true;
-			}	
-		}		
-		return false;
+		return toTest.getX() > borders.getX()						//boolsche Abfrage, sonst if(...)
+				&& toTest.getX() < borders.getX() + borders.getWidth()
+				&& toTest.getY() > borders.getY()
+				&& toTest.getY() < (borders.getY() + borders.getHeight());
 	}
 
 	
