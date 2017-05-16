@@ -18,9 +18,11 @@ public class Spielfeld
 
 	private Deck dPL;
 	private Deck dPC;
+	private int idxMovedC;
+	
 	
 	public Spielfeld()
-	{
+	{		
 		DeckHandler dH = new DeckHandler();	
 		
 		dPL = dH.getPlayerDeck();
@@ -36,8 +38,8 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{
-		drawDeck(dPL, g, true);
-		drawDeck(dPC, g, false);
+		drawDeck(dPL, g, false);
+		drawDeck(dPC, g, true);
 	}
 
 	public void tick() 
@@ -50,9 +52,9 @@ public class Spielfeld
 	 * uses the Graphics class to do so
 	 * @param deck the deck of cards that needs to get drawn
 	 * @param g the Graphics parameter used to draw the cards on
-	 * @param player this ich true if the card belongs to the player, if a card does not belong to the player it is not shown to him 
+	 * @param pc this ich true if the card belongs to the pc, if a card does not belong to the pc
 	 */
-	private void drawDeck(Deck deck, Graphics g, boolean player)
+	private void drawDeck(Deck deck, Graphics g, boolean pc)
 	{
 		int kartenCount = 0;
 		int abblageCount = 0;
@@ -70,7 +72,7 @@ public class Spielfeld
 			
 			else if(tempKarte.getStatus() == Status.Hand)
 			{
-				if(player)
+				if(pc)
 				{
 					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 
 																	- (dPL.getAnzKarten() * (dPL.getKarten().get(0).getBounds().getWidth() - 50) / 2)
@@ -96,7 +98,7 @@ public class Spielfeld
 		}
 		
 		g.setFont(new Font("Info", Font.BOLD , 12));
-		if(player)
+		if(pc)
 		{
 			g.setColor(Color.green);
 			g.drawString("" + stapelCount
@@ -147,34 +149,20 @@ public class Spielfeld
 		return temp;
 	}
 
+	
 	/**
 	 * This is used to check if a valid card has been clicked on and is responsible for updating its position
-	 * @param arg0 a Mouse event to get the starting (and finishing) Coordinates 
+	 * @param xyChange a Mouse event to get the starting (and finishing) Coordinates 
 	 */
-	public void moveCard(MouseEvent arg0) 
+	public void moveCard(int[] xyChange) 
 	{
-		Point cEvent = arg0.getPoint();
+		Karte movedC = dPL.getKarten().get(idxMovedC);
+		Rectangle newB = new Rectangle((int) (movedC.getBounds().getX() + xyChange[0])
+									, (int) (movedC.getBounds().getY() + xyChange[1])
+									, (int) movedC.getBounds().getWidth()
+									, (int) movedC.getBounds().getHeight());
 		
-		for(int i = 0; i < dPL.getAnzKarten(); i++)
-		{
-			Karte tKarte = dPL.getKarten().get(i);
-			Karte nKarte = null;
-			
-			if(i < dPL.getAnzKarten() - 1)
-			{
-				nKarte = dPL.getKarten().get(i + 1);
-			}
-			
-			if(inBounds(cEvent, tKarte.getBounds()))
-			{
-				System.out.println("2 TestErfolgreich " + tKarte.toString());
-				if(! (inBounds(cEvent, nKarte.getBounds())))
-				{
-					System.out.println("TestErfolgreich " + tKarte.toString());
-				}
-			}
-		}
-		
+		dPL.getKarten().get(idxMovedC).setBounds(newB);;
 	}
 	
 	/**
@@ -185,15 +173,37 @@ public class Spielfeld
 	 */
 	private boolean inBounds(Point toTest, Rectangle borders)
 	{
-
 		if(toTest.getX() > borders.getX()
 		&& toTest.getX() < borders.getX() + borders.getWidth())
 		{
 			if(toTest.getY() > borders.getY()
-					&& toTest.getY() < borders.getY() + borders.getHeight())
+			&& toTest.getY() < (borders.getY() + borders.getHeight()))
 			{
 				return true;
 			}	
+		}
+		return false;
+	}
+
+	
+	/**
+	 * to check if there is a card at the clicked point
+	 * @param arg0 the mousevent that needs to be checked
+	 * @return true if the event happened on a card
+	 */
+	public boolean cardAt(MouseEvent arg0) 
+	{
+		Point cEvent = arg0.getPoint();
+		
+		for(int i = 0; i < dPL.getAnzKarten(); i++)
+		{
+			Karte tKarte = dPL.getKarten().get(i);
+			
+			if(inBounds(cEvent, tKarte.getBounds()))
+			{
+				idxMovedC = i;
+				return true;
+			}
 		}
 		return false;
 	}

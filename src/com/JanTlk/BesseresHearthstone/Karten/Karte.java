@@ -170,9 +170,14 @@ public class Karte extends JPanel
 	 */
 	public void drawCard(int x, int y, Graphics g)
 	{
-		bounds = new Rectangle(x, y
-								, textur.getWidth()
-								, textur.getHeight());
+		//if not the card might have been moved
+		if(bounds.getY() != y
+		|| bounds.getX() != x)
+		{
+			bounds = new Rectangle(x, y
+					, textur.getWidth()
+					, textur.getHeight());
+		}
 		
 		g.drawImage(textur, x, y, null);
 		

@@ -4,6 +4,11 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class Hearthstone extends Canvas implements Runnable 
 {
@@ -16,19 +21,24 @@ public class Hearthstone extends Canvas implements Runnable
 	private Thread thread;
 	private Spielfeld spielfeld;
 	
+	private BufferedImage backGround;
+	
 	private boolean running = false;
 	
 	public Hearthstone()
 	{		
+		try {
+			backGround = ImageIO.read(new File("backGround.png"));
+		} catch (IOException e) {
+			backGround = null;
+			e.printStackTrace();
+		}
+		
 		spielfeld = new Spielfeld();
-		MousInput mouseStuff = new MousInput(spielfeld);
+		MousInput mouseStuff = new MousInput(spielfeld, this);
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
-		
-		/*
-		 * MouseListener:
-		 * if in Rectangle und nicht in Recktangle nächster Karte...
-		 */
+
 		
 		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);	
@@ -109,6 +119,8 @@ public class Hearthstone extends Canvas implements Runnable
 		
 		g.setColor(Color.black);
 		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+		g.drawImage(backGround, 0, 0, null);
+		
 		
 		spielfeld.render(g);
 		

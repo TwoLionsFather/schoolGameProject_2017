@@ -1,5 +1,6 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -7,24 +8,33 @@ import java.awt.event.MouseMotionListener;
 public class MousInput implements MouseMotionListener, MouseListener
 {
 	private Spielfeld spielfeld;
-	private boolean isBeingMoved = false;
+	private Hearthstone hS;
+	
+	private int[] xyChange;
+	private Point oldPoint = null;
 	
 	
-	public MousInput(Spielfeld spielfeld) 
+	
+	public MousInput(Spielfeld spielfeld, Hearthstone hS) 
 	{
 		this.spielfeld = spielfeld;
+		this.hS = hS;
+		xyChange = new int[2];
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent arg0) 
 	{
-		if(!isBeingMoved)
+		if(oldPoint != null)
 		{
-			System.out.println("Debugg");
-			spielfeld.moveCard(arg0);
-			isBeingMoved = true;
-		}
-		arg0.consume();
+			Point temp = arg0.getPoint();
+		
+			xyChange[0] += (int) (temp.getX() - oldPoint.getX());
+			xyChange[1] += (int) (temp.getY() - oldPoint.getY());
+			
+			oldPoint = temp;
+			arg0.consume();
+		}		
 	}
 
 	@Override
@@ -54,14 +64,30 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mousePressed(MouseEvent arg0) 
 	{
+		if(spielfeld.cardAt(arg0))
+		{
+			oldPoint = arg0.getPoint();		
+		}
 		arg0.consume();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) 
 	{
-		System.out.println("Test");
-		isBeingMoved = false;
-		arg0.consume();
+		if(oldPoint != null)
+		{
+			Point temp = arg0.getPoint();
+			
+			xyChange[0] += (int) (oldPoint.getX() - temp.getX());
+			xyChange[1] += (int) (oldPoint.getY() - temp.getY());			
+			oldPoint = null;
+			
+			System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
+			spielfeld.moveCard(xyChange);			
+			
+			hS.render();
+			arg0.consume();
+		}
+		
 	}
 }
