@@ -1,6 +1,7 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -21,9 +22,9 @@ public class Spielfeld
 	private int idxMovedC;
 	
 	
-	public Spielfeld()
+	public Spielfeld(Component c)
 	{		
-		DeckHandler dH = new DeckHandler();	
+		DeckHandler dH = new DeckHandler(c);	
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
@@ -166,8 +167,9 @@ public class Spielfeld
 		
 		movedC.setChange(xyChange);
 		movedC.setStatus(Status.Feld);
+		movedC.getComponent().repaint();
 		
-		dPL.cardPlayed(idxMovedC);
+		dPL.cardPlayed(idxMovedC);		
 	}
 	
 	/**

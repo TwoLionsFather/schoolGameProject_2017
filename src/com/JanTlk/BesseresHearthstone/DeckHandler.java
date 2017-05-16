@@ -1,5 +1,6 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class DeckHandler {
 	private Deck player;
 	private Deck pc;
 	
-	public DeckHandler()
+	public DeckHandler(Component c)
 	{
 		player = new Deck();
 		
@@ -32,6 +33,7 @@ public class DeckHandler {
 			for(Karte tempK : player.getKarten())
 			{
 				tempK.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
+				tempK.setComponent(c);
 			}				
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -2,6 +2,7 @@ package com.JanTlk.BesseresHearthstone.Karten;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -35,6 +36,7 @@ public class Karte extends JPanel
 	 * textur will get standardiced Graphic from a composed image, when set up
 	 * bounds will hopefully be used to check if the card got clicked on
 	 */
+	private Component component;
 	private BufferedImage textur;
 	private Rectangle bounds;
 	private boolean moved;
@@ -218,7 +220,7 @@ public class Karte extends JPanel
 		g.setFont(new Font("CardInfo", Font.BOLD, 11));
 		g.drawString(Karte.this.getName()
 					, 22 + x
-					, 22 + y);	
+					, 22 + y);
 		
 		moved = false;
 	}
@@ -230,6 +232,7 @@ public class Karte extends JPanel
 	{
 		Karte newK = new Karte(this.name, this.typ, this.mana, this.schaden, this.leben);
 		newK.setCardImage(this.texturClone());
+		newK.setComponent(this.component);
 		return newK;
 	}
 	
@@ -369,4 +372,13 @@ public class Karte extends JPanel
 		this.bounds = bounds;
 	}
 	
+	public Component getComponent()
+	{
+		return this.component;
+	}
+	
+	public void setComponent(Component c)
+	{
+		this.component = c;
+	}
 }
