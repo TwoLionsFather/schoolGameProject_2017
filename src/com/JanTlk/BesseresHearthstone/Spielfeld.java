@@ -91,8 +91,8 @@ public class Spielfeld
 			
 			else if(tempKarte.getStatus() == Status.Feld)
 			{
-				tempKarte.drawCard(tempKarte.getBounds().width
-								, tempKarte.getBounds().height
+				tempKarte.drawCard((int) tempKarte.getBounds().getX()
+								, (int) tempKarte.getBounds().getY()
 								, g);
 			}
 		}
@@ -156,13 +156,12 @@ public class Spielfeld
 	 */
 	public void moveCard(int[] xyChange) 
 	{
-		Karte movedC = dPL.getKarten().get(idxMovedC);
-		Rectangle newB = new Rectangle((int) (movedC.getBounds().getX() + xyChange[0])
-									, (int) (movedC.getBounds().getY() + xyChange[1])
-									, (int) movedC.getBounds().getWidth()
-									, (int) movedC.getBounds().getHeight());
+		System.out.println(dPL.getKarten().get(idxMovedC).toString());
+		System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
 		
-		dPL.getKarten().get(idxMovedC).setBounds(newB);;
+		
+		dPL.getKarten().get(idxMovedC).setChange(xyChange);
+		dPL.getKarten().get(idxMovedC).setStatus(Status.Feld);
 	}
 	
 	/**

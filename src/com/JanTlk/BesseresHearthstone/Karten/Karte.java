@@ -37,6 +37,7 @@ public class Karte extends JPanel
 	 */
 	private BufferedImage textur;
 	private Rectangle bounds;
+	private boolean moved;
 	
 	/**
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
@@ -170,9 +171,13 @@ public class Karte extends JPanel
 	 */
 	public void drawCard(int x, int y, Graphics g)
 	{
-		//if not the card might have been moved
-		if(bounds.getY() != y
-		|| bounds.getX() != x)
+
+		if(moved)
+		{
+			x = (int) bounds.getX();
+			y = (int) bounds.getY();
+		}		
+		else 
 		{
 			bounds = new Rectangle(x, y
 					, textur.getWidth()
@@ -210,7 +215,9 @@ public class Karte extends JPanel
 		g.setFont(new Font("CardInfo", Font.BOLD, 11));
 		g.drawString(Karte.this.getName()
 					, 22 + x
-					, 22 + y);		
+					, 22 + y);	
+		
+		moved = false;
 	}
 	
 	/**
@@ -256,65 +263,87 @@ public class Karte extends JPanel
 		this.textur = textur;
 	}
 	
+	public void setChange(int[] xyChange) 
+	{
+		bounds = new Rectangle((int) (bounds.getX() + xyChange[0])
+							, (int) (bounds.getY() + xyChange[1])
+							, (int) bounds.getWidth()
+							, (int) bounds.getHeight());
+		moved = true;
+	}
+	
 	/**
 	 * A Monster Card has different functionality then a spell card
 	 * @return enum with the typ that card is
 	 */
-	public Typ getTyp() {
+	public Typ getTyp() 
+	{
 		return typ;
 	}
 
-	public void setTyp(Typ typ) {
+	public void setTyp(Typ typ) 
+	{
 		this.typ = typ;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(String name) 
+	{
 		this.name = name;
 	}
 
-	public int getMana() {
+	public int getMana() 
+	{
 		return mana;
 	}
 
-	public void setMana(int mana) {
+	public void setMana(int mana) 
+	{
 		this.mana = mana;
 	}
 
-	public int getLeben() {
+	public int getLeben() 
+	{
 		return leben;
 	}
 
-	public void setLeben(int leben) {
+	public void setLeben(int leben) 
+	{
 		this.leben = leben;
 	}
 
-	public int getSchaden() {
+	public int getSchaden() 
+	{
 		return schaden;
 	}
 
-	public void setSchaden(int schaden) {
+	public void setSchaden(int schaden) 
+	{
 		this.schaden = schaden;
 	}
 
-	public Status getStatus() {
+	public Status getStatus() 
+	{
 		return status;
 	}
 
-	public void setStatus(Status status) {
+	public void setStatus(Status status) 
+	{
 		this.status = status;
 	}
 
-	public Rectangle getBounds() {
+	public Rectangle getBounds() 
+	{
 		return bounds;
 	}
 
-	public void setBounds(Rectangle bounds) {
+	public void setBounds(Rectangle bounds) 
+	{
 		this.bounds = bounds;
 	}
-	
 	
 }

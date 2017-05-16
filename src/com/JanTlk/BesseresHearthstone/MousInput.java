@@ -82,10 +82,10 @@ public class MousInput implements MouseMotionListener, MouseListener
 			xyChange[1] += (int) (oldPoint.getY() - temp.getY());			
 			oldPoint = null;
 			
-			System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
 			spielfeld.moveCard(xyChange);			
 			
-			hS.render();
+			xyChange[0] = 0;
+			xyChange[1] = 0;
 			arg0.consume();
 		}
 		

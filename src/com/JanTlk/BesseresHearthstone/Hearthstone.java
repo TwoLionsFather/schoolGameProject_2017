@@ -51,7 +51,7 @@ public class Hearthstone extends Canvas implements Runnable
 	{
 		this.requestFocus();
 		
-		double target = 60.0;
+		double target = 10.0;
 		double nsPerTick = 1000000000 / target;
 		double unprocessed = 0.0;
 		long lastTime = System.nanoTime();
