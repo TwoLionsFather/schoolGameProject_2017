@@ -289,13 +289,17 @@ public class Spielfeld
 		return false;
 	}
 
-	private void remCardFromRectangles(Karte movedC) 
+	/**
+	 * checks if moved card is checked in on any of the rectangles and delets it from the array
+	 * @param remC the card choosen to get removed
+	 */
+	private void remCardFromRectangles(Karte remC) 
 	{
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int i = 0; i < kartenFelder.length; i++)
 			{
-				if(kartenAufFelder[i][playerPC] == movedC)
+				if(kartenAufFelder[i][playerPC] == remC)
 				{
 					kartenAufFelder[i][playerPC] = null;
 				}
