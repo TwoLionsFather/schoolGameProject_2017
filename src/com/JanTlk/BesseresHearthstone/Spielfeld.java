@@ -31,6 +31,17 @@ public class Spielfeld
 		kartenFelder = new Rectangle [9][2];
 		kartenAufFelder = new Karte [9][2];
 		
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
+			{
+				kartenFelder[spalte][playerPC] = new Rectangle((int) Hearthstone.BREITE / 9 * spalte
+															, (int) (Hearthstone.HOEHE / 2 - ((playerPC > 0) ? 0 : (Hearthstone.HOEHE / 10) * 3))	//If Rectangle is on Playerside, do not substract
+															,(int) (Hearthstone.BREITE / 9)
+															,(int) (Hearthstone.HOEHE / 10) * 3);	
+			}
+		}
+		
 		/**
 		 * Kartenfelder anlegen
 		 */
@@ -51,7 +62,7 @@ public class Spielfeld
 		drawDeck(dPL, g, true);
 		drawDeck(dPC, g, false);
 		
-		//Felder als dünne linie zeichnen
+		drawHud(g);
 	}
 
 	/**
@@ -60,6 +71,22 @@ public class Spielfeld
 	public void tick() 
 	{
 		
+	}
+	
+	private void drawHud(Graphics g)
+	{
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
+			{
+				Rectangle temp = kartenFelder[spalte][playerPC];
+				g.setColor((playerPC > 0) ? Color.green : Color.red);
+				g.drawRect((int) temp.getX()
+						, (int) temp.getY()
+						, (int) temp.getWidth()
+						, (int) temp.getHeight());
+			}
+		}
 	}
 	
 	/**
