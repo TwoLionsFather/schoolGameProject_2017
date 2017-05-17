@@ -13,4 +13,4 @@ auf Gihub geladen
 Darstellung von Karten erfolgreich verbessert
 Fehler in Main Methode repariert
 
-Ende dieses Logs, da der Rest von Git verwaltet wir, bb
+Ende dieses Logs, da der Rest von Git verwaltet wird, bb

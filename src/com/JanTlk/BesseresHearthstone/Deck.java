@@ -1,13 +1,31 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
+import java.util.Random;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
+import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 public class Deck {
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
+	private int drawCounter = 0;
 	
+	public Karte ziehen()
+	{
+		Karte dCard = this.getKarten().get(drawCounter++);
+		drawCounter = (int) Hearthstone.clamp(drawCounter, 0, karten.size() - 1);
+		if(dCard.getStatus() == Status.Stapel)
+		{
+			return dCard;
+		}
+		return null;			
+	}
+	
+	/**
+	 * creates a new Deck with clones of every card
+	 */
 	public Deck clone()
 	{
 		Deck newD = new Deck();
@@ -16,6 +34,30 @@ public class Deck {
 			newD.addKarte(temp.clone());
 		}
 		return newD;
+	}
+	
+	/**
+	 * this class brings the cards from a deck in a random order
+	 * @param zuMischen the deck that needs to be shuffeled
+	 * @return the shuffeled deck
+	 */
+	public void mischen()
+	{
+		Random r = new SecureRandom();							//Random Objekt anlegen
+		LinkedList<Karte> old = this.getKarten();
+		LinkedList<Karte> temp = new LinkedList<Karte>();		//neue temporäre Liste um gemischtes Deck zu speichern
+		
+		int anzKarten = old.size();					//Anzahl an zu mischenden Karten
+		
+		for(int i = 0; i < anzKarten; i++) 					//solange Karten zu mischen sind
+		{
+			int randomZahl = r.nextInt(old.size());	//neue Zufallszahl im Bereich der noch zu sortierenden Karten
+			
+			temp.add(old.get(randomZahl));			//fügt dem temp(gemischten) Stapel die Karte an der Zufälligen Position zu
+			old.remove(randomZahl);					//entfernt die Karte aus dem Stapel
+		}
+		
+		this.setKarten(temp);
 	}
 	
 	public int getAnzKarten() 

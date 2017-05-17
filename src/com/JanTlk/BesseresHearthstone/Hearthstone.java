@@ -41,8 +41,11 @@ public class Hearthstone extends Canvas
 	
 	public void paint(Graphics g)
 	{
-		g.setColor(Color.black);
-		g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+		if(backGround == null)
+		{
+			g.setColor(Color.black);
+			g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+		}
 		g.drawImage(backGround, 0, 0, null);
 		
 		spielfeld.render(g);
@@ -51,5 +54,24 @@ public class Hearthstone extends Canvas
 	public static void main(String[] args) 
 	{
 		new Hearthstone();
+	}
+
+	/**
+	 * used to prevent a variable from running out of bounds
+	 * @param var
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	public static float clamp(float var, float min, float max)
+	{
+		if(var >= max)
+			return var = max;
+		
+		else if(var <= min)
+			return var = min;
+		
+		else 
+			return var;
 	}
 }

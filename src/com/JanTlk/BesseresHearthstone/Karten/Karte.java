@@ -62,7 +62,7 @@ public class Karte extends JPanel
 		this.schadenInit = schaden;
 		this.leben = leben;	
 		this.lebenInit = leben;
-		this.setStatus(Status.Hand);
+		this.setStatus(Status.Stapel);
 	}
 	
 	/**

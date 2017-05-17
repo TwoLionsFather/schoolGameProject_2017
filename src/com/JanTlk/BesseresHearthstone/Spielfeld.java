@@ -7,20 +7,18 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.security.SecureRandom;
-import java.util.LinkedList;
-import java.util.Random;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 public class Spielfeld 
 {
-
 	private Deck dPL;
 	private Deck dPC;
 	private int idxMovedC;
 	
+	private int anzRectH = 15;		//How many rectangles are there from left to right
+	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	Rectangle [][] kartenFelder;
 	Karte [][] kartenAufFelder;
 	
@@ -28,25 +26,39 @@ public class Spielfeld
 	{		
 		DeckHandler dH = new DeckHandler(c);	
 		
-		kartenFelder = new Rectangle [9][2];
-		kartenAufFelder = new Karte [9][2];
+		kartenFelder = new Rectangle [anzRectH][2];
+		kartenAufFelder = new Karte [anzRectH][2];
 		
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
 			{
-				kartenFelder[spalte][playerPC] = new Rectangle((int) Hearthstone.BREITE / 9 * spalte
-															, (int) (Hearthstone.HOEHE / 2 - ((playerPC > 0) ? 0 : (Hearthstone.HOEHE / 10) * 3))	//If Rectangle is on Playerside, do not substract
-															,(int) (Hearthstone.BREITE / 9)
-															,(int) (Hearthstone.HOEHE / 10) * 3);	
+				kartenFelder[spalte][playerPC] = new Rectangle((int) Hearthstone.BREITE / anzRectH * spalte
+															, (int) (Hearthstone.HOEHE / 2 - ((playerPC > 0) ? 0 : rectHoehe)) //If Rectangle is on Playerside, do not substract the rectangles height
+															,(int) (Hearthstone.BREITE / anzRectH)
+															,(int) rectHoehe);	
 			}
 		}
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		dPL.setKarten(mischen(dPL.getKarten()));
-		dPC.setKarten(mischen(dPC.getKarten()));
+		dPL.mischen();
+		dPC.mischen();
+	}
+	
+	/**
+	 * used to set up next Round
+	 * @param playerPC if true, its the players turn
+	 */
+	public void nextRound(boolean player)
+	{
+		Karte tempC = dPL.ziehen();
+		if(tempC != null)
+		{
+			tempC.setStatus(Status.Hand);
+			tempC.getComponent().repaint();
+		}		
 	}
 	
 	/**
@@ -60,15 +72,11 @@ public class Spielfeld
 		
 		drawHud(g);
 	}
-
-	/**
-	 * wildcard
-	 */
-	public void tick() 
-	{
-		
-	}
 	
+	/**
+	 * used to display buttons for next round, mana, live, ...
+	 * @param g graphics component that graphics get drwn on
+	 */
 	private void drawHud(Graphics g)
 	{
 		for(int playerPC = 0; playerPC < 2; playerPC++)
@@ -135,6 +143,9 @@ public class Spielfeld
 			}
 		}
 		
+		/**
+		 * since this info is related to the specific deck it is not displayed on the hud
+		 */
 		g.setFont(new Font("Info", Font.BOLD , 12));
 		if(player)
 		{
@@ -164,30 +175,7 @@ public class Spielfeld
 		abblageCount = 0;
 		stapelCount = 0;
 	}
-	
-	/**
-	 * this class brings the cards from the linked list in a random order
-	 * @param linkedList this is the list of cards that is getting  a shuffeled return
-	 * @return the linked list gets returned as a list in a random order but with the same cards
-	 */
-	private LinkedList<Karte> mischen(LinkedList<Karte> linkedList) 
-	{
-		Random r = new SecureRandom();							//Random Objekt anlegen
-		LinkedList<Karte> temp = new LinkedList<Karte>();		//neue temporäre Liste um gemischtes Deck zu speichern
-		
-		int anzKarten = linkedList.size();					//Anzahl an zu mischenden Karten
-		
-		for(int i = 0; i < anzKarten; i++) 					//solange Karten zu mischen sind
-		{
-			int randomZahl = r.nextInt(linkedList.size());	//neue Zufallszahl im Bereich der noch zu sortierenden Karten
-			
-			temp.add(linkedList.get(randomZahl));			//fügt dem temp(gemischten) Stapel die Karte an der Zufälligen Position zu
-			linkedList.remove(randomZahl);					//entfernt die Karte aus dem Stapel
-		}
-		return temp;
-	}
 
-	
 	/**
 	 * This is used to check if a valid card has been clicked on and is responsible for updating its position
 	 * @param xyChange a Mouse event to get the starting (and finishing) Coordinates 
@@ -255,6 +243,11 @@ public class Spielfeld
 		return true;
 	}
 	
+	/**
+	 * this is used to check in/out cards from card array of this class. 
+	 * @param arg0 MouseEvent used to check if there is a Rectangle at its location
+	 * @return true if card has been placed in a rectangle
+	 */
 	public boolean cardRectAt(MouseEvent arg0) 
 	{
 		Point cEvent = arg0.getPoint();
@@ -263,16 +256,30 @@ public class Spielfeld
 		{
 			for(int i = 0; i < kartenFelder.length; i++)
 			{				
+				Rectangle tempRect = kartenFelder[i][playerPC];
+				Karte movedC = dPL.getKarten().get(idxMovedC);
+
+				/**
+				 * delets card from rectangles since it's been moved
+				 */
+				if(movedC.getStatus() != Status.Hand
+				&& movedC.getStatus() != Status.Stapel)
+				{
+					remCardFromRectangles(movedC);
+				}
+				
+				/**
+				 * checks if this card gets dropped into a new rectangle and moves it there
+				 */
 				if(inBounds(cEvent, kartenFelder[i][playerPC].getBounds())
 				&& kartenAufFelder[i][playerPC] == null) 
 				{
-					Rectangle tempRect = kartenFelder[i][playerPC];
-					Karte movedC = dPL.getKarten().get(idxMovedC);
 					kartenAufFelder[i][playerPC] = movedC; 
 					dPL.getKarten().get(idxMovedC).setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 																		, (int) (tempRect.getY() + (tempRect.getHeight() - movedC.getBounds().getHeight()) / 2)
 																		, (int) movedC.getBounds().getWidth()
 																		, (int) movedC.getBounds().getHeight()));
+
 					movedC.setStatus(Status.Feld);
 					movedC.getComponent().repaint();
 					return true;
@@ -280,6 +287,20 @@ public class Spielfeld
 			}
 		}					
 		return false;
+	}
+
+	private void remCardFromRectangles(Karte movedC) 
+	{
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int i = 0; i < kartenFelder.length; i++)
+			{
+				if(kartenAufFelder[i][playerPC] == movedC)
+				{
+					kartenAufFelder[i][playerPC] = null;
+				}
+			}
+		}
 	}
 	
 }

@@ -11,8 +11,11 @@ public class MousInput implements MouseMotionListener, MouseListener
 	private int[] xyChange;		//alternativ als Point
 	private Point oldPoint = null;
 	
-	
-	
+	/**
+	 * this is used to handle mouseinput
+	 * dictates spiefeld how to handle mouseevent
+	 * @param spielfeld this is used to convert mouseevents into actions
+	 */
 	public MousInput(Spielfeld spielfeld) 
 	{
 		this.spielfeld = spielfeld;
@@ -65,6 +68,8 @@ public class MousInput implements MouseMotionListener, MouseListener
 		{
 			oldPoint = arg0.getPoint();		
 		}
+		
+		spielfeld.nextRound(true);
 		arg0.consume();
 	}
 
