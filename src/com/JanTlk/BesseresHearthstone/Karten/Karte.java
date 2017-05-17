@@ -289,12 +289,25 @@ public class Karte extends JPanel
 		this.textur = textur;
 	}
 	
+	/**
+	 * used for changes in DragAndDrop
+	 * @param xyChange offsets Card by values defined in this array
+	 */
 	public void setChange(int[] xyChange) 
 	{
 		bounds = new Rectangle((int) (bounds.getX() + xyChange[0])
 							, (int) (bounds.getY() + xyChange[1])
 							, (int) bounds.getWidth()
 							, (int) bounds.getHeight());
+		moved = true;
+	}
+	
+	public void setNewPos(Rectangle nP) 
+	{
+		bounds = new Rectangle((int) nP.getX()
+							, (int) nP.getY()
+							, (int) nP.getWidth()
+							, (int) nP.getHeight());
 		moved = true;
 	}
 	

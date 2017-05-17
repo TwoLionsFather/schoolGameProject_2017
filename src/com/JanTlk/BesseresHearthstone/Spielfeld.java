@@ -42,10 +42,6 @@ public class Spielfeld
 			}
 		}
 		
-		/**
-		 * Kartenfelder anlegen
-		 */
-		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
@@ -257,6 +253,33 @@ public class Spielfeld
 		
 		idxMovedC = highestID;
 		return true;
+	}
+	
+	public boolean cardRectAt(MouseEvent arg0) 
+	{
+		Point cEvent = arg0.getPoint();
+		
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int i = 0; i < kartenFelder.length; i++)
+			{				
+				if(inBounds(cEvent, kartenFelder[i][playerPC].getBounds())
+				&& kartenAufFelder[i][playerPC] == null) 
+				{
+					Rectangle tempRect = kartenFelder[i][playerPC];
+					Karte movedC = dPL.getKarten().get(idxMovedC);
+					kartenAufFelder[i][playerPC] = movedC; 
+					dPL.getKarten().get(idxMovedC).setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
+																		, (int) (tempRect.getY() + (tempRect.getHeight() - movedC.getBounds().getHeight()) / 2)
+																		, (int) movedC.getBounds().getWidth()
+																		, (int) movedC.getBounds().getHeight()));
+					movedC.setStatus(Status.Feld);
+					movedC.getComponent().repaint();
+					return true;
+				}
+			}
+		}					
+		return false;
 	}
 	
 }

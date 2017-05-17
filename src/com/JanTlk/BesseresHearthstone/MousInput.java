@@ -73,14 +73,16 @@ public class MousInput implements MouseMotionListener, MouseListener
 	{
 		if(oldPoint != null)
 		{
-			Point temp = arg0.getPoint();
+			if(!spielfeld.cardRectAt(arg0))
+			{
+				Point temp = arg0.getPoint();
+				
+				xyChange[0] += (int) (oldPoint.getX() - temp.getX());
+				xyChange[1] += (int) (oldPoint.getY() - temp.getY());	
+				spielfeld.moveCard(xyChange);
+			}
 			
-			xyChange[0] += (int) (oldPoint.getX() - temp.getX());
-			xyChange[1] += (int) (oldPoint.getY() - temp.getY());			
 			oldPoint = null;
-			
-			spielfeld.moveCard(xyChange);			
-			
 			xyChange[0] = 0;
 			xyChange[1] = 0;
 			arg0.consume();
