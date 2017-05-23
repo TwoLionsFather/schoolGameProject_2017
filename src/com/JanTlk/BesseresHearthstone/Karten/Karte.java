@@ -79,6 +79,17 @@ public class Karte extends JPanel
 		
 		this.leben = this.leben - attackCard.getSchaden();
 		attackCard.setLeben(attackCard.getLeben() - this.schaden);
+		
+		if(this.leben <= 0)
+		{
+			this.status = Status.Abblage;
+		}
+		
+		if(attackCard.getLeben() <= 0)
+		{
+			attackCard.setStatus(Status.Abblage);
+		}
+		
 		this.component.repaint();
 		attackCard = null;
 	}
