@@ -102,7 +102,7 @@ public class Karte extends JPanel
 	public static void main(String[] args) throws IOException 
 	{
 		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 12, 9, 12);
-		firstTestCard.setCardImage(ImageIO.read(new File("Ves.png")));
+		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Ves.png")));
 		
 		
 		//Create JFrame to display the Card

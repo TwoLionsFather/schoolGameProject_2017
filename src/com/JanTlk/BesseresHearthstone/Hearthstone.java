@@ -24,7 +24,7 @@ public class Hearthstone extends Canvas
 	public Hearthstone()
 	{		
 		try {
-			backGround = ImageIO.read(new File("backGround.png"));
+			backGround = ImageIO.read(new File("Graphics\\backGround.png"));
 		} catch (IOException e) {
 			backGround = null;
 			e.printStackTrace();

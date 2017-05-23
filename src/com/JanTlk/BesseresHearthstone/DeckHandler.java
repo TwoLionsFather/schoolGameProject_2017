@@ -41,7 +41,7 @@ public class DeckHandler
 		
 		try {
 			
-			setCardsImages(new File("allCards.png"), c);
+			setCardsImages(new File("Graphics\\allCards.png"), c);
 //		      for(Karte tempK : player.getKarten())
 //		      {
 //		        tempK.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
