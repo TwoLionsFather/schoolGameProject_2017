@@ -76,6 +76,9 @@ public class Deck {
 		return karten;
 	}
 
+	/*
+	 * resorts the order of cards to make last played card the first card to be picked up again
+	 */
 	public void cardPlayed(int idxMovedC) 
 	{
 		Karte playedC = karten.get(idxMovedC);

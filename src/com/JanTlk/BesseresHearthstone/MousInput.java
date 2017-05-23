@@ -46,10 +46,7 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
-		if (spielfeld.clickNR(arg0))
-		{
-			spielfeld.nextRound(!spielfeld.isPlayersMove());
-		}
+		spielfeld.clickNR(arg0);
 		arg0.consume();
 	}
 
@@ -81,14 +78,15 @@ public class MousInput implements MouseMotionListener, MouseListener
 	{
 		if(oldPoint != null)
 		{
-			if(!spielfeld.cardRectAt(arg0))
-			{
-				Point temp = arg0.getPoint();
-				
-				xyChange[0] += (int) (oldPoint.getX() - temp.getX());
-				xyChange[1] += (int) (oldPoint.getY() - temp.getY());	
-				spielfeld.moveCard(xyChange);
-			}
+			spielfeld.cardRectAt(arg0);
+//			if(!spielfeld.cardRectAt(arg0))
+//			{
+//				Point temp = arg0.getPoint();
+//				
+//				xyChange[0] += (int) (oldPoint.getX() - temp.getX());
+//				xyChange[1] += (int) (oldPoint.getY() - temp.getY());	
+//				spielfeld.moveCard(xyChange);
+//			}
 			
 			oldPoint = null;
 			xyChange[0] = 0;

@@ -72,8 +72,14 @@ public class Karte extends JPanel
 	 */
 	public void damageTick()
 	{
+		if (attackCard == null)
+		{
+			return;
+		}
+		
 		this.leben = this.leben - attackCard.getSchaden();
 		attackCard.setLeben(attackCard.getLeben() - this.schaden);
+		this.component.repaint();
 		attackCard = null;
 	}
 	
@@ -298,6 +304,10 @@ public class Karte extends JPanel
 		moved = true;
 	}
 	
+	/**
+	 * used to relocate a cad to a new Rectangle
+	 * @param nP
+	 */
 	public void setNewPos(Rectangle nP) 
 	{
 		bounds = new Rectangle((int) nP.getX()

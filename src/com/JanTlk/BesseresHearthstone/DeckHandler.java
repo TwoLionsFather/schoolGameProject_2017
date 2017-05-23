@@ -19,7 +19,8 @@ import com.JanTlk.BesseresHearthstone.Karten.Typ;
  * @author Gaming
  *
  */
-public class DeckHandler {
+public class DeckHandler 
+{
 
 	private int[] spaltenZeilenPic;
 	private Rectangle cardProps;
