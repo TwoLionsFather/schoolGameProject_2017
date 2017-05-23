@@ -17,11 +17,17 @@ public class Spielfeld
 	private Deck dPC;
 	private int idxMovedC;
 	
+	private boolean playersMove;
+	private int lifePlayer;
+	private int manaPlayer;
+	private int lifePC;
+	private int manaPC;
+	
 	private int anzRectH = 15;		//How many rectangles are there from left to right
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	Rectangle [][] kartenFelder;
 	Karte [][] kartenAufFelder;
-	
+		
 	public Spielfeld(Component c)
 	{		
 		DeckHandler dH = new DeckHandler(c);	
@@ -43,6 +49,10 @@ public class Spielfeld
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
+		lifePlayer = 20;
+		lifePC = 20;
+		manaPlayer = 0;		
+		
 		dPL.mischen();
 		dPC.mischen();
 	}
@@ -53,12 +63,18 @@ public class Spielfeld
 	 */
 	public void nextRound(boolean player)
 	{
-		Karte tempC = dPL.ziehen();
-		if(tempC != null)
+		if (!player)
 		{
-			tempC.setStatus(Status.Hand);
-			tempC.getComponent().repaint();
-		}		
+			playersMove = false;
+			manaPC++;
+			dPC.ziehen();
+			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPC);
+			return;
+		}
+		
+		manaPlayer++;
+		dPL.ziehen();
+		playersMove = true;
 	}
 	
 	/**
@@ -124,14 +140,16 @@ public class Spielfeld
 																	- (dPL.getAnzKarten() * (dPL.getKarten().get(0).getBounds().getWidth() - 50) / 2)
 																	+ 55 * kartenCount++)
 									, (int) (Hearthstone.HOEHE - (Hearthstone.HOEHE / 5))
-									, g);
+									, g
+									, false);
 				}
 				
 				else 
 				{
 					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPC.getAnzKarten() * (dPC.getKarten().get(0).getBounds().getWidth() - 50) / 2) + 55 * kartenCount++)
 									, 0
-									, g);
+									, g
+									, false);
 				}
 			}
 			
@@ -139,7 +157,8 @@ public class Spielfeld
 			{
 				tempKarte.drawCard((int) tempKarte.getBounds().getX()
 								, (int) tempKarte.getBounds().getY()
-								, g);
+								, g
+								, false);
 			}
 		}
 		
@@ -215,7 +234,7 @@ public class Spielfeld
 
 	
 	/**
-	 * to check if there is a card at the clicked point, saves index of card on top
+	 * to check if there is a card at the clicked point, saves index of card on top to be the moved card
 	 * @param arg0 the mousevent that needs to be checked
 	 * @return true if the event happened on a card
 	 */

@@ -62,7 +62,7 @@ public class Karte extends JPanel
 		this.schadenInit = schaden;
 		this.leben = leben;	
 		this.lebenInit = leben;
-		this.setStatus(Status.Stapel);
+		this.setStatus(Status.Hand);
 	}
 	
 	/**
@@ -80,13 +80,13 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 2, 2, 9);
-		firstTestCard.setCardImage(ImageIO.read(new File("CardBluePrint.png")));
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 12, 9, 12);
+		firstTestCard.setCardImage(ImageIO.read(new File("Ves.png")));
 		
 		
 		//Create JFrame to display the Card
 		JFrame window = new JFrame("Display");
-		window.setSize(300, 400);
+		window.setSize(400, 800);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setVisible(true);
 		
@@ -117,36 +117,31 @@ public class Karte extends JPanel
 					{
 						super.paintChildren(g);						
 						g.drawImage(textur, 0, 0, null);
-						
-						if(Karte.this.getTyp() == Typ.Monster)
+
+						/**
+						 * used to debug with cards main method
+						 */	
+						if (Karte.this.typ == Typ.Monster)
 						{
 							g.setColor(checkForChange(schadenInit, schaden));			
-							g.setFont(new Font("Damage", Font.BOLD, 15));
+							g.setFont(new Font("Damage", Font.BOLD, 25));
 							g.drawString("" + Karte.this.getSchaden()
-										, (Karte.this.getSchaden() < 10) ? 20 : 15
-										, textur.getHeight() - 16);
+										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
+										, textur.getHeight() - 70);
 							
-							g.setColor(checkForChange(lebenInit, leben));	
-							g.setFont(new Font("Live", Font.BOLD, 15));
+							
+							g.setColor(checkForChange(lebenInit, leben));			
+							g.setFont(new Font("Live", Font.BOLD, 25));
 							g.drawString("" + Karte.this.getLeben()
-										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27)
-										, textur.getHeight() - 16);
-						}	
+										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
+										, textur.getHeight() - 70);
+						}
 						
-						/**
-						 * this needs some adjustment and a place in the blueprint
-						 */						
 						g.setColor(Color.blue);
-						g.setFont(new Font("Mana", Font.PLAIN, 11));
+						g.setFont(new Font("Mana", Font.PLAIN, 35));
 						g.drawString("" + Karte.this.getMana()
-									, (Karte.this.getMana() < 10) ? 8 : 4
-									, 22);
-						
-						g.setColor(Color.black);
-						g.setFont(new Font("CardInfo", Font.BOLD, 11));
-						g.drawString(Karte.this.getName()
-									, 22
-									, 22);
+									, (Karte.this.getMana() < 10) ? 45 : 30
+									, 57);
 					}
 				};		
 				
@@ -171,7 +166,7 @@ public class Karte extends JPanel
 	 * @param y position of the corner
 	 * @param g this is what the card gets drawn on
 	 */
-	public void drawCard(int x, int y, Graphics g)
+	public void drawCard(int x, int y, Graphics g , boolean drawTitle)
 	{
 		if(moved)
 		{
@@ -188,39 +183,36 @@ public class Karte extends JPanel
 		
 		g.drawImage(textur, x, y, null);
 		
-		/**
-		 * if using different Graphics for the card the values below might get changed
-		 */
-		if(this.typ == Typ.Monster)
+		if (this.typ == Typ.Monster)
 		{
 			g.setColor(checkForChange(schadenInit, schaden));			
 			g.setFont(new Font("Damage", Font.BOLD, 15));
 			g.drawString("" + Karte.this.getSchaden()
-						, ((Karte.this.getSchaden() < 10) ? 20 : 15) + x
-						, textur.getHeight() - 15 + y);
+						, ((Karte.this.getSchaden() < 10) ? 15 : 10) + x
+						, textur.getHeight() - 25 + y);
 			
 			
 			g.setColor(checkForChange(lebenInit, leben));			
 			g.setFont(new Font("Live", Font.BOLD, 15));
 			g.drawString("" + Karte.this.getLeben()
-						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + x
-						, textur.getHeight() - 15 + y);
+						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 20 : 25) + x
+						, textur.getHeight() - 25 + y);
 		}
-		
-		/**
-		 * this needs some adjustment and a place in the blueprint
-		 */						
+							
 		g.setColor(Color.blue);
-		g.setFont(new Font("Mana", Font.PLAIN, 11));
+		g.setFont(new Font("Mana", Font.PLAIN, 15));
 		g.drawString("" + Karte.this.getMana()
-					, x + ((Karte.this.getMana() < 10) ? 8 : 4)
-					, y + 22);
+					, x + ((Karte.this.getMana() < 10) ? 10 : 6)
+					, y + 20);
 			
-		g.setColor(Color.black);
-		g.setFont(new Font("CardInfo", Font.BOLD, 11));
-		g.drawString(Karte.this.getName()
-					, 22 + x
-					, 22 + y);
+		if (drawTitle)
+		{
+			g.setColor(Color.black);
+			g.setFont(new Font("CardInfo", Font.BOLD, 11));
+			g.drawString(Karte.this.getName()
+						, 22 + x
+						, 22 + y);
+		}
 		
 		moved = false;
 	}
@@ -279,14 +271,14 @@ public class Karte extends JPanel
 	
 	/**
 	 * this sets up the grafik, if not setup by this, the graphic will be null
-	 * @param textur the Buffered image used as texture when displaying the card
+	 * @param cardImage the Buffered image used as texture when displaying the card
 	 */
-	public void setCardImage(BufferedImage textur)
+	public void setCardImage(BufferedImage cardImage)
 	{
 		bounds = new Rectangle(-1, -1	//at the point of setting Graphics, one shouldn't be drawing it
-							, textur.getWidth()
-							, textur.getHeight());
-		this.textur = textur;
+							, cardImage.getWidth()
+							, cardImage.getHeight());
+		this.textur = cardImage;
 	}
 	
 	/**

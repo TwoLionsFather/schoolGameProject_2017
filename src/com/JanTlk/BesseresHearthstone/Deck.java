@@ -12,15 +12,21 @@ public class Deck {
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	private int drawCounter = 0;
 	
-	public Karte ziehen()
+	/**
+	 * sets next cards status to hand and repaints canvas
+	 */
+	public void ziehen()
 	{
 		Karte dCard = this.getKarten().get(drawCounter++);
 		drawCounter = (int) Hearthstone.clamp(drawCounter, 0, karten.size() - 1);
+		
 		if(dCard.getStatus() == Status.Stapel)
 		{
-			return dCard;
+			dCard.setStatus(Status.Hand);
+			dCard.getComponent().repaint();
 		}
-		return null;			
+		
+		return;			
 	}
 	
 	/**
@@ -86,4 +92,5 @@ public class Deck {
 	{
 		this.karten.add(karte);
 	}
+
 }

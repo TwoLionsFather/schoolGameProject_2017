@@ -13,7 +13,7 @@ public class Hearthstone extends Canvas
 {
 	private static final long serialVersionUID = 2288248461332515463L;
 
-	public static final String TITEL = "Hearthstone";
+	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
 	public static final float BREITE = 1920; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
 	
@@ -39,6 +39,9 @@ public class Hearthstone extends Canvas
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
 	
+	/**
+	 * used by the Component Class to repaint the "Game" Component
+	 */
 	public void paint(Graphics g)
 	{
 		if(backGround == null)
@@ -58,10 +61,6 @@ public class Hearthstone extends Canvas
 
 	/**
 	 * used to prevent a variable from running out of bounds
-	 * @param var
-	 * @param min
-	 * @param max
-	 * @return
 	 */
 	public static float clamp(float var, float min, float max)
 	{
