@@ -40,6 +40,8 @@ public class Karte extends JPanel
 	private BufferedImage textur;
 	private Rectangle bounds;
 	private boolean moved;
+
+	private Karte attackCard;
 	
 	/**
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
@@ -66,11 +68,13 @@ public class Karte extends JPanel
 	}
 	
 	/**
-	 * currently a wildcard
+	 * used from damage dealing deck to attack another card
 	 */
-	public void tick()
+	public void damageTick()
 	{
-		
+		this.leben = this.leben - attackCard.getSchaden();
+		attackCard.setLeben(attackCard.getLeben() - this.schaden);
+		attackCard = null;
 	}
 	
 	/**
@@ -385,5 +389,10 @@ public class Karte extends JPanel
 	public void setComponent(Component c)
 	{
 		this.component = c;
+	}
+
+	public void attacks(Karte karte) 
+	{
+		this.attackCard = karte;
 	}
 }

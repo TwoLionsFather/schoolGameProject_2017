@@ -46,6 +46,10 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
+		if (spielfeld.clickNR(arg0))
+		{
+			spielfeld.nextRound(!spielfeld.isPlayersMove());
+		}
 		arg0.consume();
 	}
 
@@ -69,7 +73,6 @@ public class MousInput implements MouseMotionListener, MouseListener
 			oldPoint = arg0.getPoint();		
 		}
 		
-		spielfeld.nextRound(true);
 		arg0.consume();
 	}
 
