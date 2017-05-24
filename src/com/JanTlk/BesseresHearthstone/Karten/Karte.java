@@ -31,6 +31,9 @@ public class Karte extends JPanel
 	private int leben;		//Leben, 0 Leben = Karte tot
 	private int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
+	
+	private boolean isLegendary;
+	private boolean isDisplayed;
 	private boolean isAttacked;
 	private Karte attackCard;
 	
@@ -54,6 +57,7 @@ public class Karte extends JPanel
 	 */
 	public Karte(String name
 				, Typ typ
+				, boolean isLegendary
 				, int mana
 				, int schaden
 				, int leben) 
@@ -66,6 +70,9 @@ public class Karte extends JPanel
 		this.schadenInit = schaden;
 		this.leben = leben;	
 		this.lebenInit = leben;
+		
+		this.isLegendary = isLegendary;
+		this.isDisplayed = false;
 		this.isAttacked = false;
 		this.moved = false;
 		this.attackCard = null;
@@ -108,7 +115,7 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, 12, 9, 12);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12);
 		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Ves.png")));
 		
 		
@@ -165,7 +172,7 @@ public class Karte extends JPanel
 										, textur.getHeight() - 70);
 						}
 						
-						g.setColor(Color.blue);
+						g.setColor((isLegendary) ? Color.white : Color.black);
 						g.setFont(new Font("Mana", Font.PLAIN, 35));
 						g.drawString("" + Karte.this.getMana()
 									, (Karte.this.getMana() < 10) ? 45 : 30
@@ -226,8 +233,8 @@ public class Karte extends JPanel
 						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 20 : 25) + x
 						, textur.getHeight() - 25 + y);
 		}
-							
-		g.setColor(Color.blue);
+				
+		g.setColor((isLegendary) ? Color.white : Color.black);
 		g.setFont(new Font("Mana", Font.PLAIN, 15));
 		g.drawString("" + Karte.this.getMana()
 					, x + ((Karte.this.getMana() < 10) ? 10 : 6)
@@ -250,12 +257,16 @@ public class Karte extends JPanel
 	 */
 	public Karte clone()
 	{
-		Karte newK = new Karte(this.name, this.typ, this.mana, this.schaden, this.leben);
+		Karte newK = new Karte(this.name, this.typ, this.isLegendary, this.mana, this.schaden, this.leben);
 		newK.setCardImage(this.texturClone());
 		newK.setComponent(this.component);
 		return newK;
 	}
 	
+	/**
+	 * creates a clone of this cards texture
+	 * @return a new buffered image of this cards texture
+	 */
 	private BufferedImage texturClone()
 	{
 		BufferedImage newBI = new BufferedImage(textur.getWidth(), textur.getHeight(), textur.getType());
@@ -374,6 +385,34 @@ public class Karte extends JPanel
 		this.typ = typ;
 	}
 
+	/**
+	 * getter used to check if a card is allready under attack
+	 * @return true if card is allready set as tarteg by another card
+	 */
+	public boolean isAttacked() 
+	{
+		return isAttacked;
+	}
+
+	/**
+	 * setter
+	 * @param isAttacked if a card is attacked, the card gets noticed
+	 */
+	public void setAttacked(boolean isAttacked) 
+	{
+		this.isAttacked = isAttacked;
+	}
+
+	/**
+	 * sets the card beeing targeted by this card and the status of the attacked card as beeing attacked
+	 * @param karte the  card beeing attacked
+	 */
+	public void attacks(Karte karte) 
+	{
+		this.attackCard = karte;
+		karte.setAttacked(true);
+	}
+	
 	public String getName()
 	{
 		return name;
@@ -444,33 +483,19 @@ public class Karte extends JPanel
 		this.component = c;
 	}
 
-	/**
-	 * getter 
-	 * @return true if card is allready set as tarteg by another card
-	 */
-	public boolean isAttacked() 
-	{
-		return isAttacked;
-	}
-
-	public void setAttacked(boolean isAttacked) 
-	{
-		this.isAttacked = isAttacked;
-	}
-
-	/**
-	 * sets the card beeing targeted by this card and the status of the attacked card as beeing attacked
-	 * @param karte the  card beeing attacked
-	 */
-	public void attacks(Karte karte) 
-	{
-		this.attackCard = karte;
-		karte.setAttacked(true);
-	}
-	
 	public Karte getAttackCard() 
 	{
 		return attackCard;
+	}
+
+	public boolean isDisplayed() 
+	{
+		return isDisplayed;
+	}
+
+	public void setDisplayed(boolean isDisplayed) 
+	{
+		this.isDisplayed = isDisplayed;
 	}
 
 }

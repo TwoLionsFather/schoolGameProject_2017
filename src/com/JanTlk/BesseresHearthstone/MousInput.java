@@ -65,9 +65,17 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mousePressed(MouseEvent arg0) 
 	{
-		if(spielfeld.cardAt(arg0))
+		if (arg0.getButton() == MouseEvent.BUTTON1)
 		{
-			oldPoint = arg0.getPoint();		
+			if(spielfeld.cardAt(arg0))
+			{
+				oldPoint = arg0.getPoint();		
+			}
+		}
+		
+		else
+		{
+			spielfeld.cardDetailsAt(arg0);
 		}
 		
 		arg0.consume();

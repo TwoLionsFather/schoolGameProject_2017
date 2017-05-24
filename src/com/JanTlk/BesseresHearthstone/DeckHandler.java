@@ -35,10 +35,10 @@ public class DeckHandler
 		
 		player = new Deck();
 		
-		player.addKarte(new Karte("Geralt", Typ.Monster, 1, 25, 3));
-		player.addKarte(new Karte("Ciri", Typ.Monster, 1, 25, 25));
-		player.addKarte(new Karte("Vesemir", Typ.Monster, 25, 5, 53));
-		player.addKarte(new Karte("Mother", Typ.Monster, 15, 25, 50));
+		player.addKarte(new Karte("Geralt", Typ.Monster, true, 1, 25, 3));
+		player.addKarte(new Karte("Ciri", Typ.Monster, true, 1, 25, 25));
+		player.addKarte(new Karte("Vesemir", Typ.Monster, false, 25, 5, 53));
+		player.addKarte(new Karte("Mother", Typ.Monster, true, 15, 25, 50));
 		
 		try {
 			
