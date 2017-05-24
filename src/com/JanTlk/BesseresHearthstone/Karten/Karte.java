@@ -21,8 +21,7 @@ public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
 
-	
-	private  String name;	//Kartenname für Anzeige
+	private String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
 	private int mana;		//kosten bei Ausspielen der Karte
 	
@@ -498,4 +497,5 @@ public class Karte extends JPanel
 		this.isDisplayed = isDisplayed;
 	}
 
+	
 }

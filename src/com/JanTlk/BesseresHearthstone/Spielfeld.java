@@ -27,7 +27,7 @@ public class Spielfeld
 	private int manaPlayer;
 	private int manaPlayerMax;
 	private int lifePC;
-	private int manaPC;
+	private int manaPCMax;
 	
 	private BufferedImage playerHud;
 	private boolean cardInDetail;
@@ -126,9 +126,9 @@ public class Spielfeld
 		if (!player)
 		{
 			playersMove = false;
-			manaPC++;
+			manaPCMax++;
 			dPC.ziehen();
-			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPC, lifePlayer);
+			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPCMax, lifePlayer);
 			return;
 		}
 
@@ -440,6 +440,13 @@ public class Spielfeld
 					movedC.getAttackCard().setAttacked(false);
 				}
 				
+//				debugg only!
+//				if (cardAtRect != null)
+//				{
+//					System.out.println(cardAtRect.toString());
+//					System.out.println("at: " + spalte + " of " + playerPC);
+//				}
+				
 				/**
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
@@ -449,11 +456,14 @@ public class Spielfeld
 				&& playerPC > 0
 				&& playersMove) 
 				{
-					//in case this card owned a rectangle before, now it no longer does so
-					remCardFromRectangles(movedC);
 					if (movedC.getStatus() == Status.Hand)
 					{
 						manaPlayer -= movedC.getMana();
+					}
+					else
+					{
+						//in case this card owned a rectangle before, now it no longer does so
+						remCardFromRectangles(movedC);
 					}
 					
 					//sets this cards default location to Recctangles center
@@ -462,7 +472,8 @@ public class Spielfeld
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-					cardAtRect = movedC;
+					//not working with reference
+					kartenAufFelder[spalte][playerPC] = movedC;
 					movedC.setStatus(Status.Feld);
 					return true;
 				}
@@ -578,13 +589,22 @@ public class Spielfeld
 	 */
 	private void remCardFromRectangles(Karte remC) 
 	{
+		if (remC == null)
+		{
+			return;
+		}
+		
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
-			for(int i = 0; i < kartenFelder.length; i++)
+			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
-				if(kartenAufFelder[i][playerPC] == remC)
-				{
-					kartenAufFelder[i][playerPC] = null;
+				try {
+					if (kartenAufFelder[i][playerPC].toString().contains(remC.getName()))
+					{
+						kartenAufFelder[i][playerPC] = null;
+					}
+				} catch(java.lang.NullPointerException e) {
+					System.out.println("an unknown error just happened");
 				}
 			}
 		}
