@@ -20,6 +20,7 @@ public class Spielfeld
 	private boolean playersMove;
 	private int lifePlayer;
 	private int manaPlayer;
+	private int manaPlayerMax;
 	private int lifePC;
 	private int manaPC;
 	private Rectangle nextRoundB;
@@ -75,7 +76,8 @@ public class Spielfeld
 		
 		lifePlayer = 20;
 		lifePC = 20;
-		manaPlayer = 100;		
+		manaPlayer = 1;		
+		manaPlayerMax = 1;
 		
 		playersMove = true;
 		dPL.mischen();
@@ -95,34 +97,26 @@ public class Spielfeld
 			if(tempC.getStatus() == Status.Attack)
 			{
 				tempC.damageTick();	
-				
-				for(int spalte = 0; spalte < kartenAufFelder.length; spalte++)
-				{	
-					Karte checkedC = kartenAufFelder[spalte][1];
-					if(tempC.equals(checkedC))
-					{
-						System.out.println("neue Runde!!");
-						Rectangle tempRect = kartenFelder[spalte][1];
-						tempC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - tempC.getBounds().getWidth()) / 2)
-													, (int) (tempRect.getY() + (tempRect.getHeight() - tempC.getBounds().getHeight()) / 2)
-													, (int) tempC.getBounds().getWidth()
-													, (int) tempC.getBounds().getHeight()));
-						tempC.setStatus(Status.Feld);
-					}	
-				}
+				tempC.placeHome();
 			}
 		}
+		
+//		for(Karte tempC : dPC.getKarten())
+//		{
+//			tempC.setAttacked(false);
+//		}
 		
 		if (!player)
 		{
 			playersMove = false;
 			manaPC++;
 			dPC.ziehen();
-			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPC);
+			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPC, lifePlayer);
 			return;
 		}
-		
-		manaPlayer++;
+
+		manaPlayerMax++;
+		manaPlayer = manaPlayerMax;
 		dPL.ziehen();
 		playersMove = true;
 		
@@ -159,6 +153,12 @@ public class Spielfeld
 						, (int) temp.getHeight());
 			}
 		}
+		
+		g.setColor(Color.BLACK);
+		g.setFont(new Font("Info", Font.BOLD , 12));
+		g.drawString("Mana Player: " + manaPlayer
+				, (int) Hearthstone.BREITE - 120
+				, (int) Hearthstone.HOEHE - 40);
 		
 		g.setColor((playersMove) ? Color.green : Color.red);
 		g.drawRect((int) nextRoundB.getX()
@@ -322,6 +322,7 @@ public class Spielfeld
 	}
 	
 	/**
+	 * main use is to move cards around and handle attacks of cards
 	 * this is used to check in/out cards from card array of this class. 
 	 * playerPC > 0 if players cards/rectangles
 	 * @param arg0 MouseEvent used to check if there is a Rectangle at its location
@@ -338,35 +339,37 @@ public class Spielfeld
 				Rectangle tempRect = kartenFelder[spalte][playerPC];
 				Karte cardAtRect = kartenAufFelder[spalte][playerPC];
 				Karte movedC = dPL.getKarten().get(idxMovedC);
-
+				
+				//if the moved card was attacking another card this needs to be resetted
+				if(movedC.getAttackCard() != null)
+				{
+					movedC.getAttackCard().setAttacked(false);
+				}
+				
 				/**
-				 * moved from hand to field and dropps the card into the selected rectangle 
+				 * moved from to a field and sets default location to the selected rectangle 
 				 */
 				if(inBounds(rEvent, tempRect.getBounds())
 				&& cardAtRect == null
+				&& ((movedC.getStatus() == Status.Hand) ? manaPlayer - movedC.getMana() >= 0 : true)
 				&& playerPC > 0
-				&& ((movedC.getStatus() == Status.Hand) ? (manaPlayer - movedC.getMana() >= 0) : true)
 				&& playersMove) 
 				{
-					cardAtRect = movedC; 
-					//places card allways centerd in the rectanlge
-					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
-												, (int) (tempRect.getY() + (tempRect.getHeight() - movedC.getBounds().getHeight()) / 2)
-												, (int) movedC.getBounds().getWidth()
-												, (int) movedC.getBounds().getHeight()));
-
+					//in case this card owned a rectangle before, now it no longer does so
+					remCardFromRectangles(movedC);
 					if (movedC.getStatus() == Status.Hand)
 					{
 						manaPlayer -= movedC.getMana();
 					}
 					
-					else if(movedC.getStatus() != Status.Stapel)
-					{
-						remCardFromRectangles(movedC);
-					}
+					//sets this cards default location to Recctangles center
+					movedC.setHome(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
+												, (int) (tempRect.getY() + (tempRect.getHeight() - movedC.getBounds().getHeight()) / 2)
+												, (int) movedC.getBounds().getWidth()
+												, (int) movedC.getBounds().getHeight()));
 					
+					cardAtRect = movedC;
 					movedC.setStatus(Status.Feld);
-					movedC.getComponent().repaint();
 					return true;
 				}
 				
@@ -374,30 +377,18 @@ public class Spielfeld
 				 * if move is used to attack another card
 				 */
 				else if(inBounds(rEvent, tempRect.getBounds())
-				&& cardAtRect != null
+				&& ((cardAtRect != null) ? !cardAtRect.isAttacked() : false)
 				&& playerPC <= 0
-				&& ((movedC.getStatus() == Status.Hand) ? (manaPlayer - movedC.getMana() >= 0) : true)
+				&& movedC.getStatus() != Status.Hand
 				&& playersMove) 
 				{
-					
-					movedC.attacks(cardAtRect);
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-//					needs to get reseted before it can be used
-//					cardAtRect.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - cardAtRect.getBounds().getWidth()) / 2)
-//													, (int) (tempRect.getY() + tempRect.getHeight() - movedC.getBounds().getHeight())
-//													, (int) cardAtRect.getBounds().getWidth()
-//													, (int) cardAtRect.getBounds().getHeight()));
-					
-					if (movedC.getStatus() == Status.Hand)
-					{
-						manaPlayer -= movedC.getMana();
-					}
+					movedC.attacks(cardAtRect);
 					movedC.setStatus(Status.Attack);
-					movedC.getComponent().repaint();
 					return true;
 				}
 				

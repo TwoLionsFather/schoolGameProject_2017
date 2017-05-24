@@ -66,6 +66,11 @@ public class Deck {
 		this.setKarten(temp);
 	}
 	
+	public boolean isInDeck(Karte cKarte)
+	{
+		return karten.contains(cKarte);
+	}
+	
 	public int getAnzKarten() 
 	{
 		return karten.size();

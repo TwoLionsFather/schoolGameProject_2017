@@ -31,6 +31,8 @@ public class Karte extends JPanel
 	private int leben;		//Leben, 0 Leben = Karte tot
 	private int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
+	private boolean isAttacked;
+	private Karte attackCard;
 	
 	/**
 	 * textur will get standardiced Graphic from a composed image, when set up
@@ -39,10 +41,9 @@ public class Karte extends JPanel
 	private Component component;
 	private BufferedImage textur;
 	private Rectangle bounds;
+	private Rectangle homeRect;
 	private boolean moved;
 
-	private Karte attackCard;
-	
 	/**
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
 	 * @param name Sets the name of the Card
@@ -60,10 +61,15 @@ public class Karte extends JPanel
 		this.name = name;
 		this.typ = typ;
 		this.mana = mana;
+		
 		this.schaden = schaden;
 		this.schadenInit = schaden;
 		this.leben = leben;	
 		this.lebenInit = leben;
+		this.isAttacked = false;
+		this.moved = false;
+		this.attackCard = null;
+		
 		this.setStatus(Status.Hand);
 	}
 	
@@ -90,6 +96,7 @@ public class Karte extends JPanel
 			attackCard.setStatus(Status.Abblage);
 		}
 		
+		attackCard.setAttacked(false);
 		this.component.repaint();
 		attackCard = null;
 	}
@@ -326,6 +333,31 @@ public class Karte extends JPanel
 							, (int) nP.getWidth()
 							, (int) nP.getHeight());
 		moved = true;
+		this.component.repaint();
+	}
+	
+	/**
+	 * sets cards position back to its homeRectangle
+	 * and repaints canvas
+	 */
+	public void placeHome() 
+	{
+		bounds = homeRect;
+		moved = true;
+		this.component.repaint();
+	}
+	
+	/**
+	 * sets and moves card to homeRect. not supposed to change during game very often...
+	 * set during placement of card
+	 * @param homeRect the rectangle the card will return to once its attack is over
+	 */
+	public void setHome(Rectangle homeRect) 
+	{
+		this.attackCard = null;
+		this.isAttacked = false;
+		this.homeRect = homeRect;
+		placeHome();
 	}
 	
 	/**
@@ -412,8 +444,33 @@ public class Karte extends JPanel
 		this.component = c;
 	}
 
+	/**
+	 * getter 
+	 * @return true if card is allready set as tarteg by another card
+	 */
+	public boolean isAttacked() 
+	{
+		return isAttacked;
+	}
+
+	public void setAttacked(boolean isAttacked) 
+	{
+		this.isAttacked = isAttacked;
+	}
+
+	/**
+	 * sets the card beeing targeted by this card and the status of the attacked card as beeing attacked
+	 * @param karte the  card beeing attacked
+	 */
 	public void attacks(Karte karte) 
 	{
 		this.attackCard = karte;
+		karte.setAttacked(true);
 	}
+	
+	public Karte getAttackCard() 
+	{
+		return attackCard;
+	}
+
 }
