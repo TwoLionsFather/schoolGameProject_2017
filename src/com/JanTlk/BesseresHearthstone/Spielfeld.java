@@ -116,6 +116,12 @@ public class Spielfeld
 				tempC.damageTick();	
 				tempC.placeHome();
 			}
+			
+			//if card gets killed its "corps" gets removed
+			if(tempC.getStatus() == Status.Abblage)
+			{
+				remCardFromRectangles(tempC);
+			}
 		}
 		
 //		for(Karte tempC : dPC.getKarten())
@@ -353,12 +359,12 @@ public class Spielfeld
 	}
 	
 	/**
-	 * This is used to check if the recorded Point of the moujseevent is within the boarders of a card's Rectangle
+	 * This is used to check if the recorded Point of the mouseevent is within the boarders of a card's Rectangle
 	 * @param toTest the point of the mouseevent
 	 * @param borders borders of card or onscreen rectangel
 	 * @return true if the point is in the boarders of the rectangle
 	 */
-	private boolean inBounds(Point toTest, Rectangle borders)
+	public boolean inBounds(Point toTest, Rectangle borders)
 	{
 		if(borders == null)
 		{
@@ -598,13 +604,10 @@ public class Spielfeld
 		{
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
-				try {
-					if (kartenAufFelder[i][playerPC].toString().contains(remC.getName()))
-					{
-						kartenAufFelder[i][playerPC] = null;
-					}
-				} catch(java.lang.NullPointerException e) {
-					System.out.println("an unknown error just happened");
+				if ((kartenAufFelder[i][playerPC] != null) 
+				&& kartenAufFelder[i][playerPC] == remC)
+				{
+					kartenAufFelder[i][playerPC] = null;
 				}
 			}
 		}

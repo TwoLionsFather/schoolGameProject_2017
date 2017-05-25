@@ -5,9 +5,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
+
 public class MousInput implements MouseMotionListener, MouseListener
 {
 	private Spielfeld spielfeld;
+	private Menu menu;
+	private Hearthstone hs;
 	private int[] xyChange;		//alternativ als Point
 	private Point oldPoint = null;
 	
@@ -15,10 +19,13 @@ public class MousInput implements MouseMotionListener, MouseListener
 	 * this is used to handle mouseinput
 	 * dictates spiefeld how to handle mouseevent
 	 * @param spielfeld this is used to convert mouseevents into actions
+	 * @param menu 
 	 */
-	public MousInput(Spielfeld spielfeld) 
+	public MousInput(Spielfeld spielfeld, Menu menu, Hearthstone hearthstone) 
 	{
 		this.spielfeld = spielfeld;
+		this.menu = menu;
+		this.hs = hearthstone;
 		xyChange = new int[2];
 	}
 	
@@ -46,7 +53,48 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
-		spielfeld.clickNR(arg0);
+		if (hs.getGameState() == STATE.End)
+		{
+			System.exit(0);
+		}
+		
+		else if (hs.getGameState() == STATE.Game)
+		{
+			spielfeld.clickNR(arg0);
+		}
+		
+		else if(hs.getGameState() == STATE.Help)
+		{
+			hs.setGameState(STATE.Menu);
+			hs.repaint();
+		}
+		
+		else if(hs.getGameState() == STATE.Menu)
+		{
+			for(int i = 0; i < menu.getButtons().length; i++)
+			{
+				if (spielfeld.inBounds(arg0.getPoint(), menu.getButtons()[i]))
+				{
+					if(i == 0)
+					{
+						hs.setGameState(STATE.Game);
+					}
+					
+					else if(i == 1)
+					{
+						hs.setGameState(STATE.Help);
+					}
+					
+					else if(i == 2)
+					{
+						hs.setGameState(STATE.End);
+					}
+					hs.repaint();
+				}
+				
+			}
+		}
+		
 		arg0.consume();
 	}
 
@@ -65,18 +113,21 @@ public class MousInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mousePressed(MouseEvent arg0) 
 	{
-		if (arg0.getButton() == MouseEvent.BUTTON1)
+		if (hs.getGameState() == STATE.Game)
 		{
-			if(spielfeld.cardAt(arg0))
+			if (arg0.getButton() == MouseEvent.BUTTON1)
 			{
-				oldPoint = arg0.getPoint();		
+				if(spielfeld.cardAt(arg0))
+				{
+					oldPoint = arg0.getPoint();		
+				}
 			}
-		}
-		
-		else
-		{
-			spielfeld.cardDetailsAt(arg0);
-		}
+			
+			else
+			{
+				spielfeld.cardDetailsAt(arg0);
+			}
+		}	
 		
 		arg0.consume();
 	}

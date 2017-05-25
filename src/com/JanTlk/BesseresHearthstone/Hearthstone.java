@@ -13,12 +13,21 @@ public class Hearthstone extends Canvas
 {
 	private static final long serialVersionUID = 2288248461332515463L;
 
+	public enum STATE
+	{
+		Menu()
+		, End()
+		, Game()
+		, Help();
+	}
+	
 	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
 	public static final float BREITE = 1920; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
+	public STATE gameState = STATE.Menu;
 	
 	private Spielfeld spielfeld;
-	
+	private Menu menu;
 	private BufferedImage backGround;
 	
 	public Hearthstone()
@@ -30,8 +39,9 @@ public class Hearthstone extends Canvas
 			e.printStackTrace();
 		}
 		
+		this.menu = new Menu();
 		spielfeld = new Spielfeld(this);
-		MousInput mouseStuff = new MousInput(spielfeld);
+		MousInput mouseStuff = new MousInput(spielfeld, menu, this);
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
 		
@@ -44,14 +54,23 @@ public class Hearthstone extends Canvas
 	 */
 	public void paint(Graphics g)
 	{
-		if(backGround == null)
+		if (gameState == STATE.Game)
 		{
-			g.setColor(Color.black);
-			g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+			if (backGround == null)
+			{
+				g.setColor(Color.black);
+				g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
+			}
+			g.drawImage(backGround, 0, 0, null);
+			
+			spielfeld.render(g);
 		}
-		g.drawImage(backGround, 0, 0, null);
 		
-		spielfeld.render(g);
+		else
+		{
+			menu.render(gameState, g);
+		}
+		
 	}
 	
 	public static void main(String[] args) 
@@ -72,5 +91,15 @@ public class Hearthstone extends Canvas
 		
 		else 
 			return var;
+	}
+	
+	public STATE getGameState() 
+	{
+		return gameState;
+	}
+
+	public void setGameState(STATE gameState) 
+	{
+		this.gameState = gameState;
 	}
 }
