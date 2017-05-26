@@ -38,7 +38,7 @@ public class DeckHandler
 			player.getKarten().getLast().setDeck(player);
 		}
 		
-		pc = player.clone(new Deck("pc")); 
+		pc = player.clone(new Deck("PC")); 
 		
 		player.mischen();
 		pc.mischen();

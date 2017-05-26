@@ -1,5 +1,6 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class DrawDeck
 		
 	}
 
-	public void render(Graphics g) 
+	public void render(boolean playersMove, Graphics g) 
 	{
 		abblageCountPL = 0;
 		stapelCountPL = 0;
@@ -50,8 +51,8 @@ public class DrawDeck
 		ArrayList<Karte> handKartenPL = new ArrayList<Karte>();
 		ArrayList<Karte> handKartenPC = new ArrayList<Karte>();
 
-		ArrayList<Karte> fieldKarten = new ArrayList<Karte>();
-		
+		ArrayList<Karte> fieldKartenPL = new ArrayList<Karte>();
+		ArrayList<Karte> fieldKartenPC = new ArrayList<Karte>();		
 		
 		//the order of these for loops is relevant
 		//It decides which deck is int the Fore/Background
@@ -62,18 +63,20 @@ public class DrawDeck
 				handKartenPC.add(tCard);
 			}
 			
-			else if(tCard.getStatus() == Status.Abblage) {
+			else if(tCard.getStatus() == Status.Abblage) 
+			{
 				abblageCountPC++;	
 			}
 			
-			else if(tCard.getStatus() == Status.Stapel) {
+			else if(tCard.getStatus() == Status.Stapel) 
+			{
 				stapelCountPC++;	
 			}
 			
 			else if(tCard.getStatus() == Status.Feld
 			|| tCard.getStatus() == Status.Attack)
 			{
-				fieldKarten.add(tCard);
+				fieldKartenPC.add(tCard);
 			}			
 		}
 		
@@ -84,25 +87,36 @@ public class DrawDeck
 				handKartenPL.add(tCard);
 			}
 			
-			else if(tCard.getStatus() == Status.Abblage) {
+			else if(tCard.getStatus() == Status.Abblage) 
+			{
 				abblageCountPL++;	
 			}
 			
-			else if(tCard.getStatus() == Status.Stapel) {
+			else if(tCard.getStatus() == Status.Stapel) 
+			{
 				stapelCountPL++;	
 			}
 			
 			else if(tCard.getStatus() == Status.Feld
 			|| tCard.getStatus() == Status.Attack)
 			{
-				fieldKarten.add(tCard);
+				fieldKartenPL.add(tCard);
 			}			
 		}
 		
-		drawField(fieldKarten, g);
+		if(playersMove)
+		{
+			drawField(fieldKartenPC, g);
+			drawField(fieldKartenPL, g);
+		}
+		else
+		{
+			drawField(fieldKartenPL, g);
+			drawField(fieldKartenPC, g);
+		}
 		
 		drawHand(true, handKartenPL, g);
-		drawHand(false, handKartenPC, g);
+		drawHand(false, handKartenPC, g);		
 	}
 	
 	/**

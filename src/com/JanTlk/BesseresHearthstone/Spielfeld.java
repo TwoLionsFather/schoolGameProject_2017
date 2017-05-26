@@ -17,12 +17,8 @@ public class Spielfeld
 	private Deck dPC;
 	private int idxMovedC;
 	
-	private boolean playersMove;
-	private int lifePlayer;
-	private int manaPlayer;
-	private int manaPlayerMax;
-	private int lifePC;
-	private int manaPCMax;
+	private boolean playersMove;	
+	private int[] gameStats;
 	
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
@@ -44,20 +40,33 @@ public class Spielfeld
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		nextRoundB =new Rectangle((int) (Hearthstone.BREITE - 50), 50
+		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
 								, 30, 20);
 		
 		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
-		
 		deckDrawer = new DrawDeck(dPL, dPC);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
 		kartenAufFelder = new Karte [deckDrawer.getHorizontal()][2];
 		
-		lifePlayer = 20;
-		lifePC = 20;
-		manaPlayer = 1;		
-		manaPlayerMax = 1;
+		/**
+		 * 0: playersLife, Leben des Spieler
+		 * 1: playersMana, Mana des Spieler
+		 * 2: playersManaCap, max Mana des Spieler
+		 * 3: pcsLife, Leben des PC
+		 * 4: pcsManaCap, max Mana des Spieler
+		 * ***********************************
+		 * 5: playersStapelCount, anzahl NachziehKarten Player
+		 * 6: playersAbblageCount, anzahl AbblageKarten Player
+		 * 7: pcsStapelCode, anzahl NachziehKarten PC
+		 * 8: pcsAbblageCode, anzahl AbblageKarten PC
+		 */
+		gameStats = new int[9];	
+		gameStats[0] = 20;
+		gameStats[3] = 20;
+		gameStats[1] = 1;		
+		gameStats[2] = 1;
+		gameStats[4] = 1;
 		
 		playersMove = true;
 	}
@@ -88,14 +97,14 @@ public class Spielfeld
 		if (!player)
 		{
 			playersMove = false;
-			manaPCMax++;
+			gameStats[4]++;
 			dPC.ziehen();
 			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPCMax, lifePlayer);
 			return;
 		}
 
-		manaPlayerMax++;
-		manaPlayer = manaPlayerMax;
+		gameStats[2]++;
+		gameStats[1] = gameStats[2];
 		dPL.ziehen();
 		playersMove = true;
 	}
@@ -106,13 +115,17 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{		
+		deckDrawer.render(playersMove, g);
+		gameStats[5] = deckDrawer.getStapelCountPL();
+		gameStats[6] = deckDrawer.getAbblageCountPL();
+		gameStats[7] = deckDrawer.getStapelCountPC();
+		gameStats[8] = deckDrawer.getAbblageCountPC();
+		hudDrawer.render(playersMove, detailedCard, gameStats, g);
 		drawHud(g);
-		deckDrawer.render(g);
-		hudDrawer.render(playersMove, detailedCard, manaPlayer, lifePlayer, lifePC, g);
 	}
 	
 	/**
-	 * used to display buttons for next round, mana, live, ...
+	 * 
 	 * @param g graphics component that graphics get drwn on
 	 */
 	private void drawHud(Graphics g)
@@ -250,13 +263,13 @@ public class Spielfeld
 				 */
 				if(inBounds(rEvent, tempRect.getBounds())
 				&& cardAtRect == null
-				&& ((movedC.getStatus() == Status.Hand) ? manaPlayer - movedC.getMana() >= 0 : true)
+				&& ((movedC.getStatus() == Status.Hand) ? gameStats[1] - movedC.getMana() >= 0 : true)
 				&& playerPC > 0
 				&& playersMove) 
 				{
 					if (movedC.getStatus() == Status.Hand)
 					{
-						manaPlayer -= movedC.getMana();
+						gameStats[1] -= movedC.getMana();
 					}
 					else
 					{

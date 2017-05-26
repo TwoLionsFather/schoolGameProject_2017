@@ -25,7 +25,7 @@ public class Deck
 
 	@Override
 	public String toString() {
-		return "Deck gehört [" + name + "]";
+		return "Deck gehört [ " + name + " ]";
 	}
 
 	/**
