@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
@@ -11,24 +15,45 @@ import com.JanTlk.BesseresHearthstone.Karten.Status;
 public class DrawHud 
 {
 	private BufferedImage hudtextur;
-	private Karte cardInDetail;
+	private Rectangle hud; //all locations relative to this
+	private Rectangle nextRoundB;
 	
-	public DrawHud(BufferedImage hudtextur, Karte cardInDetail) 
+	public DrawHud(File hudTextur, Rectangle nextRoundB) 
 	{
-		this.hudtextur = hudtextur;
-		if (cardInDetail != null)
-		{
-			this.cardInDetail = cardInDetail;
+		this.nextRoundB = nextRoundB;
+		
+		try {
+			hudtextur = ImageIO.read(hudTextur);
+		} catch (IOException e) {
+			hudtextur = null;
+			e.printStackTrace();
 		}
+		
+		hud = new Rectangle(50
+						, (int) Hearthstone.HOEHE - hudtextur.getHeight() - 40
+						, hudtextur.getWidth()
+						, hudtextur.getHeight());
 	}
 	
-	public void render(int manaPlayer, int lifePlayer, int lifePC, Graphics g)
-	{
-		//all locations relative to this
-		Rectangle hud = new Rectangle(50
-									, (int) Hearthstone.HOEHE - hudtextur.getHeight() - 40
-									, hudtextur.getWidth()
-									, hudtextur.getHeight());
+	public void render(boolean playersMove
+					, Karte cardInDetail
+					, int manaPlayer
+					, int lifePlayer
+					, int lifePC
+					, Graphics g)
+	{		
+		g.setColor((playersMove) ? Color.green : Color.red);
+		g.drawRect((int) nextRoundB.getX()
+				, (int) nextRoundB.getY()
+				, (int) nextRoundB.getWidth()
+				, (int) nextRoundB.getHeight());	
+		
+		g.drawImage(hudtextur
+	            , (int) hud.getX()
+	            , (int) hud.getY()
+	            , (int) hud.getWidth()
+	            , (int) hud.getHeight()
+	            , null);
 		
 		if((cardInDetail != null)
 		&& cardInDetail.getStatus() != Status.Abblage)
@@ -69,7 +94,5 @@ public class DrawHud
 				, (int) (hud.getX() + 50)
 				, (int) (hud.getY() + 120));
 	}
-	
-	
 	
 }

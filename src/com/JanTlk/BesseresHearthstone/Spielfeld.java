@@ -2,17 +2,11 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
@@ -27,12 +21,9 @@ public class Spielfeld
 	private int lifePlayer;
 	private int manaPlayer;
 	private int manaPlayerMax;
-	private int handKartenCountPL;
 	private int lifePC;
 	private int manaPCMax;
 	
-	private BufferedImage playerHud;
-	private boolean cardInDetail;
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
 	
@@ -42,28 +33,26 @@ public class Spielfeld
 	private DrawHud hudDrawer;
 	
 	
-	
 	/**
 	 * used to set up the game
 	 * @param c used to redraw
 	 */
 	public Spielfeld(Component c)
-	{		
-		try {
-			playerHud = ImageIO.read(new File("Graphics\\HudPlayer.png"));
-		} catch (IOException e) {
-			playerHud = null;
-			e.printStackTrace();
-		}
-		
+	{				
 		DeckHandler dH = new DeckHandler(c);
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		hudDrawer = new DrawHud(playerHud, detailedCard);
-		deckDrawer = new DrawDeck(dPL, dPC);		
+		nextRoundB =new Rectangle((int) (Hearthstone.BREITE - 50), 50
+								, 30, 20);
+		
+		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
+		
+		deckDrawer = new DrawDeck(dPL, dPC);
+		
 		kartenFelder = deckDrawer.getKartenFelder();
+		kartenAufFelder = new Karte [deckDrawer.getHorizontal()][2];
 		
 		lifePlayer = 20;
 		lifePC = 20;
@@ -117,8 +106,9 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{		
-		deckDrawer.render(g);
 		drawHud(g);
+		deckDrawer.render(g);
+		hudDrawer.render(playersMove, detailedCard, manaPlayer, lifePlayer, lifePC, g);
 	}
 	
 	/**
@@ -126,114 +116,20 @@ public class Spielfeld
 	 * @param g graphics component that graphics get drwn on
 	 */
 	private void drawHud(Graphics g)
-	{
-		g.setColor((playersMove) ? Color.green : Color.red);
-		g.drawRect((int) nextRoundB.getX()
-				, (int) nextRoundB.getY()
-				, (int) nextRoundB.getWidth()
-				, (int) nextRoundB.getHeight());
-		
-		if(playerHud == null)
-		{
-			g.setColor(Color.BLACK);
-			g.setFont(new Font("Info", Font.BOLD , 12));
-			g.drawString("Mana Player: " + manaPlayer
-					, (int) Hearthstone.BREITE - 120
-					, (int) Hearthstone.HOEHE - 40);
-		}
-		else
-		{
-			//all locations relative to this
-			Rectangle hud = new Rectangle(50
-										, (int) Hearthstone.HOEHE - playerHud.getHeight() - 40
-										, playerHud.getWidth()
-										, playerHud.getHeight());
-			
-			g.drawImage(playerHud
-						, (int) hud.getX()
-						, (int) hud.getY()
-						, (int) hud.getWidth()
-						, (int) hud.getHeight()
-						, null);
-			
-			
-			g.setFont(new Font("PlayerHud", Font.BOLD , 15));
-			
-			
-			if(cardInDetail
-			&& detailedCard.getStatus() != Status.Abblage)
-			{
-				g.setColor((dPL.isInDeck(detailedCard) ? Color.GREEN : Color.RED));
-				g.drawString("" + detailedCard.getLeben()
-						, (int) (hud.getX() + ((detailedCard.getLeben() > 9) ? 9 : 12))
-						, (int) (hud.getY() + 22));
-				
-				g.drawString("Leben von " + detailedCard.getName()
-						, (int) (hud.getX() + 50)
-						, (int) (hud.getY() + 22));
-
-				g.drawString("" + detailedCard.getSchaden()
-						, (int) (hud.getX() + ((detailedCard.getSchaden() > 9) ? 9 : 12))
-						, (int) (hud.getY() + 55));
-				
-				g.drawString("Schaden von " + detailedCard.getName()
-						, (int) (hud.getX() + 50)
-						, (int) (hud.getY() + 55));
-			}
-			
-			g.setColor(Color.white); //possibly change this to RGB of Gold for looks
-			g.drawString("" + lifePlayer
-					, (int) (hud.getX() + ((lifePlayer > 9) ? 9 : 12))
-					, (int) (hud.getY() + 87));
-			
-			g.drawString("Life Player"
-					, (int) (hud.getX() + 50)
-					, (int) (hud.getY() + 87));
-			
-			//manaDisplay
-			g.drawString("" + manaPlayer
-					, (int) (hud.getX() + ((manaPlayer > 9) ? 9 : 12))
-					, (int) (hud.getY() + 120));
-			
-			g.drawString("Mana Player"
-					, (int) (hud.getX() + 50)
-					, (int) (hud.getY() + 120));
-		}
-		
-		g.setFont(new Font("Info", Font.BOLD , 12));
-		g.setColor(Color.green);
-		g.drawString("" + deckDrawer.getStapelCountPL()
-				, 20
-				, (int) Hearthstone.HOEHE - 40);
-	
-		g.drawString("" + deckDrawer.getStapelCountPL()
-				, (int) Hearthstone.BREITE - 25
-				, (int) Hearthstone.HOEHE - 40);
-
-		g.setColor(Color.red);
-		g.drawString("" + deckDrawer.getStapelCountPC()
-					, 15
-					, 15);
-		
-		g.drawString("" + deckDrawer.getStapelCountPC()
-				, (int) Hearthstone.BREITE - 25
-				, 15);
-		
-		
+	{		
 //		Rectangles to guide userinput
-//		for(int playerPC = 0; playerPC < 2; playerPC++)
-//		{
-//			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
-//			{
-//				Rectangle temp = kartenFelder[spalte][playerPC];
-//				g.setColor((playerPC > 0) ? Color.green : Color.red);
-//				g.drawRect((int) temp.getX()
-//						, (int) temp.getY()
-//						, (int) temp.getWidth()
-//						, (int) temp.getHeight());
-//			}
-//		}
-		
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
+			{
+				Rectangle temp = kartenFelder[spalte][playerPC];
+				g.setColor((playerPC > 0) ? Color.green : Color.red);
+				g.drawRect((int) temp.getX()
+						, (int) temp.getY()
+						, (int) temp.getWidth()
+						, (int) temp.getHeight());
+			}
+		}
 	}
 	
 
@@ -333,7 +229,6 @@ public class Spielfeld
 					}
 					
 					movedC.setDisplayed(true);
-					cardInDetail = true;
 					detailedCard = movedC;			
 				}
 				
@@ -448,7 +343,6 @@ public class Spielfeld
 				detailedCard.setDisplayed(false);
 				detailedCard = null;
 			}
-			cardInDetail = false;
 			return;
 		}
 		
@@ -463,7 +357,6 @@ public class Spielfeld
 			}
 			
 			atDisplay.setDisplayed(true);
-			cardInDetail = true;
 			detailedCard = atDisplay;			
 			detailedCard.getComponent().repaint();
 		}

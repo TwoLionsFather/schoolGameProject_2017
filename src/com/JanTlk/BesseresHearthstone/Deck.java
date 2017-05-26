@@ -7,7 +7,8 @@ import java.util.Random;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
-public class Deck {
+public class Deck 
+{
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	private int drawCounter = 0;
@@ -47,16 +48,17 @@ public class Deck {
 	/**
 	 * creates a new Deck with clones of every card
 	 * @param name the name of the new decks owner
-	 * @param newDeck this is the new Deck that schal be added
+	 * @param cloneDeck this is the new Deck that schal be added
 	 * @return a clone of the original deck
 	 */
-	public void clone(String name, Deck newDeck)
+	public Deck clone(Deck cloneDeck)
 	{
 		for(Karte temp : karten)
 		{
-			newDeck.addKarte(temp.clone());
-			newDeck.getKarten().getLast().setDeck(newDeck);
+			cloneDeck.addKarte(temp.clone());
+			cloneDeck.getKarten().getLast().setDeck(cloneDeck);
 		}
+		return cloneDeck;
 	}
 	
 	/**

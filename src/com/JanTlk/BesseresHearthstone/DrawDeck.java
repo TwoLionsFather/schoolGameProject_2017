@@ -100,8 +100,9 @@ public class DrawDeck
 		}
 		
 		drawField(fieldKarten, g);
+		
 		drawHand(true, handKartenPL, g);
-		drawHand(true, handKartenPC, g);
+		drawHand(false, handKartenPC, g);
 	}
 	
 	/**
@@ -141,6 +142,11 @@ public class DrawDeck
 		}
 	}
 	
+	public int getHorizontal() 
+	{
+		return anzRectInR;
+	}
+	
 	public int getAbblageCountPL() 
 	{
 		return abblageCountPL;
@@ -161,7 +167,8 @@ public class DrawDeck
 		return stapelCountPC;
 	}
 
-	public Rectangle[][] getKartenFelder() {
+	public Rectangle[][] getKartenFelder() 
+	{
 		return kartenFelder;
 	}
 

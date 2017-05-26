@@ -1,6 +1,5 @@
 package com.JanTlk.BesseresHearthstone;
 
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -65,24 +64,23 @@ public class MousInput implements MouseMotionListener, MouseListener
 			{
 				if (spielfeld.inBounds(arg0.getPoint(), menu.getButtons()[i]))
 				{
-					if(i == 0)
+					switch (i)
 					{
-						Hearthstone.gameState = STATE.Game;
+					case 0: Hearthstone.gameState = STATE.Game;
+						break;
+						
+					case 1: Hearthstone.gameState = STATE.Help;
+						break;
+						
+					case 2: Hearthstone.gameState = STATE.End;
+						break;
 					}
 					
-					else if(i == 1)
-					{
-						Hearthstone.gameState = STATE.Help;
-					}
-					
-					else if(i == 2)
-					{
-						Hearthstone.gameState = STATE.End;
-					}
 					hs.repaint();
 				}
 				
 			}
+			
 		}
 		
 		arg0.consume();

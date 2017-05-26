@@ -32,13 +32,13 @@ public class DeckHandler
 			return;
 		} 
 		
-		for(int i = 1; i <= 17; i++)
+		for(int i = 1; i <= 13; i++)
 		{
 			player.addKarte(cC.nextCard());
-			player.getKarten().get(i).setDeck(player);
+			player.getKarten().getLast().setDeck(player);
 		}
 		
-		player.clone("Pc", pc); 
+		pc = player.clone(new Deck("pc")); 
 		
 		player.mischen();
 		pc.mischen();
