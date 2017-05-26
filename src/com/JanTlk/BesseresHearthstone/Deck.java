@@ -11,7 +11,22 @@ public class Deck {
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	private int drawCounter = 0;
+	private String name;
 	
+	/**
+	 * If a Deck is created...
+	 * @param name ...the name oft the owner needs to be set
+	 */
+	public Deck(String name) 
+	{
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Deck gehört [" + name + "]";
+	}
+
 	/**
 	 * sets next cards status to hand and repaints canvas
 	 */
@@ -31,15 +46,17 @@ public class Deck {
 	
 	/**
 	 * creates a new Deck with clones of every card
+	 * @param name the name of the new decks owner
+	 * @param newDeck this is the new Deck that schal be added
+	 * @return a clone of the original deck
 	 */
-	public Deck clone()
+	public void clone(String name, Deck newDeck)
 	{
-		Deck newD = new Deck();
 		for(Karte temp : karten)
 		{
-			newD.addKarte(temp.clone());
+			newDeck.addKarte(temp.clone());
+			newDeck.getKarten().getLast().setDeck(newDeck);
 		}
-		return newD;
 	}
 	
 	/**

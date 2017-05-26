@@ -101,7 +101,7 @@ public class Menu
 		&& helpSheet != null)
 		{
 			g.drawImage(helpSheet
-					, (int) (Hearthstone.BREITE / 2 - helpSheet.getWidth())
+					, (int) (Hearthstone.BREITE / 2 - helpSheet.getWidth() / 2)
 					, 0
 					, null);
 		}

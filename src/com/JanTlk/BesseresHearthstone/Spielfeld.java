@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -26,6 +27,7 @@ public class Spielfeld
 	private int lifePlayer;
 	private int manaPlayer;
 	private int manaPlayerMax;
+	private int handKartenCountPL;
 	private int lifePC;
 	private int manaPCMax;
 	
@@ -34,10 +36,11 @@ public class Spielfeld
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
 	
-	private int anzRectInR = 15;		//How many rectangles are there from left to right
-	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
-	Rectangle [][] kartenFelder;
-	Karte [][] kartenAufFelder;
+	private Rectangle [][] kartenFelder;
+	private Karte [][] kartenAufFelder;
+	private DrawDeck deckDrawer;
+	private DrawHud hudDrawer;
+	
 	
 	
 	/**
@@ -53,45 +56,14 @@ public class Spielfeld
 			e.printStackTrace();
 		}
 		
-		DeckHandler dH = new DeckHandler(c);	
-		
-		kartenFelder = new Rectangle [anzRectInR][2];
-		kartenAufFelder = new Karte [anzRectInR][2];
-		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
-								, 30, 20);
-		
-		for(int playerPC = 0; playerPC < 2; playerPC++)
-		{
-			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
-			{
-				kartenFelder[spalte][playerPC] = new Rectangle((int) Hearthstone.BREITE / anzRectInR * spalte
-															, (int) (Hearthstone.HOEHE / 2 - ((playerPC > 0) ? 0 : rectHoehe)) //If Rectangle is on Playerside, do not substract the rectangles height
-															, (int) (Hearthstone.BREITE / anzRectInR)
-															, (int) rectHoehe);	
-			}
-		}
+		DeckHandler dH = new DeckHandler(c);
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		//used for test of fighting system
-		int spalte = 0;
-		for(Karte tempC : dPC.getKarten())
-		{
-			if (spalte >= anzRectInR)
-			{
-				return;
-			}
-			kartenAufFelder[spalte][0] = tempC;
-			Rectangle tempRect = kartenFelder[spalte][0];
-			tempC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - tempC.getBounds().getWidth()) / 2)
-										, (int) (tempRect.getY() + (tempRect.getHeight() - tempC.getBounds().getHeight()) / 2)
-										, (int) tempC.getBounds().getWidth()
-										, (int) tempC.getBounds().getHeight()));
-
-			tempC.setStatus(Status.Feld);
-			spalte++;
-		}
+		hudDrawer = new DrawHud(playerHud, detailedCard);
+		deckDrawer = new DrawDeck(dPL, dPC);		
+		kartenFelder = deckDrawer.getKartenFelder();
 		
 		lifePlayer = 20;
 		lifePC = 20;
@@ -124,11 +96,6 @@ public class Spielfeld
 			}
 		}
 		
-//		for(Karte tempC : dPC.getKarten())
-//		{
-//			tempC.setAttacked(false);
-//		}
-		
 		if (!player)
 		{
 			playersMove = false;
@@ -149,10 +116,8 @@ public class Spielfeld
 	 * @param g the Graphics that every Card in the Game gets drawn with
 	 */
 	public void render(Graphics g) 
-	{
-		drawDeck(dPC, g, false);
-		drawDeck(dPL, g, true);
-		
+	{		
+		deckDrawer.render(g);
 		drawHud(g);
 	}
 	
@@ -235,6 +200,25 @@ public class Spielfeld
 					, (int) (hud.getY() + 120));
 		}
 		
+		g.setFont(new Font("Info", Font.BOLD , 12));
+		g.setColor(Color.green);
+		g.drawString("" + deckDrawer.getStapelCountPL()
+				, 20
+				, (int) Hearthstone.HOEHE - 40);
+	
+		g.drawString("" + deckDrawer.getStapelCountPL()
+				, (int) Hearthstone.BREITE - 25
+				, (int) Hearthstone.HOEHE - 40);
+
+		g.setColor(Color.red);
+		g.drawString("" + deckDrawer.getStapelCountPC()
+					, 15
+					, 15);
+		
+		g.drawString("" + deckDrawer.getStapelCountPC()
+				, (int) Hearthstone.BREITE - 25
+				, 15);
+		
 		
 //		Rectangles to guide userinput
 //		for(int playerPC = 0; playerPC < 2; playerPC++)
@@ -252,93 +236,6 @@ public class Spielfeld
 		
 	}
 	
-	/**
-	 * draws a deck of cards based on their status
-	 * uses the Graphics class to do so
-	 * @param deck the deck of cards that needs to get drawn
-	 * @param g the Graphics parameter used to draw the cards on
-	 * @param player this ich true if the card belongs to the player
-	 */
-	private void drawDeck(Deck deck, Graphics g, boolean player)
-	{
-		int kartenCount = 0;
-		int abblageCount = 0;
-		int stapelCount = 0;
-		
-		for(Karte tempKarte : deck.getKarten())
-		{
-			if(tempKarte.getStatus() == Status.Abblage) {
-				abblageCount++;	
-			}
-			
-			else if(tempKarte.getStatus() == Status.Stapel) {
-				stapelCount++;	
-			}
-			
-			else if(tempKarte.getStatus() == Status.Hand)
-			{
-				if(player)
-				{
-					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 
-																	- (dPL.getAnzKarten() * (dPL.getKarten().get(0).getBounds().getWidth() - 50) / 2)
-																	+ 55 * kartenCount++)
-									, (int) (Hearthstone.HOEHE - (Hearthstone.HOEHE / 5))
-									, g
-									, false);
-				}
-				
-				else 
-				{
-					tempKarte.drawCard((int) (Hearthstone.BREITE / 2 - (dPC.getAnzKarten() * (dPC.getKarten().get(0).getBounds().getWidth() - 50) / 2) + 55 * kartenCount++)
-									, 0
-									, g
-									, false);
-				}
-			}
-			
-			else if(tempKarte.getStatus() == Status.Feld
-			|| tempKarte.getStatus() == Status.Attack)
-			{
-				tempKarte.drawCard((int) tempKarte.getBounds().getX()
-								, (int) tempKarte.getBounds().getY()
-								, g
-								, false);
-			}
-		}
-		
-		/**
-		 * since this info is related to the specific deck it is not displayed on the hud
-		 * once finial finishing is beeing done, cardbacksides will be added
-		 */
-		g.setFont(new Font("Info", Font.BOLD , 12));
-		if(player)
-		{
-			g.setColor(Color.green);
-			g.drawString("" + stapelCount
-					, 20
-					, (int) Hearthstone.HOEHE - 40);
-		
-			g.drawString("" + abblageCount
-					, (int) Hearthstone.BREITE - 25
-					, (int) Hearthstone.HOEHE - 40);
-		}
-			
-		else
-		{
-			g.setColor(Color.red);
-			g.drawString("" + stapelCount
-						, 15
-						, 15);
-			
-			g.drawString("" + abblageCount
-					, (int) Hearthstone.BREITE - 25
-					, 15);
-		}
-			
-		kartenCount = 0;
-		abblageCount = 0;
-		stapelCount = 0;
-	}
 
 	/**
 	 * This is used to check if a valid card has been clicked on and is responsible for updating its position

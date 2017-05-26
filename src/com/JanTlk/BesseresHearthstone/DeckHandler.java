@@ -21,7 +21,7 @@ public class DeckHandler
 	 */
 	public DeckHandler(Component c)
 	{		
-		player = new Deck();
+		player = new Deck("Player");
 		
 		CardCreator cC;
 		try {
@@ -35,9 +35,10 @@ public class DeckHandler
 		for(int i = 1; i <= 17; i++)
 		{
 			player.addKarte(cC.nextCard());
+			player.getKarten().get(i).setDeck(player);
 		}
 		
-		pc = player.clone(); 
+		player.clone("Pc", pc); 
 		
 		player.mischen();
 		pc.mischen();
@@ -46,6 +47,7 @@ public class DeckHandler
 		for(int startKartren = 0; startKartren < 3; startKartren ++)
 		{
 			player.ziehen();
+			pc.ziehen();
 		}
 		
 	}

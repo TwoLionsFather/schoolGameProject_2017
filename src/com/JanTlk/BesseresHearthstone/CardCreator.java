@@ -37,8 +37,7 @@ public class CardCreator
 	private BufferedReader br;
 	private String line;
 	private Scanner s;
-	
-	
+
 	public CardCreator(String pathCardCretorFile, Component c) throws FileNotFoundException 
 	{
 		mainComponent = c;
@@ -145,11 +144,13 @@ public class CardCreator
 							, cardLeg
 							, cardMana
 							, cardAttack
-							, cardLife);
+							, cardLife
+							, null);
 		
 		nextCard.setCardImage(cardTextur);
 		nextCard.setComponent(mainComponent);
 		
+		//Debugg output
 		System.out.println(nextCard.toString());
 		return nextCard;
 	}

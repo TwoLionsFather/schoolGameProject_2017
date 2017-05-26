@@ -17,6 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.JanTlk.BesseresHearthstone.Deck;
+
 public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
@@ -24,6 +26,7 @@ public class Karte extends JPanel
 	private String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
 	private int mana;		//kosten bei Ausspielen der Karte
+	private Deck inDeck;	//in diesem Deck ist die Karte zu finden
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private int schadenInit;
@@ -35,6 +38,7 @@ public class Karte extends JPanel
 	private boolean isDisplayed;
 	private boolean isAttacked;
 	private Karte attackCard;
+	
 	
 	/**
 	 * textur will get standardiced Graphic from a composed image, when set up
@@ -60,7 +64,8 @@ public class Karte extends JPanel
 				, boolean isLegendary
 				, int mana
 				, int schaden
-				, int leben) 
+				, int leben
+				, Deck inDeck) 
 	{
 		this.name = name;
 		this.typ = typ;
@@ -77,6 +82,7 @@ public class Karte extends JPanel
 		this.moved = false;
 		this.attackCard = null;
 		
+		this.setDeck(inDeck);
 		this.setStatus(Status.Stapel);
 	}
 	
@@ -115,7 +121,7 @@ public class Karte extends JPanel
 	 */
 	public static void main(String[] args) throws IOException 
 	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12);
+		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
 		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
 		
 		
@@ -257,7 +263,13 @@ public class Karte extends JPanel
 	 */
 	public Karte clone()
 	{
-		Karte newK = new Karte(this.name, this.typ, this.isLegendary, this.mana, this.schaden, this.leben);
+		Karte newK = new Karte(this.name
+							, this.typ
+							, this.isLegendary
+							, this.mana
+							, this.schaden
+							, this.leben
+							, null);
 		newK.setCardImage(this.texturClone());
 		newK.setComponent(this.component);
 		return newK;
@@ -498,5 +510,14 @@ public class Karte extends JPanel
 		this.isDisplayed = isDisplayed;
 	}
 
+	public Deck getDeck() 
+	{
+		return inDeck;
+	}
+	
+	public void setDeck(Deck deck) 
+	{
+		this.inDeck = deck;
+	}
 	
 }
