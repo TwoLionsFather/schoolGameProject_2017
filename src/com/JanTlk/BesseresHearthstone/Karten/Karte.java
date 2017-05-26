@@ -50,6 +50,7 @@ public class Karte extends JPanel
 	 * Konstruktor um Karte Werte beim anlegen zu zu weisen
 	 * @param name Sets the name of the Card
 	 * @param typ It is either a Spell or a monster
+	 * @param isLegendary Legendary cards have another color to display their mana due to textur
 	 * @param mana How much this card will cost when played
 	 * @param schaden How much Damage the card deals when attacking another one
 	 * @param leben How much damage a card can take before beeing moved to the graveyard :(
@@ -76,7 +77,7 @@ public class Karte extends JPanel
 		this.moved = false;
 		this.attackCard = null;
 		
-		this.setStatus(Status.Hand);
+		this.setStatus(Status.Stapel);
 	}
 	
 	/**
@@ -115,7 +116,7 @@ public class Karte extends JPanel
 	public static void main(String[] args) throws IOException 
 	{
 		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12);
-		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Ves.png")));
+		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
 		
 		
 		//Create JFrame to display the Card

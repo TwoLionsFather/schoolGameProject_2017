@@ -24,7 +24,7 @@ public class Hearthstone extends Canvas
 	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
 	public static final float BREITE = 1920; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
-	public STATE gameState = STATE.Menu;
+	public static STATE gameState = STATE.Menu;
 	
 	private Spielfeld spielfeld;
 	private Menu menu;
@@ -45,7 +45,6 @@ public class Hearthstone extends Canvas
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
 		
-		//window init
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 	}
 	
@@ -93,13 +92,4 @@ public class Hearthstone extends Canvas
 			return var;
 	}
 	
-	public STATE getGameState() 
-	{
-		return gameState;
-	}
-
-	public void setGameState(STATE gameState) 
-	{
-		this.gameState = gameState;
-	}
 }

@@ -57,10 +57,8 @@ public class Spielfeld
 		
 		kartenFelder = new Rectangle [anzRectInR][2];
 		kartenAufFelder = new Karte [anzRectInR][2];
-		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50)
-								, 50
-								, 30
-								, 20);
+		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
+								, 30, 20);
 		
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
@@ -80,6 +78,10 @@ public class Spielfeld
 		int spalte = 0;
 		for(Karte tempC : dPC.getKarten())
 		{
+			if (spalte >= anzRectInR)
+			{
+				return;
+			}
 			kartenAufFelder[spalte][0] = tempC;
 			Rectangle tempRect = kartenFelder[spalte][0];
 			tempC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - tempC.getBounds().getWidth()) / 2)
@@ -97,8 +99,6 @@ public class Spielfeld
 		manaPlayerMax = 1;
 		
 		playersMove = true;
-		dPL.mischen();
-		dPC.mischen();
 	}
 	
 	/**
@@ -257,7 +257,7 @@ public class Spielfeld
 	 * uses the Graphics class to do so
 	 * @param deck the deck of cards that needs to get drawn
 	 * @param g the Graphics parameter used to draw the cards on
-	 * @param player this ich true if the card belongs to the pc, if a card does not belong to the pc
+	 * @param player this ich true if the card belongs to the player
 	 */
 	private void drawDeck(Deck deck, Graphics g, boolean player)
 	{

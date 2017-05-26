@@ -1,0 +1,19 @@
+Geralt of Riva;M;L;4;9;7
+Ciri;M;L;7;12;4
+Vesemir;M;N;4;9;7
+Triss Merigold;M;L;4;9;7
+Draug;M;L;4;9;7
+Imlerith;M;L;4;9;7
+Frightener;M;N;4;9;7
+Griffin;M;N;4;9;7
+Vernon Roche;M;L;4;9;7
+Jhon Natalis;M;L;6;8;12
+Siegfried;M;N;6;8;12
+Ves;M;N;6;8;12
+Zoltan Chivay;M;N;6;8;12
+Test;M;N;6;8;12
+Test;M;N;6;8;12
+Test;M;N;6;8;12
+Test;M;N;6;8;12
+Test;M;N;6;8;12
+Test;M;N;6;8;12
