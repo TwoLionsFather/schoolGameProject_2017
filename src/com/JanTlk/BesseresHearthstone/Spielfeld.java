@@ -84,6 +84,7 @@ public class Spielfeld
 	
 	/**
 	 * used to set up next Round
+	 * this is a project for the future
 	 * @param toggelRound 
 	 * @param playerPC if true, its the players turn
 	 */
@@ -120,8 +121,8 @@ public class Spielfeld
 			else 
 				playersMove = true;
 			
-			nextRound();
 			dPL.repaint();
+			nextRound();
 			return;
 		}
 		

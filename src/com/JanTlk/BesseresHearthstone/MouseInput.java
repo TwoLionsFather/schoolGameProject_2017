@@ -51,6 +51,10 @@ public class MouseInput implements MouseMotionListener, MouseListener
 		{
 			if(spielfeld.clickedNR(arg0))
 			{
+				if (spielfeld.getAttackUpdate())
+				{
+					return;
+				}
 				spielfeld.nextRound();					
 			}
 		}
