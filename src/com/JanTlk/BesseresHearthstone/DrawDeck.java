@@ -16,11 +16,6 @@ public class DrawDeck
 	private DeckHandler deckHandler;
 	private Deck dPL;
 	private Deck dPC;
-
-	private int abblageCountPL;
-	private int abblageCountPC;
-	private int stapelCountPL;
-	private int stapelCountPC;
 	
 	public DrawDeck(DeckHandler dH) 
 	{
@@ -49,13 +44,13 @@ public class DrawDeck
 	 * @param playersMove if this is true, players Cards will get displayed on top
 	 * @param g no comment needed
 	 */
-	public void render(boolean playersMove, Graphics g) 
+	public void render(int[] gameStats, boolean playersMove, Graphics g) 
 	{
 		//reset counter to start counting while checking Status of every Card
-		abblageCountPL = 0;
-		stapelCountPL = 0;
-		abblageCountPC = 0;
-		stapelCountPC = 0;
+		gameStats[6] = 0;
+		gameStats[7] = 0;
+		gameStats[8] = 0;
+		gameStats[9] = 0;
 		
 		//Collection of Cards that get displayed on top/bottom of the screen
 		ArrayList<Karte> handKartenPL = new ArrayList<Karte>();
@@ -82,12 +77,17 @@ public class DrawDeck
 				}
 				break;
 				
-			case Abblage:
-				abblageCountPC++;
-				break;
-				
 			case Stapel:
-				stapelCountPC++;
+			case Abblage:
+				if (tCard.getDeck() == dPL)
+				{
+					gameStats[(tCard.getStatus() == Status.Stapel) ? 6 : 7]++;
+				}
+				
+				else if (tCard.getDeck() == dPC)
+				{
+					gameStats[(tCard.getStatus() == Status.Stapel) ? 8 : 9]++;
+				}
 				break;
 				
 			case Feld:
@@ -159,34 +159,16 @@ public class DrawDeck
 		}
 	}
 	
-	public int getHorizontal() 
-	{
-		return anzRectInR;
-	}
 	
-	public int getAbblageCountPL() 
-	{
-		return abblageCountPL;
-	}
-
-	public int getAbblageCountPC() 
-	{
-		return abblageCountPC;
-	}
-
-	public int getStapelCountPL() 
-	{
-		return stapelCountPL;
-	}
-
-	public int getStapelCountPC() 
-	{
-		return stapelCountPC;
-	}
-
+	
 	public Rectangle[][] getKartenFelder() 
 	{
 		return kartenFelder;
+	}
+
+	public int getAnzRectInR() 
+	{
+		return anzRectInR;
 	}
 
 }

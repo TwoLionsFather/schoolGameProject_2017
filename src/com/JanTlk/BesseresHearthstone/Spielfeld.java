@@ -19,7 +19,7 @@ public class Spielfeld
 	private int idxMovedC;
 	
 	private boolean playersMove;	
-	private boolean playerFirstMove = false;
+	private boolean playerFirstMove = true;
 	private boolean attackUpdate;
 	private int[] gameStats;
 	
@@ -53,7 +53,7 @@ public class Spielfeld
 		deckDrawer = new DrawDeck(dH);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
-		kartenAufFelder = new Karte [deckDrawer.getHorizontal()][2];
+		kartenAufFelder = new Karte [deckDrawer.getAnzRectInR()][2];
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -78,7 +78,7 @@ public class Spielfeld
 		gameStats[4] = (!playerFirstMove) ? 1 : 0;
 		gameStats[5] = (!playerFirstMove) ? 1 : 0;
 		
-		pcController = new KI(kartenFelder, dH);
+		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
 		playersMove = playerFirstMove;
 	}
 	
@@ -152,12 +152,7 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{		
-		deckDrawer.render(playersMove, g);
-		
-		gameStats[6] = deckDrawer.getStapelCountPL();
-		gameStats[7] = deckDrawer.getAbblageCountPL();
-		gameStats[8] = deckDrawer.getStapelCountPC();
-		gameStats[9] = deckDrawer.getAbblageCountPC();
+		deckDrawer.render(gameStats, playersMove, g);
 		
 		hudDrawer.render(playersMove, detailedCard, gameStats, g);
 		
@@ -231,12 +226,6 @@ public class Spielfeld
 			{
 				highestID = i;
 			}
-			else if (i > highestID + 1
-			&& highestID > -1)
-			{
-				idxMovedC = highestID;
-				return true;
-			}
 		}
 		
 		if(highestID == -1)
@@ -244,7 +233,8 @@ public class Spielfeld
 			return false;
 		}
 		
-		return false;
+		idxMovedC = highestID;
+		return true;
 	}
 	
 	/**
@@ -284,13 +274,6 @@ public class Spielfeld
 				{
 					movedC.getAttackCard().setAttacked(false);
 					movedC.attackedCard(null);
-				}
-				
-//				debugg only!
-				if (cardAtRect != null)
-				{
-					System.out.println(cardAtRect.toString());
-					System.out.println("at: " + spalte + " of " + playerPC);
 				}
 				
 				/**
@@ -418,7 +401,10 @@ public class Spielfeld
 	public boolean clickedNR(MouseEvent arg0)
 	{
 		Point cEvent = arg0.getPoint();
-		playersMove = !playersMove;
+		if (inBounds(cEvent, nextRoundB))
+		{
+			playersMove = !playersMove;
+		}
 		return inBounds(cEvent, nextRoundB);
 	}
 	

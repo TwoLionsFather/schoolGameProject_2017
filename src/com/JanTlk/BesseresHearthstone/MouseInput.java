@@ -13,8 +13,6 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	private Hearthstone hs;
 	private boolean cardMoved;
 	
-	private int times;
-	
 	/**
 	 * this is used to handle mouseinput
 	 * dictates spiefeld how to handle mouseevent

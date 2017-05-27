@@ -24,20 +24,20 @@ public class Karte extends JPanel
 	private static final long serialVersionUID = -4663989360172026366L;
 
 	private static int numberOfInstances = 0;
-	private final int cardID;
+	private final int cardID;	//every instance of Card gets its own id
 	
 	private final String name;	//Kartenname für Anzeige
-	private Typ typ;		//Typ der Karte (Zauber oder Monster)
-	private int mana;		//kosten bei Ausspielen der Karte
+	private final boolean isLegendary; //used to determine color of mana cost
+	private final Typ typ;		//Typ der Karte (Zauber oder Monster)
+	private final int mana;		//kosten bei Ausspielen der Karte
 	private Deck inDeck;	//in diesem Deck ist die Karte zu finden
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
-	private final int schadenInit;
+	private final int schadenInit;	//reverence to determine color of life display
 	private int leben;		//Leben, 0 Leben = Karte tot
-	private final int lebenInit;
+	private final int lebenInit;	//
 	private Status status; //this will be used to decide how the card gets handeled
 	
-	private boolean isLegendary;
 	private boolean isDisplayed;
 	private boolean isAttacked;
 	private Karte attackCard;
@@ -400,12 +400,7 @@ public class Karte extends JPanel
 	{
 		return typ;
 	}
-
-	public void setTyp(Typ typ) 
-	{
-		this.typ = typ;
-	}
-
+	
 	/**
 	 * getter used to check if a card is allready under attack
 	 * @return true if card is allready set as tarteg by another card
@@ -445,11 +440,6 @@ public class Karte extends JPanel
 	public int getMana() 
 	{
 		return mana;
-	}
-
-	public void setMana(int mana) 
-	{
-		this.mana = mana;
 	}
 
 	public int getLeben() 
