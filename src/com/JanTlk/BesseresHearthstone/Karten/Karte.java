@@ -367,7 +367,6 @@ public class Karte extends JPanel
 	{
 		bounds = homeRect;
 		moved = true;
-		this.component.repaint();
 	}
 	
 	/**
@@ -381,6 +380,7 @@ public class Karte extends JPanel
 		this.isAttacked = false;
 		this.homeRect = homeRect;
 		placeHome();
+		this.component.repaint();
 	}
 	
 	/**

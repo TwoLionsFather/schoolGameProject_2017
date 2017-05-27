@@ -1,6 +1,5 @@
 package com.JanTlk.BesseresHearthstone;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -58,50 +57,48 @@ public class DrawDeck
 		//It decides which deck is int the Fore/Background
 		for(Karte tCard : dPC.getKarten())
 		{
-			if(tCard.getStatus() == Status.Hand)
+			switch (tCard.getStatus()) 
 			{
+			case Hand:
 				handKartenPC.add(tCard);
-			}
-			
-			else if(tCard.getStatus() == Status.Abblage) 
-			{
-				abblageCountPC++;	
-			}
-			
-			else if(tCard.getStatus() == Status.Stapel) 
-			{
-				stapelCountPC++;	
-			}
-			
-			else if(tCard.getStatus() == Status.Feld
-			|| tCard.getStatus() == Status.Attack)
-			{
+				break;
+				
+			case Abblage:
+				abblageCountPC++;
+				break;
+				
+			case Stapel:
+				stapelCountPC++;
+				break;
+				
+			case Feld:
+			case Attack:
 				fieldKartenPC.add(tCard);
+				break;
 			}			
 		}
 		
 		for(Karte tCard : dPL.getKarten())
 		{
-			if(tCard.getStatus() == Status.Hand)
+			switch (tCard.getStatus()) 
 			{
+			case Hand:
 				handKartenPL.add(tCard);
-			}
-			
-			else if(tCard.getStatus() == Status.Abblage) 
-			{
-				abblageCountPL++;	
-			}
-			
-			else if(tCard.getStatus() == Status.Stapel) 
-			{
-				stapelCountPL++;	
-			}
-			
-			else if(tCard.getStatus() == Status.Feld
-			|| tCard.getStatus() == Status.Attack)
-			{
+				break;
+				
+			case Abblage:
+				abblageCountPL++;
+				break;
+				
+			case Stapel:
+				stapelCountPL++;
+				break;
+				
+			case Feld:
+			case Attack:
 				fieldKartenPL.add(tCard);
-			}			
+				break;
+			}
 		}
 		
 		if(playersMove)

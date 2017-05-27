@@ -27,7 +27,7 @@ public class CardCreator
 	private int cardMana;
 	private int cardAttack;
 	private int cardLife;	
-	private BufferedImage cardTextur;
+	private BufferedImage cardTexture;
 	private Karte nextCard;
 	
 	private int[] spaltenZeilenPic;
@@ -48,8 +48,8 @@ public class CardCreator
 		try {
 			allCards = ImageIO.read(new File("Graphics\\allCards.png"));
 		} catch (IOException e) {
-			System.err.println("no Graphics File");
 			e.printStackTrace();
+			System.err.println("no Graphics File");
 		}
 		br = new BufferedReader(new FileReader(pathCardCretorFile));
 		
@@ -70,8 +70,8 @@ public class CardCreator
 				return null;
 			}
 		} catch (IOException e) {
-			System.err.println("Card cound't be created");
 			e.printStackTrace();
+			System.err.println("Card cound't be created");
 			return null;
 		}
 		
@@ -127,13 +127,13 @@ public class CardCreator
 			}
 			
 			
-			cardTextur = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_DEFAULT));
+			cardTexture = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_DEFAULT));
 		}
 		
 		else
 		{
 			try {
-				cardTextur = ImageIO.read(new File("Graphics\\CardBluePrint.png"));
+				cardTexture = ImageIO.read(new File("Graphics\\CardBluePrint.png"));
 			} catch (IOException e) {
 				System.err.println("The Default BluePrint for emergencies got lost!");
 			}
@@ -147,11 +147,11 @@ public class CardCreator
 							, cardLife
 							, null);
 		
-		nextCard.setCardImage(cardTextur);
+		nextCard.setCardImage(cardTexture);
 		nextCard.setComponent(mainComponent);
 		
 		//Debugg output
-		System.out.println(nextCard.toString());
+//		System.out.println(nextCard.toString());
 		return nextCard;
 	}
 	

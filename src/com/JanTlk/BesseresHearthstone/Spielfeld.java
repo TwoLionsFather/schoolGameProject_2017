@@ -27,7 +27,8 @@ public class Spielfeld
 	private Karte [][] kartenAufFelder;
 	private DrawDeck deckDrawer;
 	private DrawHud hudDrawer;
-	
+
+	private boolean drawHelp = false;
 	
 	/**
 	 * used to set up the game
@@ -116,19 +117,28 @@ public class Spielfeld
 	public void render(Graphics g) 
 	{		
 		deckDrawer.render(playersMove, g);
+//		long timer = System.nanoTime();
+		
 		gameStats[5] = deckDrawer.getStapelCountPL();
 		gameStats[6] = deckDrawer.getAbblageCountPL();
 		gameStats[7] = deckDrawer.getStapelCountPC();
 		gameStats[8] = deckDrawer.getAbblageCountPC();
+		
 		hudDrawer.render(playersMove, detailedCard, gameStats, g);
-		drawHud(g);
+//		System.out.println("Spielfeld.render time diff " + (System.nanoTime() - timer) * 0.001 + "us");
+		
+		if(drawHelp)
+		{
+			drawGuideLines(g);
+		}
+		
 	}
 	
 	/**
-	 * 
+	 *  used to draw lines around rectangles that cards use to get displayed/layed out
 	 * @param g graphics component that graphics get drwn on
 	 */
-	private void drawHud(Graphics g)
+	private void drawGuideLines(Graphics g)
 	{		
 //		Rectangles to guide userinput
 		for(int playerPC = 0; playerPC < 2; playerPC++)

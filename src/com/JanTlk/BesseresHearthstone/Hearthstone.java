@@ -26,21 +26,25 @@ public class Hearthstone extends Canvas
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
 	public static STATE gameState = STATE.Menu;
 	
+	private BufferedImage background;
+	
 	private Spielfeld spielfeld;
 	private Menu menu;
-	private BufferedImage backGround;
 	
 	public Hearthstone()
-	{		
+	{	
+		this.setBackground(Color.black);
+		
 		try {
-			backGround = ImageIO.read(new File("Graphics\\backGround.png"));
+			background = ImageIO.read(new File("Graphics\\backGround.png"));
 		} catch (IOException e) {
-			backGround = null;
 			e.printStackTrace();
+			System.err.println("Backgound not found");
 		}
 		
 		this.menu = new Menu();
-		spielfeld = new Spielfeld(this);
+		this.spielfeld = new Spielfeld(this);
+		
 		MousInput mouseStuff = new MousInput(spielfeld, menu, this);
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
@@ -51,17 +55,12 @@ public class Hearthstone extends Canvas
 	/**
 	 * used by the Component Class to repaint the "Game" Component
 	 */
+	@Override
 	public void paint(Graphics g)
 	{
 		if (gameState == STATE.Game)
 		{
-			if (backGround == null)
-			{
-				g.setColor(Color.black);
-				g.fillRect(0, 0, (int) BREITE, (int) HOEHE);
-			}
-			g.drawImage(backGround, 0, 0, null);
-			
+			g.drawImage(background, 0, 0, null);	
 			spielfeld.render(g);
 		}
 		

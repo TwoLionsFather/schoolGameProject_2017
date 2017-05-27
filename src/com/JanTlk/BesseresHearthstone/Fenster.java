@@ -10,10 +10,16 @@ public class Fenster extends Canvas
 
 	private static final long serialVersionUID = 8837313394937421756L;
 
+	/**
+	 * Fenster is used to add the Game Component to a new JFrame
+	 * @param breite width of the game/frame
+	 * @param hoehe hight of the game/frame
+	 * @param titel the title of the game window
+	 * @param spiel the game component
+	 */
 	public Fenster(float breite, float hoehe, String titel, Hearthstone spiel)
 	{
-		//JFrame bekommt einen Titel für das Fenster
-		JFrame frame = new JFrame(titel);
+		JFrame frame = new JFrame(titel);		
 		
 		//Das Fenster kann nur noch in der festgelegten größe sein und wird normal geschlossen
 		frame.setPreferredSize(new Dimension((int) breite, (int) hoehe));
@@ -21,12 +27,9 @@ public class Fenster extends Canvas
 		frame.setMinimumSize(new Dimension((int) breite, (int) hoehe));		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
-		frame.add(spiel);		
+		frame.add(spiel);
 		frame.setVisible(true);		
-//		spiel.render();
-//		spiel.start();
 	}
 }
