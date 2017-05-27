@@ -3,6 +3,7 @@ package com.JanTlk.BesseresHearthstone;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -54,21 +55,33 @@ public class Hearthstone extends Canvas
 	
 	/**
 	 * used by the Component Class to repaint the "Game" Component
+	 * Updates get stored in Buffer so only changes get rendered
+	 * This improves Performance.... a lot
 	 */
 	@Override
 	public void paint(Graphics g)
 	{
+		BufferStrategy bs = this.getBufferStrategy();
+		if (bs == null) {
+			this.createBufferStrategy(2);
+			return;
+		}
+		
+		Graphics gb = bs.getDrawGraphics();
+		
 		if (gameState == STATE.Game)
 		{
-			g.drawImage(background, 0, 0, null);	
-			spielfeld.render(g);
+			gb.drawImage(background, 0, 0, null);	
+			spielfeld.render(gb);
 		}
 		
 		else
 		{
-			menu.render(gameState, g);
+			menu.render(gameState, gb);
 		}
 		
+		gb.dispose();
+		bs.show();
 	}
 	
 	public static void main(String[] args) 

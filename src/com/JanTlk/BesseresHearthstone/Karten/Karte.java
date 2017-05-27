@@ -23,15 +23,18 @@ public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
 
-	private String name;	//Kartenname für Anzeige
+	private static int numberOfInstances = 0;
+	private final int cardID;
+	
+	private final String name;	//Kartenname für Anzeige
 	private Typ typ;		//Typ der Karte (Zauber oder Monster)
 	private int mana;		//kosten bei Ausspielen der Karte
 	private Deck inDeck;	//in diesem Deck ist die Karte zu finden
 	
 	private int schaden;	//Schaden bei angriff auf andere Karte
-	private int schadenInit;
+	private final int schadenInit;
 	private int leben;		//Leben, 0 Leben = Karte tot
-	private int lebenInit;
+	private final int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
 	
 	private boolean isLegendary;
@@ -67,6 +70,8 @@ public class Karte extends JPanel
 				, int leben
 				, Deck inDeck) 
 	{
+		this.cardID = ++numberOfInstances;
+		
 		this.name = name;
 		this.typ = typ;
 		this.mana = mana;
@@ -296,10 +301,11 @@ public class Karte extends JPanel
 	{
 		String kartenInfo = "";
 		if(this.typ == Typ.Monster)
-			kartenInfo = String.format("%s macht %d Schaden und hat %d leben.", name, schaden, leben);
+			kartenInfo = String.format("%s macht %d Schaden und hat %d leben.\n", name, schaden, leben);
 		else
-			kartenInfo = String.format("%s ist ein Zauber mit STARKEM Effekt!!", name);
+			kartenInfo = String.format("%s ist ein Zauber mit STARKEM Effekt!!\n", name);
 			
+		kartenInfo += String.format("Karte [%d]\n", cardID);
 		return kartenInfo;
 	}
 	
@@ -428,11 +434,6 @@ public class Karte extends JPanel
 	public String getName()
 	{
 		return name;
-	}
-
-	public void setName(String name) 
-	{
-		this.name = name;
 	}
 
 	public int getMana() 

@@ -27,6 +27,7 @@ public class Spielfeld
 	private Karte [][] kartenAufFelder;
 	private DrawDeck deckDrawer;
 	private DrawHud hudDrawer;
+	private KI pcController;
 
 	private boolean drawHelp = false;
 	
@@ -55,19 +56,23 @@ public class Spielfeld
 		 * 1: playersMana, Mana des Spieler
 		 * 2: playersManaCap, max Mana des Spieler
 		 * 3: pcsLife, Leben des PC
-		 * 4: pcsManaCap, max Mana des Spieler
+		 * 4: pcsMana, Mana des PC
+		 * 5: pcsManaCap, max Mana des Spieler
 		 * ***********************************
-		 * 5: playersStapelCount, anzahl NachziehKarten Player
-		 * 6: playersAbblageCount, anzahl AbblageKarten Player
-		 * 7: pcsStapelCode, anzahl NachziehKarten PC
-		 * 8: pcsAbblageCode, anzahl AbblageKarten PC
+		 * 6: playersStapelCount, anzahl NachziehKarten Player
+		 * 7: playersAbblageCount, anzahl AbblageKarten Player
+		 * 8: pcsStapelCode, anzahl NachziehKarten PC
+		 * 9: pcsAbblageCode, anzahl AbblageKarten PC
 		 */
-		gameStats = new int[9];	
+		gameStats = new int[10];	
 		gameStats[0] = 20;
 		gameStats[3] = 20;
 		gameStats[1] = 1;		
 		gameStats[2] = 1;
 		gameStats[4] = 1;
+		gameStats[5] = 1;
+		
+		pcController = new KI(kartenFelder, dPC);
 		
 		playersMove = true;
 	}
@@ -98,9 +103,11 @@ public class Spielfeld
 		if (!player)
 		{
 			playersMove = false;
-			gameStats[4]++;
+			gameStats[5]++;
+			gameStats[4] = gameStats[5];
 			dPC.ziehen();
-			//ki.nextRound(dPC, kartenFelder, kartenAufFelder, manaPCMax, lifePlayer);
+			gameStats = pcController.nextRound(kartenAufFelder, gameStats);
+//			System.out.println(dPC.toString());
 			return;
 		}
 
@@ -117,15 +124,13 @@ public class Spielfeld
 	public void render(Graphics g) 
 	{		
 		deckDrawer.render(playersMove, g);
-//		long timer = System.nanoTime();
 		
-		gameStats[5] = deckDrawer.getStapelCountPL();
-		gameStats[6] = deckDrawer.getAbblageCountPL();
-		gameStats[7] = deckDrawer.getStapelCountPC();
-		gameStats[8] = deckDrawer.getAbblageCountPC();
+		gameStats[6] = deckDrawer.getStapelCountPL();
+		gameStats[7] = deckDrawer.getAbblageCountPL();
+		gameStats[8] = deckDrawer.getStapelCountPC();
+		gameStats[9] = deckDrawer.getAbblageCountPC();
 		
 		hudDrawer.render(playersMove, detailedCard, gameStats, g);
-//		System.out.println("Spielfeld.render time diff " + (System.nanoTime() - timer) * 0.001 + "us");
 		
 		if(drawHelp)
 		{
@@ -135,12 +140,11 @@ public class Spielfeld
 	}
 	
 	/**
-	 *  used to draw lines around rectangles that cards use to get displayed/layed out
+	 *  used to draw lines around rectangles that cards use to navigate
 	 * @param g graphics component that graphics get drwn on
 	 */
 	private void drawGuideLines(Graphics g)
 	{		
-//		Rectangles to guide userinput
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
@@ -153,25 +157,6 @@ public class Spielfeld
 						, (int) temp.getHeight());
 			}
 		}
-	}
-	
-
-	/**
-	 * This is used to check if a valid card has been clicked on and is responsible for updating its position
-	 * @param xyChange a Mouse event to get the starting (and finishing) Coordinates 
-	 */
-	public void moveCard(int[] xyChange) 
-	{
-		Karte movedC = dPL.getKarten().get(idxMovedC);
-		
-		System.out.println(movedC.toString());
-		System.out.println(xyChange[0] + " in X und " + xyChange[1] + " in Y");
-		
-		movedC.setChange(xyChange);
-		movedC.setStatus(Status.Feld);
-		movedC.getComponent().repaint();
-		
-		dPL.cardPlayed(idxMovedC);		
 	}
 	
 	/**

@@ -24,8 +24,16 @@ public class Deck
 	}
 
 	@Override
-	public String toString() {
-		return "Deck gehört [ " + name + " ]";
+	public String toString() 
+	{
+		String deckString = "Deck gehört [ " + name + " ]\n";
+		
+		for(Karte tCard : karten)
+		{
+			deckString += tCard.toString() + "\n";
+		}
+		
+		return deckString;
 	}
 
 	/**

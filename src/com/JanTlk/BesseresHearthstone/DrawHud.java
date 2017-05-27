@@ -96,20 +96,20 @@ public class DrawHud
 		g.setFont(new Font("Info", Font.BOLD , 12));
 		
 		g.setColor(Color.green);
-		g.drawString("" + gameStats[5]
+		g.drawString("" + gameStats[6]
 					, 20
 					, (int) Hearthstone.HOEHE - 40);
 		
-		g.drawString("" + gameStats[6]
+		g.drawString("" + gameStats[7]
 					, (int) Hearthstone.BREITE - 25
 					, (int) Hearthstone.HOEHE - 40);
 		
 		g.setColor(Color.red);
-		g.drawString("" + gameStats[7]
+		g.drawString("" + gameStats[8]
 					, 15
 					, 15);
 		  
-		g.drawString("" + gameStats[8]
+		g.drawString("" + gameStats[9]
 					, (int) Hearthstone.BREITE - 25
 					, 15);
 	}
