@@ -87,7 +87,7 @@ public class Karte extends JPanel
 		this.moved = false;
 		this.attackCard = null;
 		
-		this.setDeck(inDeck);
+		this.inDeck = inDeck;
 		this.setStatus(Status.Stapel);
 	}
 	
@@ -115,7 +115,6 @@ public class Karte extends JPanel
 		}
 		
 		attackCard.setAttacked(false);
-		this.component.repaint();
 		attackCard = null;
 	}
 	
@@ -371,8 +370,12 @@ public class Karte extends JPanel
 	 */
 	public void placeHome() 
 	{
-		bounds = homeRect;
-		moved = true;
+		if(this.status != Status.Abblage)
+		{
+			bounds = homeRect;
+			moved = true;
+		}
+		
 	}
 	
 	/**
@@ -425,10 +428,13 @@ public class Karte extends JPanel
 	 * sets the card beeing targeted by this card and the status of the attacked card as beeing attacked
 	 * @param karte the  card beeing attacked
 	 */
-	public void attacks(Karte karte) 
+	public void attackedCard(Karte karte) 
 	{
-		this.attackCard = karte;
-		karte.setAttacked(true);
+		if (karte != null)
+		{
+			this.attackCard = karte;
+			karte.setAttacked(true);
+		}
 	}
 	
 	public String getName()

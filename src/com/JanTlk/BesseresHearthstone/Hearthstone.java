@@ -46,7 +46,7 @@ public class Hearthstone extends Canvas
 		this.menu = new Menu();
 		this.spielfeld = new Spielfeld(this);
 		
-		MousInput mouseStuff = new MousInput(spielfeld, menu, this);
+		MouseInput mouseStuff = new MouseInput(spielfeld, menu, this);
 		this.addMouseMotionListener(mouseStuff);
 		this.addMouseListener(mouseStuff);
 		

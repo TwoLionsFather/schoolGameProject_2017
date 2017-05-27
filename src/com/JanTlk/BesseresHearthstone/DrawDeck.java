@@ -12,6 +12,8 @@ public class DrawDeck
 	private int anzRectInR = 15;		//How many rectangles are there from left to right
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	private Rectangle [][] kartenFelder;
+	
+	private DeckHandler deckHandler;
 	private Deck dPL;
 	private Deck dPC;
 
@@ -20,10 +22,12 @@ public class DrawDeck
 	private int stapelCountPL;
 	private int stapelCountPC;
 	
-	public DrawDeck(Deck dPL, Deck dPC) 
+	public DrawDeck(DeckHandler dH) 
 	{
-		this.dPL = dPL;
-		this.dPC = dPC;
+		this.dPL = dH.getPlayerDeck();
+		this.dPC = dH.getPCDeck();
+		this.deckHandler = dH;
+		
 		kartenFelder = new Rectangle [anzRectInR][2];
 		
 		for(int playerPC = 0; playerPC < 2; playerPC++)
@@ -40,27 +44,42 @@ public class DrawDeck
 		
 	}
 
+	/**
+	 * this displays all Cards on the Game
+	 * @param playersMove if this is true, players Cards will get displayed on top
+	 * @param g no comment needed
+	 */
 	public void render(boolean playersMove, Graphics g) 
 	{
+		//reset counter to start counting while checking Status of every Card
 		abblageCountPL = 0;
 		stapelCountPL = 0;
 		abblageCountPC = 0;
 		stapelCountPC = 0;
 		
+		//Collection of Cards that get displayed on top/bottom of the screen
 		ArrayList<Karte> handKartenPL = new ArrayList<Karte>();
 		ArrayList<Karte> handKartenPC = new ArrayList<Karte>();
 
+		//these lists collect all field cards and displays them
 		ArrayList<Karte> fieldKartenPL = new ArrayList<Karte>();
 		ArrayList<Karte> fieldKartenPC = new ArrayList<Karte>();		
 		
-		//the order of these for loops is relevant
-		//It decides which deck is int the Fore/Background
-		for(Karte tCard : dPC.getKarten())
+		//checks status of every card in the game and adds its to the correct list
+		for(Karte tCard : deckHandler.getAllCards())
 		{
 			switch (tCard.getStatus()) 
 			{
 			case Hand:
-				handKartenPC.add(tCard);
+				if (tCard.getDeck() == dPL)
+				{
+					handKartenPL.add(tCard);
+				}
+				
+				else if (tCard.getDeck() == dPC)
+				{
+					handKartenPC.add(tCard);
+				}
 				break;
 				
 			case Abblage:
@@ -73,39 +92,26 @@ public class DrawDeck
 				
 			case Feld:
 			case Attack:
-				fieldKartenPC.add(tCard);
+			case Layed:
+				if (tCard.getDeck() == dPL)
+				{
+					fieldKartenPL.add(tCard);
+				}
+				
+				else if (tCard.getDeck() == dPC)
+				{
+					fieldKartenPC.add(tCard);
+				}
 				break;
 			}			
 		}
 		
-		for(Karte tCard : dPL.getKarten())
-		{
-			switch (tCard.getStatus()) 
-			{
-			case Hand:
-				handKartenPL.add(tCard);
-				break;
-				
-			case Abblage:
-				abblageCountPL++;
-				break;
-				
-			case Stapel:
-				stapelCountPL++;
-				break;
-				
-			case Feld:
-			case Attack:
-				fieldKartenPL.add(tCard);
-				break;
-			}
-		}
-		
-		if(playersMove)
+		if (playersMove)
 		{
 			drawField(fieldKartenPC, g);
 			drawField(fieldKartenPL, g);
 		}
+		
 		else
 		{
 			drawField(fieldKartenPL, g);

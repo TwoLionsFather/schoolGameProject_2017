@@ -13,11 +13,14 @@ import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 public class Spielfeld 
 {
+	private DeckHandler dH;
 	private Deck dPL;
 	private Deck dPC;
 	private int idxMovedC;
 	
 	private boolean playersMove;	
+	private boolean playerFirstMove = false;
+	private boolean attackUpdate;
 	private int[] gameStats;
 	
 	private Karte detailedCard;
@@ -29,7 +32,8 @@ public class Spielfeld
 	private DrawHud hudDrawer;
 	private KI pcController;
 
-	private boolean drawHelp = false;
+	private boolean drawHelp = true;
+	
 	
 	/**
 	 * used to set up the game
@@ -37,7 +41,7 @@ public class Spielfeld
 	 */
 	public Spielfeld(Component c)
 	{				
-		DeckHandler dH = new DeckHandler(c);
+		dH = new DeckHandler(c);
 		
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
@@ -46,7 +50,7 @@ public class Spielfeld
 								, 30, 20);
 		
 		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
-		deckDrawer = new DrawDeck(dPL, dPC);
+		deckDrawer = new DrawDeck(dH);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
 		kartenAufFelder = new Karte [deckDrawer.getHorizontal()][2];
@@ -67,54 +71,79 @@ public class Spielfeld
 		gameStats = new int[10];	
 		gameStats[0] = 20;
 		gameStats[3] = 20;
-		gameStats[1] = 1;		
-		gameStats[2] = 1;
-		gameStats[4] = 1;
-		gameStats[5] = 1;
 		
-		pcController = new KI(kartenFelder, dPC);
+		gameStats[1] = (playerFirstMove) ? 1 : 0;		
+		gameStats[2] = (playerFirstMove) ? 1 : 0;
 		
-		playersMove = true;
+		gameStats[4] = (!playerFirstMove) ? 1 : 0;
+		gameStats[5] = (!playerFirstMove) ? 1 : 0;
+		
+		pcController = new KI(kartenFelder, dH);
+		playersMove = playerFirstMove;
 	}
 	
 	/**
 	 * used to set up next Round
+	 * @param toggelRound 
 	 * @param playerPC if true, its the players turn
 	 */
-	public void nextRound(boolean player)
+	public void nextRound()
 	{		
-		//only needs to check for players cards, PC/KI handles attacks on its own
-		for(Karte tempC : dPL.getKarten())
+		//atacking cards get moved back to their origin position
+		for (Karte tempC : dH.getAllCards()) 
 		{
-			//if a card has attacked, it gets moved back to its origin position
-			if(tempC.getStatus() == Status.Attack)
+			switch(tempC.getStatus())
 			{
-				tempC.damageTick();	
+			case Attack:
+				tempC.damageTick();
 				tempC.placeHome();
+				break;
+				
+			case Layed:
+				tempC.setStatus(Status.Feld);
+				break;
+				
+			default:
+				break;
 			}
-			
-			//if card gets killed its "corps" gets removed
-			if(tempC.getStatus() == Status.Abblage)
-			{
-				remCardFromRectangles(tempC);
-			}
+
 		}
 		
-		if (!player)
+		remDeadCardsFromRectangles();
+		
+		if(attackUpdate)
 		{
-			playersMove = false;
-			gameStats[5]++;
-			gameStats[4] = gameStats[5];
-			dPC.ziehen();
-			gameStats = pcController.nextRound(kartenAufFelder, gameStats);
-//			System.out.println(dPC.toString());
+			attackUpdate = false;
+			
+			if (playersMove)
+				playersMove = false;
+			else 
+				playersMove = true;
+			
+			nextRound();
+			dPL.repaint();
 			return;
 		}
+		
+		//if it is PCs move
+		if (playersMove == false)
+		{
+			gameStats[5]++;					//increase PC Mana Pool by one
+			gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
+			dPC.ziehen();					//draws new Card from Deck		
+			gameStats = pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
+			attackUpdate = true;
+			nextRound();
+		}
+		
+		else if (playersMove)
+		{
+			gameStats[2]++;
+			gameStats[1] = gameStats[2];
+			dPL.ziehen();
+			dPL.repaint();
+		}
 
-		gameStats[2]++;
-		gameStats[1] = gameStats[2];
-		dPL.ziehen();
-		playersMove = true;
 	}
 	
 	/**
@@ -184,18 +213,29 @@ public class Spielfeld
 	 * @param arg0 the mousevent that needs to be checked
 	 * @return true if the event happened on a card
 	 */
-	public boolean cardAt(MouseEvent arg0) 
+	public boolean playableCardAt(MouseEvent arg0) 
 	{
 		Point cEvent = arg0.getPoint();
 		int highestID = -1;
 		
+		//needs to check all cards, to always pick the one on top
 		for(int i = 0; i < dPL.getAnzKarten(); i++)
 		{
 			Karte tKarte = dPL.getKarten().get(i);
 			
-			if(inBounds(cEvent, tKarte.getBounds())) 
+			if (inBounds(cEvent, tKarte.getBounds())
+			&& (tKarte.getStatus() != Status.Abblage)
+			&& (tKarte.getStatus() != Status.Stapel)
+			&& ((tKarte.getStatus() == Status.Hand) ? (gameStats[1] - tKarte.getMana() >= 0) : true)
+			&& playersMove) 
 			{
 				highestID = i;
+			}
+			else if (i > highestID + 1
+			&& highestID > -1)
+			{
+				idxMovedC = highestID;
+				return true;
 			}
 		}
 		
@@ -204,8 +244,7 @@ public class Spielfeld
 			return false;
 		}
 		
-		idxMovedC = highestID;
-		return true;
+		return false;
 	}
 	
 	/**
@@ -215,7 +254,7 @@ public class Spielfeld
 	 * @param arg0 MouseEvent used to check if there is a Rectangle at its location
 	 * @return true if card has been placed in a rectangle
 	 */
-	public boolean cardRectAt(MouseEvent arg0) 
+	public boolean moveCardAtRect(MouseEvent arg0) 
 	{
 		Point rEvent = arg0.getPoint();
 		
@@ -244,28 +283,30 @@ public class Spielfeld
 				if(movedC.getAttackCard() != null)
 				{
 					movedC.getAttackCard().setAttacked(false);
+					movedC.attackedCard(null);
 				}
 				
 //				debugg only!
-//				if (cardAtRect != null)
-//				{
-//					System.out.println(cardAtRect.toString());
-//					System.out.println("at: " + spalte + " of " + playerPC);
-//				}
+				if (cardAtRect != null)
+				{
+					System.out.println(cardAtRect.toString());
+					System.out.println("at: " + spalte + " of " + playerPC);
+				}
 				
 				/**
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
 				if(inBounds(rEvent, tempRect.getBounds())
 				&& cardAtRect == null
-				&& ((movedC.getStatus() == Status.Hand) ? gameStats[1] - movedC.getMana() >= 0 : true)
-				&& playerPC > 0
-				&& playersMove) 
+				&& playerPC > 0) 
 				{
+					//Update Players Mana pool and sets Status so card can't attack same Round it's played 
 					if (movedC.getStatus() == Status.Hand)
 					{
 						gameStats[1] -= movedC.getMana();
+						movedC.setStatus(Status.Layed);
 					}
+					
 					else
 					{
 						//in case this card owned a rectangle before, now it no longer does so
@@ -278,9 +319,8 @@ public class Spielfeld
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-					//not working with reference
+					//updates Location of Card in card filed
 					kartenAufFelder[spalte][playerPC] = movedC;
-					movedC.setStatus(Status.Feld);
 					return true;
 				}
 				
@@ -289,16 +329,16 @@ public class Spielfeld
 				 */
 				else if(inBounds(rEvent, tempRect.getBounds())
 				&& ((cardAtRect != null) ? !cardAtRect.isAttacked() : false)
-				&& playerPC <= 0
+				&& playerPC == 0
 				&& movedC.getStatus() != Status.Hand
-				&& playersMove) 
+				&& movedC.getStatus() != Status.Layed) 
 				{
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-					movedC.attacks(cardAtRect);
+					movedC.attackedCard(cardAtRect);
 					movedC.setStatus(Status.Attack);
 					return true;
 				}
@@ -375,15 +415,10 @@ public class Spielfeld
 	 * @param arg0 clickevent to be tested
 	 * @return true if next round
 	 */
-	public boolean clickNR(MouseEvent arg0)
+	public boolean clickedNR(MouseEvent arg0)
 	{
 		Point cEvent = arg0.getPoint();
-		if (inBounds(cEvent, nextRoundB))
-		{
-			playersMove = !playersMove;
-			nextRound(playersMove);
-			dPL.getKarten().getLast().getComponent().repaint();
-		}
+		playersMove = !playersMove;
 		return inBounds(cEvent, nextRoundB);
 	}
 	
@@ -406,6 +441,26 @@ public class Spielfeld
 				&& kartenAufFelder[i][playerPC] == remC)
 				{
 					kartenAufFelder[i][playerPC] = null;
+					return;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * checks if moved card is checked in on any of the rectangles and delets it from the array
+	 * @param remC the card choosen to get removed
+	 */
+	private void remDeadCardsFromRectangles() 
+	{
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int i = 0; i < kartenAufFelder.length; i++)
+			{
+				if ((kartenAufFelder[i][playerPC] != null) 
+				&& kartenAufFelder[i][playerPC].getStatus() == Status.Abblage)
+				{
+					kartenAufFelder[i][playerPC] = null;
 				}
 			}
 		}
@@ -426,6 +481,16 @@ public class Spielfeld
 	public void setDetailedCard(Karte detailedCard) 
 	{
 		this.detailedCard = detailedCard;
+	}
+
+	public boolean getAttackUpdate()
+	{
+		return attackUpdate;
+	}
+
+	public void setAttackUpdate(boolean attackUpdate) 
+	{
+		this.attackUpdate = attackUpdate;
 	}
 
 }

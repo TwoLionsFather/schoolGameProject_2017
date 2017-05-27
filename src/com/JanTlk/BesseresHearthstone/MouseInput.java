@@ -6,12 +6,14 @@ import java.awt.event.MouseMotionListener;
 
 import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 
-public class MousInput implements MouseMotionListener, MouseListener
+public class MouseInput implements MouseMotionListener, MouseListener
 {
 	private Spielfeld spielfeld;
 	private Menu menu;
 	private Hearthstone hs;
 	private boolean cardMoved;
+	
+	private int times;
 	
 	/**
 	 * this is used to handle mouseinput
@@ -19,14 +21,14 @@ public class MousInput implements MouseMotionListener, MouseListener
 	 * @param spielfeld this is used to convert mouseevents into actions
 	 * @param menu 
 	 */
-	public MousInput(Spielfeld spielfeld, Menu menu, Hearthstone hearthstone) 
+	public MouseInput(Spielfeld spielfeld, Menu menu, Hearthstone hearthstone) 
 	{
 		this.spielfeld = spielfeld;
 		this.menu = menu;
 		this.hs = hearthstone;
 		this.cardMoved = false;
 	}
-	
+
 	@Override
 	public void mouseDragged(MouseEvent arg0) 
 	{
@@ -49,7 +51,10 @@ public class MousInput implements MouseMotionListener, MouseListener
 		
 		else if (Hearthstone.gameState == STATE.Game)
 		{
-			spielfeld.clickNR(arg0);
+			if(spielfeld.clickedNR(arg0))
+			{
+				spielfeld.nextRound();					
+			}
 		}
 		
 		else if(Hearthstone.gameState == STATE.Help)
@@ -104,7 +109,7 @@ public class MousInput implements MouseMotionListener, MouseListener
 		if (Hearthstone.gameState == STATE.Game)
 		{
 			if (arg0.getButton() == MouseEvent.BUTTON1
-			&& spielfeld.cardAt(arg0))
+			&& spielfeld.playableCardAt(arg0))
 			{
 				cardMoved = true;		
 			}
@@ -123,7 +128,7 @@ public class MousInput implements MouseMotionListener, MouseListener
 	{
 		if(cardMoved)
 		{
-			spielfeld.cardRectAt(arg0);
+			spielfeld.moveCardAtRect(arg0);
 			
 			cardMoved = false;
 			arg0.consume();

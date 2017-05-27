@@ -6,5 +6,6 @@ public enum Status
 	, Hand
 	, Feld
 	, Attack	
-	, Abblage;
+	, Abblage
+	, Layed;
 }

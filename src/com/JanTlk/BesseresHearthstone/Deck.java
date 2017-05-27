@@ -47,13 +47,17 @@ public class Deck
 		if(dCard.getStatus() == Status.Stapel)
 		{
 			dCard.setStatus(Status.Hand);
-			
-//			long timer = System.nanoTime();
-			dCard.getComponent().repaint();
-//			System.out.println("Deck.ziehen time diff " + (System.nanoTime() - timer) * 0.001 + "us");
 		}
 		
 		return;			
+	}
+	
+	/**
+	 * redraws game
+	 */
+	public void repaint() 
+	{
+		karten.get(0).getComponent().repaint();
 	}
 	
 	/**

@@ -2,6 +2,9 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Component;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
+
+import com.JanTlk.BesseresHearthstone.Karten.Karte;
 
 /**
  * In this class every card should be added to the game and to a deck
@@ -50,6 +53,14 @@ public class DeckHandler
 			pc.ziehen();
 		}
 		
+	}
+	
+	public LinkedList<Karte> getAllCards()
+	{
+		LinkedList<Karte> allCards = new LinkedList<Karte>();
+		allCards.addAll(player.getKarten());
+		allCards.addAll(pc.getKarten());
+		return allCards;
 	}
 
 
