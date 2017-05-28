@@ -45,7 +45,7 @@ public class KI
 		{
 			switch(tCard.getStatus())
 			{
-			case Hand: 
+			case HAND: 
 				if ((tCard.getDeck() == deck)
 				&& (gameStats[4] - tCard.getMana() >= 0))
 				{
@@ -53,8 +53,8 @@ public class KI
 				}
 				break;
 				
-			case Feld:
-			case Attack:
+			case FELD:
+			case ATTACKC:
 				if (tCard.getDeck() == deck)
 				{
 					ownCs.add(tCard);
@@ -72,12 +72,32 @@ public class KI
 		}
 		
 		gameStats = layNextCard(playableCs, kartenAufFelder, gameStats);
-		
 		chooseCardToAttack(enemysCs, ownCs, gameStats);
+		
+		if (allCardsUnderAttack(kartenAufFelder))
+		{
+			attackPlayer(ownCs);
+		}
 		
 		return gameStats;		
 		
 	}
+
+	/**
+	 * all cards that have no target, attack the player
+	 * @param ownCs
+	 */
+	private void attackPlayer(LinkedList<Karte> ownCs) 
+	{
+		for (Karte tempC : ownCs)
+		{
+			if (tempC.getStatus() == Status.FELD)
+			{
+				tempC.setStatus(Status.ATTACKP);
+			}
+		}
+	}
+
 
 	/**
 	 * lays all possible cards
@@ -93,7 +113,7 @@ public class KI
 		{
 			Karte cardToPlay = chooseCardToPlay(playableCs, gameStats);
 			
-			cardToPlay.setStatus(Status.Layed);
+			cardToPlay.setStatus(Status.LAYED);
 			gameStats[4] -= cardToPlay.getMana();
 			
 			nextPlayField = nextPlayField(kartenAufFelder);
@@ -108,7 +128,9 @@ public class KI
 										, (int) cardToPlay.getBounds().getWidth()
 										, (int) cardToPlay.getBounds().getHeight()));
 			
-			this.nextRound(kartenAufFelder, gameStats);
+			playableCs.remove(cardToPlay);
+			
+			this.chooseCardToPlay(playableCs, gameStats);
 		}
 		
 		else return gameStats;
@@ -124,9 +146,8 @@ public class KI
 	 */
 	private void chooseCardToAttack(LinkedList<Karte> enemysCs, LinkedList<Karte> ownCards, int[] gameStats)
 	{
-		boolean offensive = gameStats[0] <= gameStats[3];
 		float topCardRating = (float) 0.0;
-		int idxTop = 0;
+		int idxTop;
 		
 		System.out.println("KI.chooseCard Attacking Card Search ------------------------------------------------------------------------------------------------");
 		
@@ -134,6 +155,7 @@ public class KI
 		{
 			int oL = ownCard.getLeben();
 			int oA = ownCard.getSchaden();
+			idxTop = -1;
 			
 			for (int idxE = 0; idxE < enemysCs.size(); idxE++)
 			{
@@ -141,33 +163,22 @@ public class KI
 				
 				int eL = potTarget.getLeben();
 				int eA = potTarget.getSchaden();
+
+				float tempRating = (float) 0.1 - (-1/((eL - oA) * 2 + 1));
 				
-				if (offensive)
+				if (tempRating > topCardRating
+				|| idxE == 0
+				&& enemysCs.get(idxE) != null)
 				{
-					float tempRating = (float) ((oA - eL) + 0.1 * (oL - eA));
-					
-					if (tempRating > topCardRating
-					|| idxE == 0)
-					{
-						idxTop = idxE;
-						topCardRating = tempRating;
-					}						
-					
-				}
-				
-				else
-				{
-					float tempRating = (float) ((oL - eA) + 0.1 * (oA - eL));
-					
-					if (tempRating > topCardRating
-					|| idxE == 0)
-					{
-						idxTop = idxE;
-						topCardRating = tempRating;
-					}	
-				}
+					idxTop = idxE;
+					topCardRating = tempRating;
+				}	
 			}
 			
+			if (idxTop < 0)
+			{
+				return;
+			}
 
 			Karte chosenCard = enemysCs.get(idxTop);
 			
@@ -177,12 +188,11 @@ public class KI
 										, (int) ownCard.getBounds().getHeight()));
 			
 			ownCard.attackedCard(chosenCard);
-			ownCard.setStatus(Status.Attack);
+			ownCard.setStatus(Status.ATTACKC);
 			
-			System.out.printf("%-20s attacking card %s\n", "", ownCard.getName());
-			System.out.printf("%-20s value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
+			System.out.printf("attacking card %s\n", ownCard.getName());
+			System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
 			enemysCs.remove(idxTop);
-//			ownCard.attackedCard(enemysCs.get(idxTop));
 			idxTop = 0;
 		}
 		
@@ -198,9 +208,14 @@ public class KI
 	 */
 	private Karte chooseCardToPlay(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
+		if (gameStats[4] == 0)
+		{
+			return null;
+		}
+		
 		boolean offensive = gameStats[0] <= gameStats[3];
 		float topCardRating = (float) 0.0;
-		int idxTop = 0;
+		int idxTop = -1;
 		
 		System.out.println("KI.chooseCard Card to Play ------------------------------------------------------------------------------------------------");
 		
@@ -238,7 +253,12 @@ public class KI
 			
 			//debugg output to check for smart choices
 			System.out.printf("%-20s value of: %.3f\n", cardToValue.getName(), topCardRating);
-			System.out.printf("%-20s It deals %d damage and has %d life\n", "", cardToValue.getSchaden(), cardToValue.getLeben());
+			System.out.printf("It deals %d damage and has %d life\n", cardToValue.getSchaden(), cardToValue.getLeben());
+		}
+		
+		if (idxTop < 0)
+		{
+			return null;
 		}
 		
 		System.out.println(playableCs.get(idxTop).toString());
@@ -268,6 +288,26 @@ public class KI
 		}
 		
 		return -1;
+	}
+	
+	/**
+	 * checks if it is possible to attack the enemy player
+	 * same function as in Spielfeld but for pc
+	 * @param playerPC if 0, cards on PCs half get checked
+	 * @return true if all cards are under attack
+	 */
+	private boolean allCardsUnderAttack(Karte[][] kartenAufFelder) 
+	{
+		for (int i = 0; i < kartenAufFelder.length; i++)
+		{
+			if ((kartenAufFelder[i][1] != null)
+			&& !kartenAufFelder[i][1].isAttacked())
+			{
+				return false;
+			}
+		}
+			
+		return true;
 	}
 
 }

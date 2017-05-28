@@ -65,7 +65,7 @@ public class DrawDeck
 		{
 			switch (tCard.getStatus()) 
 			{
-			case Hand:
+			case HAND:
 				if (tCard.getDeck() == dPL)
 				{
 					handKartenPL.add(tCard);
@@ -77,22 +77,23 @@ public class DrawDeck
 				}
 				break;
 				
-			case Stapel:
-			case Abblage:
+			case STAPEL:
+			case ABBLAGE:
 				if (tCard.getDeck() == dPL)
 				{
-					gameStats[(tCard.getStatus() == Status.Stapel) ? 6 : 7]++;
+					gameStats[(tCard.getStatus() == Status.STAPEL) ? 6 : 7]++;
 				}
 				
 				else if (tCard.getDeck() == dPC)
 				{
-					gameStats[(tCard.getStatus() == Status.Stapel) ? 8 : 9]++;
+					gameStats[(tCard.getStatus() == Status.STAPEL) ? 8 : 9]++;
 				}
 				break;
 				
-			case Feld:
-			case Attack:
-			case Layed:
+			case FELD:
+			case ATTACKC:
+			case ATTACKP:
+			case LAYED:
 				if (tCard.getDeck() == dPL)
 				{
 					fieldKartenPL.add(tCard);

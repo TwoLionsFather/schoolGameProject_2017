@@ -42,14 +42,14 @@ public class Menu
 	 * draws menu and buttons on the screen, MouseInputClass handles their effect
 	 * @param g
 	 */
-	public void render(STATE gameState, Graphics g)
+	public void render(Graphics g)
 	{
 		g.setColor(Color.black);
 		g.fillRect(0, 0
 				, (int) Hearthstone.BREITE
 				, (int) Hearthstone.HOEHE);
 		
-		if(gameState == STATE.Menu)
+		if(Hearthstone.gameState == STATE.MENU)
 		{
 			for (int i = 0; i < buttons.length; i++)
 			{
@@ -88,7 +88,7 @@ public class Menu
 			
 		}
 		
-		else if(gameState == STATE.End) 
+		else if(Hearthstone.gameState == STATE.END) 
 		{
 			g.setColor(Color.white);
 			g.setFont(new Font("Ende", Font.BOLD, 50));
@@ -97,7 +97,7 @@ public class Menu
 					, (int) Hearthstone.HOEHE / 2);
 		}
 		
-		else if(gameState == STATE.Help
+		else if(Hearthstone.gameState == STATE.HELP
 		&& helpSheet != null)
 		{
 			g.drawImage(helpSheet
@@ -105,6 +105,16 @@ public class Menu
 					, 0
 					, null);
 		}
+		
+		else if(Hearthstone.gameState == STATE.BEATEN) 
+		{
+			g.setColor(Color.white);
+			g.setFont(new Font("Ende", Font.BOLD, 50));
+			g.drawString("Gewonnen/Verloren , cool"
+					, (int) Hearthstone.BREITE / 2 - "Gewonnen/Verloren , cool".length() * 10
+					, (int) Hearthstone.HOEHE / 2);
+		}
+		
 		
 	}
 

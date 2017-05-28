@@ -16,19 +16,19 @@ public class Hearthstone extends Canvas
 
 	public enum STATE
 	{
-		Menu()
-		, End()
-		, Game()
-		, Help();
+		MENU()
+		, END()
+		, GAME()
+		, HELP()
+		, BEATEN();
 	}
 	
 	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
 	public static final float BREITE = 1920; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
-	public static STATE gameState = STATE.Menu;
+	public static STATE gameState = STATE.MENU;
 	
 	private BufferedImage background;
-	
 	private Spielfeld spielfeld;
 	private Menu menu;
 	
@@ -51,6 +51,9 @@ public class Hearthstone extends Canvas
 		this.addMouseListener(mouseStuff);
 		
 		new Fenster(BREITE, HOEHE, TITEL, this);	
+		
+//		float tst = (float) ((-1/(3 - 5)) * 2 + 1);
+//		System.out.printf("%.3f \n", tst);
 	}
 	
 	/**
@@ -69,7 +72,7 @@ public class Hearthstone extends Canvas
 		
 		Graphics gb = bs.getDrawGraphics();
 		
-		if (gameState == STATE.Game)
+		if (gameState == STATE.GAME)
 		{
 			gb.drawImage(background, 0, 0, null);	
 			spielfeld.render(gb);
@@ -77,7 +80,7 @@ public class Hearthstone extends Canvas
 		
 		else
 		{
-			menu.render(gameState, gb);
+			menu.render(gb);
 		}
 		
 		gb.dispose();

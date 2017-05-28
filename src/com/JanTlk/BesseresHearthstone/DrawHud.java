@@ -62,26 +62,29 @@ public class DrawHud
 		
 		//Overlay on Hud texture
 		if((cardInDetail != null)
-		&& cardInDetail.getStatus() != Status.Abblage)
+		&& cardInDetail.getStatus() != Status.ABBLAGE)
 		{
 			g.setColor((!cardInDetail.getDeck().toString().contains("PC")) ? Color.GREEN : Color.RED);
-			g.drawString("" + cardInDetail.getLeben()
-					, (int) (hud.getX() + ((cardInDetail.getLeben() > 9) ? 9 : 12))
-					, (int) (hud.getY() + 22));
 			
-			g.drawString("Leben von " + cardInDetail.getName()
-					, (int) (hud.getX() + 50)
-					, (int) (hud.getY() + 22));
-
 			g.drawString("" + cardInDetail.getSchaden()
 					, (int) (hud.getX() + ((cardInDetail.getSchaden() > 9) ? 9 : 12))
-					, (int) (hud.getY() + 55));
+					, (int) (hud.getY() + 22));
 			
 			g.drawString("Schaden von " + cardInDetail.getName()
 					, (int) (hud.getX() + 50)
+					, (int) (hud.getY() + 22));
+			
+			g.drawString("" + cardInDetail.getLeben()
+					, (int) (hud.getX() + ((cardInDetail.getLeben() > 9) ? 9 : 12))
 					, (int) (hud.getY() + 55));
+			
+			g.drawString("Leben von " + cardInDetail.getName()
+					, (int) (hud.getX() + 50)
+					, (int) (hud.getY() + 55));
+
 		}
 		
+		g.setFont(new Font("Info", Font.BOLD , 12));
 		drawInfo(gameStats, g);
 		drawDeckInfo(gameStats, g);
 	}
@@ -93,8 +96,6 @@ public class DrawHud
 	 */
 	public void drawDeckInfo(int[] gameStats, Graphics g)
 	{
-		g.setFont(new Font("Info", Font.BOLD , 12));
-		
 		g.setColor(Color.green);
 		g.drawString("" + gameStats[6]
 					, 20
@@ -122,7 +123,7 @@ public class DrawHud
 	public void drawInfo(int[] gameStats, Graphics g)
 	{
 		g.setColor(Color.white); //possibly change this to RGB of Gold for looks
-		//lifeDisplay
+		//lifeDisplay Player
 		g.drawString("" + gameStats[0]
 				, (int) (hud.getX() + ((gameStats[0] > 9) ? 9 : 12))
 				, (int) (hud.getY() + 87));
@@ -131,13 +132,31 @@ public class DrawHud
 				, (int) (hud.getX() + 50)
 				, (int) (hud.getY() + 87));
 		
-		//manaDisplay
+		//manaDisplay Player
 		g.drawString("" + gameStats[1]
 				, (int) (hud.getX() + ((gameStats[1] > 9) ? 9 : 12))
 				, (int) (hud.getY() + 120));
 		
 		g.drawString("Mana Player"
 				, (int) (hud.getX() + 50)
+				, (int) (hud.getY() + 120));
+		
+		//lifeDisplay PC
+		g.drawString("" + gameStats[3]
+				, (int) (hud.getX() + hud.getWidth() - ((gameStats[3] > 9) ? 20 : 17))
+				, (int) (hud.getY() + 87));
+		
+		g.drawString("Life PC"
+				, (int) (hud.getX() + hud.getWidth() - "Life PC".length() * 6 - 50)
+				, (int) (hud.getY() + 87));
+		
+		//manaDisplay PC
+		g.drawString("" + gameStats[5]
+				, (int) (hud.getX() + hud.getWidth() - ((gameStats[4] > 9) ? 20 : 17))
+				, (int) (hud.getY() + 120));
+		
+		g.drawString("Mana PC Max"
+				, (int) (hud.getX() + hud.getWidth() - "Mana PC Max".length() * 6 - 50)
 				, (int) (hud.getY() + 120));
 	}
 	

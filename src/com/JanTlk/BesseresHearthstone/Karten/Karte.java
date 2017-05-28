@@ -88,7 +88,7 @@ public class Karte extends JPanel
 		this.attackCard = null;
 		
 		this.inDeck = inDeck;
-		this.setStatus(Status.Stapel);
+		this.setStatus(Status.STAPEL);
 	}
 	
 	/**
@@ -106,12 +106,12 @@ public class Karte extends JPanel
 		
 		if(this.leben <= 0)
 		{
-			this.status = Status.Abblage;
+			this.status = Status.ABBLAGE;
 		}
 		
 		if(attackCard.getLeben() <= 0)
 		{
-			attackCard.setStatus(Status.Abblage);
+			attackCard.setStatus(Status.ABBLAGE);
 		}
 		
 		attackCard.setAttacked(false);
@@ -370,7 +370,7 @@ public class Karte extends JPanel
 	 */
 	public void placeHome() 
 	{
-		if(this.status != Status.Abblage)
+		if(this.status != Status.ABBLAGE)
 		{
 			bounds = homeRect;
 			moved = true;
@@ -430,6 +430,20 @@ public class Karte extends JPanel
 			this.attackCard = karte;
 			karte.setAttacked(true);
 		}
+	}
+	
+	/**
+	 * removes life from selected Player
+	 * @param playerPC if true, the player gets attacked
+	 * @param gameStats these Stats get used to damage player/PC
+	 */
+	public void attackPlayer(boolean playerPC, int[] gameStats) 
+	{
+		gameStats[(playerPC) ? 0 : 3] -= schaden;
+		
+		this.status = Status.FELD;
+		placeHome();
+		return;
 	}
 	
 	public String getName()
@@ -516,5 +530,5 @@ public class Karte extends JPanel
 	{
 		this.inDeck = deck;
 	}
-	
+
 }

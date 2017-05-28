@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
@@ -19,7 +20,7 @@ public class Spielfeld
 	private int idxMovedC;
 	
 	private boolean playersMove;	
-	private boolean playerFirstMove = true;
+	private boolean playerFirstMove = false;
 	private boolean attackUpdate;
 	private int[] gameStats;
 	
@@ -32,7 +33,7 @@ public class Spielfeld
 	private DrawHud hudDrawer;
 	private KI pcController;
 
-	private boolean drawHelp = true;
+	private boolean drawHelp = false;
 	
 	
 	/**
@@ -80,6 +81,12 @@ public class Spielfeld
 		
 		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
 		playersMove = playerFirstMove;
+		
+		if(!playersMove)
+		{
+			pcController.nextRound(kartenAufFelder, gameStats);
+		}
+		
 	}
 	
 	/**
@@ -95,13 +102,17 @@ public class Spielfeld
 		{
 			switch(tempC.getStatus())
 			{
-			case Attack:
+			case ATTACKC:
 				tempC.damageTick();
 				tempC.placeHome();
 				break;
 				
-			case Layed:
-				tempC.setStatus(Status.Feld);
+			case ATTACKP:
+				tempC.attackPlayer((tempC.getDeck() == dPC), gameStats);
+				break;
+				
+			case LAYED:
+				tempC.setStatus(Status.FELD);
 				break;
 				
 			default:
@@ -154,12 +165,20 @@ public class Spielfeld
 	public void render(Graphics g) 
 	{		
 		deckDrawer.render(gameStats, playersMove, g);
-		
 		hudDrawer.render(playersMove, detailedCard, gameStats, g);
 		
 		if(drawHelp)
 		{
 			drawGuideLines(g);
+		}
+		
+		if (gameStats[0] <= 0
+		|| gameStats[3] <= 0
+		|| gameStats[7] >= dPL.getAnzKarten()
+		|| gameStats[9] >= dPC.getAnzKarten())
+		{
+			Hearthstone.gameState = STATE.BEATEN;
+			dPC.repaint();
 		}
 		
 	}
@@ -220,9 +239,9 @@ public class Spielfeld
 			Karte tKarte = dPL.getKarten().get(i);
 			
 			if (inBounds(cEvent, tKarte.getBounds())
-			&& (tKarte.getStatus() != Status.Abblage)
-			&& (tKarte.getStatus() != Status.Stapel)
-			&& ((tKarte.getStatus() == Status.Hand) ? (gameStats[1] - tKarte.getMana() >= 0) : true)
+			&& (tKarte.getStatus() != Status.ABBLAGE)
+			&& (tKarte.getStatus() != Status.STAPEL)
+			&& ((tKarte.getStatus() == Status.HAND) ? (gameStats[1] - tKarte.getMana() >= 0) : true)
 			&& playersMove) 
 			{
 				highestID = i;
@@ -281,14 +300,14 @@ public class Spielfeld
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
 				if(inBounds(rEvent, tempRect.getBounds())
-				&& cardAtRect == null
+				&& ((cardAtRect == movedC) ? true : cardAtRect == null)
 				&& playerPC > 0) 
 				{
 					//Update Players Mana pool and sets Status so card can't attack same Round it's played 
-					if (movedC.getStatus() == Status.Hand)
+					if (movedC.getStatus() == Status.HAND)
 					{
 						gameStats[1] -= movedC.getMana();
-						movedC.setStatus(Status.Layed);
+						movedC.setStatus(Status.LAYED);
 					}
 					
 					else
@@ -314,8 +333,8 @@ public class Spielfeld
 				else if(inBounds(rEvent, tempRect.getBounds())
 				&& ((cardAtRect != null) ? !cardAtRect.isAttacked() : false)
 				&& playerPC == 0
-				&& movedC.getStatus() != Status.Hand
-				&& movedC.getStatus() != Status.Layed) 
+				&& movedC.getStatus() != Status.HAND
+				&& movedC.getStatus() != Status.LAYED) 
 				{
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
@@ -323,7 +342,26 @@ public class Spielfeld
 												, (int) movedC.getBounds().getHeight()));
 					
 					movedC.attackedCard(cardAtRect);
-					movedC.setStatus(Status.Attack);
+					movedC.setStatus(Status.ATTACKC);
+					return true;
+				}
+				
+				/**
+				 * if move is used to attack Player
+				 */
+				else if(inBounds(rEvent, tempRect.getBounds())
+				&& cardAtRect == null
+				&& allCardsUnderAttack(0)
+				&& playerPC == 0
+				&& movedC.getStatus() != Status.HAND
+				&& movedC.getStatus() != Status.LAYED) 
+				{
+					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
+												, (int) tempRect.getY()
+												, (int) movedC.getBounds().getWidth()
+												, (int) movedC.getBounds().getHeight()));
+					
+					movedC.setStatus(Status.ATTACKP);
 					return true;
 				}
 				
@@ -331,6 +369,25 @@ public class Spielfeld
 			
 		}					
 		return false;
+	}
+
+	/**
+	 * checks if it is possible to attack the enemy player
+	 * @param playerPC if 0, cards on PCs half get checked
+	 * @return true if all cards are under attack
+	 */
+	private boolean allCardsUnderAttack(int playerPC) 
+	{
+		for (int i = 0; i < kartenAufFelder.length; i++)
+		{
+			if ((kartenAufFelder[i][playerPC] != null)
+			&& !kartenAufFelder[i][playerPC].isAttacked())
+			{
+				return false;
+			}
+		}
+			
+		return true;
 	}
 
 	/**
@@ -445,7 +502,7 @@ public class Spielfeld
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
 				if ((kartenAufFelder[i][playerPC] != null) 
-				&& kartenAufFelder[i][playerPC].getStatus() == Status.Abblage)
+				&& kartenAufFelder[i][playerPC].getStatus() == Status.ABBLAGE)
 				{
 					kartenAufFelder[i][playerPC] = null;
 				}

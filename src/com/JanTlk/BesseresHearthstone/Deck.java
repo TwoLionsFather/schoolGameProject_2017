@@ -44,9 +44,9 @@ public class Deck
 		Karte dCard = this.getKarten().get(drawCounter++);
 		drawCounter = (int) Hearthstone.clamp(drawCounter, 0, karten.size() - 1);
 		
-		if(dCard.getStatus() == Status.Stapel)
+		if(dCard.getStatus() == Status.STAPEL)
 		{
-			dCard.setStatus(Status.Hand);
+			dCard.setStatus(Status.HAND);
 		}
 		
 		return;			

@@ -42,12 +42,13 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
-		if (Hearthstone.gameState == STATE.End)
+		if (Hearthstone.gameState == STATE.END
+		|| Hearthstone.gameState == STATE.BEATEN)
 		{
 			System.exit(0);
 		}
 		
-		else if (Hearthstone.gameState == STATE.Game)
+		else if (Hearthstone.gameState == STATE.GAME)
 		{
 			if(spielfeld.clickedNR(arg0))
 			{
@@ -59,13 +60,13 @@ public class MouseInput implements MouseMotionListener, MouseListener
 			}
 		}
 		
-		else if(Hearthstone.gameState == STATE.Help)
+		else if(Hearthstone.gameState == STATE.HELP)
 		{
-			Hearthstone.gameState = STATE.Menu;
+			Hearthstone.gameState = STATE.MENU;
 			hs.repaint();
 		}
 		
-		else if(Hearthstone.gameState == STATE.Menu)
+		else if(Hearthstone.gameState == STATE.MENU)
 		{
 			for(int i = 0; i < menu.getButtons().length; i++)
 			{
@@ -73,13 +74,13 @@ public class MouseInput implements MouseMotionListener, MouseListener
 				{
 					switch (i)
 					{
-					case 0: Hearthstone.gameState = STATE.Game;
+					case 0: Hearthstone.gameState = STATE.GAME;
 						break;
 						
-					case 1: Hearthstone.gameState = STATE.Help;
+					case 1: Hearthstone.gameState = STATE.HELP;
 						break;
 						
-					case 2: Hearthstone.gameState = STATE.End;
+					case 2: Hearthstone.gameState = STATE.END;
 						break;
 					}
 					
@@ -108,7 +109,7 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	@Override
 	public void mousePressed(MouseEvent arg0) 
 	{
-		if (Hearthstone.gameState == STATE.Game)
+		if (Hearthstone.gameState == STATE.GAME)
 		{
 			if (arg0.getButton() == MouseEvent.BUTTON1
 			&& spielfeld.playableCardAt(arg0))
