@@ -55,19 +55,24 @@ public class MouseInput implements MouseMotionListener, MouseListener
 		{
 			if(spielfeld.clickedNR(arg0))
 			{
+				if(playersMove)
+				{
+					spielfeld.attackUpdate();
+				}
+					
 				if (spielfeld.getAttackUpdate())
 				{
 					spielfeld.attackUpdate();
-					return;
 				}
 				
 				playersMove = !playersMove;
-				spielfeld.nextRound(playersMove);	
+				spielfeld.nextRound(playersMove);
+				
+				
 				return;
 			}
 			
-			spielfeld.attackUpdate();
-		}
+		}			
 		
 		else if(Hearthstone.gameState == STATE.HELP)
 		{

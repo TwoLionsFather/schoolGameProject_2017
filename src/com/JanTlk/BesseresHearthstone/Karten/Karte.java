@@ -6,10 +6,13 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import com.JanTlk.BesseresHearthstone.Deck;
+import com.JanTlk.BesseresHearthstone.Hearthstone;
 
 public class Karte extends JPanel
 {
@@ -25,16 +28,18 @@ public class Karte extends JPanel
 	private final int mana;		//kosten bei Ausspielen der Karte
 	private Deck inDeck;	//in diesem Deck ist die Karte zu finden
 	
+	private BufferedImage icon_Attack;
+	private BufferedImage icon_Life;
+	
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private final int schadenInit;	//reverence to determine color of life display
 	private int leben;		//Leben, 0 Leben = Karte tot
-	private final int lebenInit;	//
+	private final int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
 	
 	private boolean isDisplayed;
 	private boolean isAttacked;
 	private Karte attackCard;
-	
 	
 	/**
 	 * since time is running low, there will be no Magic Card System for now
@@ -87,6 +92,16 @@ public class Karte extends JPanel
 		
 		this.inDeck = inDeck;
 		this.setStatus(Status.STAPEL);
+		
+		try {
+			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[9]), 12, 12);
+			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[10]), 12, 12);
+		} catch (IOException e) {
+			e.printStackTrace();
+			icon_Attack = null;
+			icon_Life = null;
+			System.err.println("No Card Icon found");
+		}
 	}
 	
 	/**
@@ -148,16 +163,34 @@ public class Karte extends JPanel
 		{
 			//draws Damage
 			g.setFont(new Font("Century", Font.BOLD, 18));
+
+			if(Hearthstone.isDrawhelpActive())
+			{
+				g.drawImage(icon_Attack
+							, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) + 10
+							, y + textur.getHeight() - 36
+							, null);
+			}
+			
 			g.setColor(checkForChange(schadenInit, schaden));			
 			g.drawString("" + Karte.this.getSchaden()
-						, ((Karte.this.getSchaden() < 10) ? 18 : 23) + x
-						, textur.getHeight() - 25 + y);
+						, x + ((Karte.this.getSchaden() < 10) ? 18 : 23)
+						, y + textur.getHeight() - 25);
 			
 			//draws Life
+			if(Hearthstone.isDrawhelpActive())
+			{
+				g.drawImage(icon_Life
+							, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) - icon_Life.getWidth() - 1
+							, y + textur.getHeight() - 36
+							, null);
+			}
+			
 			g.setColor(checkForChange(lebenInit, leben));			
 			g.drawString("" + Karte.this.getLeben()
-						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + x
-						, textur.getHeight() - 25 + y);
+						, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27)
+						, y + textur.getHeight() - 25);
+			
 		}
 				
 		//draws mana, chooses color based on background (L/N)
@@ -172,8 +205,8 @@ public class Karte extends JPanel
 			g.setColor(Color.black);
 			g.setFont(new Font("Arial", Font.BOLD, 11));
 			g.drawString(Karte.this.getName()
-						, 22 + x
-						, 22 + y);
+						, x + 22
+						, y + 22);
 		}
 		
 		moved = false;
@@ -431,6 +464,11 @@ public class Karte extends JPanel
 	public Karte getAttackCard() 
 	{
 		return attackCard;
+	}
+
+	public int getCardID() 
+	{
+		return cardID;
 	}
 
 	public boolean isDisplayed() 

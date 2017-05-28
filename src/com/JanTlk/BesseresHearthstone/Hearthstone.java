@@ -80,6 +80,8 @@ public class Hearthstone extends Canvas
 	 * "G\\helpSheet.png"[6]; 
 	 * "G\\playerWin.png"[7]; 
 	 * "G\\pcWin.png"[8];  
+	 * "G\\v_attack.png"[9];
+	 * "G\\v_life.png"[10];
 	 * @return list of listed Files
 	 */
 	public static File[] allImportedFiles()
@@ -94,6 +96,8 @@ public class Hearthstone extends Canvas
 		paths.add("Graphics\\helpSheet.png"); //Menu.Menu
 		paths.add("Graphics\\playerWin.png"); //Menu.Menu
 		paths.add("Graphics\\pcWin.png"); //Menu.Menu
+		paths.add("Graphics\\v_attack.png"); //Karte.Karte
+		paths.add("Graphics\\v_life.png"); //Karte.Karte
 		
 		File[] allImportedFiles = new File[paths.size()];
 		
@@ -155,7 +159,7 @@ public class Hearthstone extends Canvas
 				HOEHE = BREITE / s.nextInt() * s.nextInt();
 				break;
 				
-			case 3:
+			case 3:				
 				String GameMode = s.next();
 				
 				if (GameMode.equalsIgnoreCase("NoobMode")) 

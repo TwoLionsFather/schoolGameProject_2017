@@ -72,17 +72,18 @@ public class Spielfeld
 		gameStats[0] = 20;
 		gameStats[3] = 20;
 		
-		gameStats[1] = (!PCFirstMove) ? 1 : 0;		
-		gameStats[2] = (!PCFirstMove) ? 1 : 0;
+		gameStats[1] = 1;		
+		gameStats[2] = 1;
 		
-		gameStats[4] = (PCFirstMove) ? 1 : 0;
-		gameStats[5] = (PCFirstMove) ? 1 : 0;
+		gameStats[4] = 1;
+		gameStats[5] = 1;
 		
 		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
 		
 		if(PCFirstMove)
 		{
 			pcController.nextRound(kartenAufFelder, gameStats);
+			attackUpdate = true;
 		}
 		
 	}
@@ -102,8 +103,6 @@ public class Spielfeld
 		
 		if(playersTurn)
 		{
-			attackUpdate();
-			
 			if (gameStats[2] < 5)
 			{
 				gameStats[2]++;
@@ -116,6 +115,7 @@ public class Spielfeld
 		}
 		
 		attackUpdate();
+		
 		if (gameStats[5] < 5)
 		{
 			gameStats[5]++;					//increase PC Mana Pool by one
@@ -129,7 +129,7 @@ public class Spielfeld
 	}
 	
 	/**
-	 * after PCs turn, player needs to click once to see move of PC
+	 * this method is used to performe the attack of every card
 	 */
 	public void attackUpdate() 
 	{
@@ -158,7 +158,7 @@ public class Spielfeld
 		}
 		
 		attackUpdate = false;
-		remDeadCardsFromRectangles();
+		updateCardRectangles();
 		dPC.repaint();
 	}
 	
@@ -243,7 +243,8 @@ public class Spielfeld
 						, (int) (dChome.getY() + dChome.getHeight()));
 			}
 			
-			else if (tCard.getStatus() == Status.FELD)
+			else if (tCard.getStatus() == Status.FELD
+			&& dPL.isInDeck(tCard))
 			{
 				Rectangle dChome = tCard.getHome();
 				int rimWidth = 3;
@@ -537,16 +538,21 @@ public class Spielfeld
 	 * checks if moved card is checked in on any of the rectangles and delets it from the array
 	 * @param remC the card choosen to get removed
 	 */
-	private void remDeadCardsFromRectangles() 
+	private void updateCardRectangles() 
 	{
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
-				if ((kartenAufFelder[i][playerPC] != null) 
-				&& kartenAufFelder[i][playerPC].getStatus() == Status.ABBLAGE)
+				if (kartenAufFelder[i][playerPC] != null)
 				{
-					kartenAufFelder[i][playerPC] = null;
+					if ((kartenAufFelder[i][playerPC].getStatus() == Status.ABBLAGE)
+					|| (kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKP)
+					|| (kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKC))
+					{
+						kartenAufFelder[i][playerPC] = null;
+					}
+					
 				}
 			}
 		}

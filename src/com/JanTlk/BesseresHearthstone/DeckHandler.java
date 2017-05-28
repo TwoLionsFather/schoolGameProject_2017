@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
+import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 /**
  * In this class every card should be added to the game and to a deck

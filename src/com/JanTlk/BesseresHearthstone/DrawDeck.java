@@ -1,5 +1,7 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -189,6 +191,22 @@ public class DrawDeck
 						, (int) tempC.getBounds().getY()
 						, g
 						, false);
+			
+			//Es ist nicht ostern, doch ostereier suchen macht immer Spaß
+			if (tempC.getCardID() == 16
+			&& !Hearthstone.isDrawhelpActive()
+			&& kartenFelder[(anzRectInR / 2) + ((anzRectInR % 2 == 0) ? 1 : 0)][1].contains(tempC.getHome()))
+			{
+				g.setColor(Color.red);
+				g.setFont(new Font("Arial", Font.PLAIN, 20));
+				
+				String EasterEgg = "Fixed it";
+				g.drawString(EasterEgg
+							, (int) tempC.getHome().getX()
+							, (int) tempC.getHome().getY() - 10);
+				
+				System.out.println("_________________┌∩┐(ಠ_ಠ)┌∩┐_________________ Achivement unlocked _________________┌∩┐(ಠ_ಠ)┌∩┐_________________");
+			}
 		}
 	}
 	

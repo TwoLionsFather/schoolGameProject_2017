@@ -71,24 +71,42 @@ public class KI
 		gameStats = layNextCard(playableCs, kartenAufFelder, gameStats);
 		chooseCardToAttack(enemysCs, ownCs, gameStats);
 		
-		if (allCardsUnderAttack(kartenAufFelder))
+		if (allCardsUnderAttack(kartenAufFelder)
+		|| noCardsToAttack(kartenAufFelder))
 		{
-			attackPlayer(ownCs);
+			attackPlayer(ownCs, kartenAufFelder);
 		}		
 		
+	}
+
+	private boolean noCardsToAttack(Karte[][] kartenAufFelder) 
+	{		
+		return (nextPlayField(kartenAufFelder, 1) == -1);
 	}
 
 	/**
 	 * all cards that have no target, attack the player
 	 * @param ownCs
 	 */
-	private void attackPlayer(LinkedList<Karte> ownCs) 
+	private void attackPlayer(LinkedList<Karte> ownCs, Karte[][] kartenAufFelder) 
 	{
 		for (Karte tempC : ownCs)
 		{
 			if (tempC.getStatus() == Status.FELD)
 			{
-				tempC.setStatus(Status.ATTACKP);
+				tempC.setStatus(Status.ATTACKP);				
+				int placeOn = nextPlayField(kartenAufFelder, 1);
+				
+				Rectangle attackPlayer = kartenFelder[placeOn][1];
+				kartenAufFelder[placeOn][1] = tempC;
+				
+				System.out.println("KI.attackPlayer Reminder for positioning");
+				tempC.setNewPos(new Rectangle((int) (attackPlayer.getX() + (attackPlayer.getWidth() - tempC.getBounds().getWidth()) / 2)
+											, (int) attackPlayer.getY() - 60
+											, (int) tempC.getBounds().getWidth()
+											, (int) tempC.getBounds().getHeight()));
+				
+				
 			}
 		}
 	}
@@ -112,10 +130,16 @@ public class KI
 				return gameStats;
 			}
 			
+			nextPlayField = nextPlayField(kartenAufFelder, 0);
+			
+			//If there is no place, no card will get played
+			if (nextPlayField == -1)
+			{
+				return gameStats;
+			}
+			
 			cardToPlay.setStatus(Status.LAYED);
 			gameStats[4] -= cardToPlay.getMana();
-			
-			nextPlayField = nextPlayField(kartenAufFelder);
 			
 			Rectangle tempRect = kartenFelder[nextPlayField][0];
 			kartenAufFelder[nextPlayField][0] = cardToPlay;
@@ -179,10 +203,11 @@ public class KI
 
 			Karte chosenCard = enemysCs.get(idxTop);
 			
+			System.out.println("KI.chooseAttack Reminder for positioning");
 			ownCard.setNewPos(new Rectangle((int) (chosenCard.getBounds().getX() + (chosenCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
-										, (int) chosenCard.getBounds().getY()
-										, (int) ownCard.getBounds().getWidth()
-										, (int) ownCard.getBounds().getHeight()));
+												, (int) chosenCard.getBounds().getY() - 60
+												, (int) ownCard.getBounds().getWidth()
+												, (int) ownCard.getBounds().getHeight()));
 			
 			ownCard.attackedCard(chosenCard);
 			ownCard.setStatus(Status.ATTACKC);
@@ -262,21 +287,23 @@ public class KI
 		return playableCs.get(idxTop);
 	}
 
+
 	/**
-	 * sets the next spot a Card will get placed on
+	 * looks for next free spot, close to the mid
 	 * @param kartenAufFelder
-	 * @return
+	 * @param playerPC 0 for PC, 1 for Player
+	 * @return free place in row
 	 */
-	public int nextPlayField(Karte[][] kartenAufFelder) 
+	public int nextPlayField(Karte[][] kartenAufFelder, int playerPC) 
 	{		
-		for (int i = 0; i < maxCardRow - 1; i++)
+		for (int i = 0; i < maxCardRow / 2 + 1; i++)
 		{
-			if (kartenAufFelder[maxCardRow / 2 + i][0] == null)
+			if (kartenAufFelder[maxCardRow / 2 + i][playerPC] == null)
 			{
 				nextPlayField = maxCardRow / 2 + i;
 				return nextPlayField;
 			}
-			else if (kartenAufFelder[maxCardRow / 2 - i][0] == null)
+			else if (kartenAufFelder[maxCardRow / 2 - i][playerPC] == null)
 			{
 				nextPlayField = maxCardRow / 2 - i;
 				return nextPlayField;

@@ -1,24 +1,23 @@
 1920
 16/9
-NoobMode
+Default
 
 Default				
 gameState = STATE.MENU;
 debug = false;
 drawHelp = false;
 
-"NoobMode"
+NoobMode
 STATE.MENU;
 debug = false;
 drawHelp = true;
-				
-				
-"Debug"
+								
+Debug
 gameState = STATE.GAME;
 debug = true;
 drawHelp = true;
 				
-"TestGame"
+TestGame
 gameState = STATE.MENU;
 debug = true;
 drawHelp = false;
