@@ -16,7 +16,7 @@ import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 public class DrawDeck 
 {
-	private int anzRectInR = 15;		//How many rectangles are there from left to right
+	private int anzRectInR = 7;		//How many rectangles are there from left to right
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	private Rectangle [][] kartenFelder;
 	
@@ -26,7 +26,7 @@ public class DrawDeck
 	private Deck dPL;
 	private Deck dPC;
 	
-	public DrawDeck(DeckHandler dH, File cardBackF) 
+	public DrawDeck(DeckHandler dH) 
 	{
 		this.dPL = dH.getPlayerDeck();
 		this.dPC = dH.getPCDeck();
@@ -90,8 +90,6 @@ public class DrawDeck
 	 */
 	public void render(int[] gameStats, boolean playersMove, Graphics g) 
 	{
-		boolean debugMode = false;
-		
 		//reset counter to start counting while checking Status of every Card
 		gameStats[6] = 0;
 		gameStats[7] = 0;
@@ -165,8 +163,8 @@ public class DrawDeck
 			drawField(fieldKartenPC, g);
 		}
 		
-		drawHand(debugMode, true, handKartenPL, g);
-		drawHand(debugMode, false, handKartenPC, g);		
+		drawHand(true, handKartenPL, g);
+		drawHand(false, handKartenPC, g);		
 	}
 	
 	/**
@@ -175,12 +173,12 @@ public class DrawDeck
 	 * @param handCards these cards are on the hand of a player and need to be drawn
 	 * @param g used to draw the graphics of the card on
 	 */
-	public void drawHand(boolean debugMode, boolean player, ArrayList<Karte> handCards, Graphics g)
+	public void drawHand(boolean player, ArrayList<Karte> handCards, Graphics g)
 	{
 		int kartenCount = 0;
 		
 		if (!player 
-		&& !debugMode
+		&& !Hearthstone.isDebugMode()
 		&& cardBack != null)
 		{
 			for(Karte tCard : handCards)

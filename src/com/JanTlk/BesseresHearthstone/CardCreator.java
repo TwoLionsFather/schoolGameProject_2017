@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class CardCreator
 	{
 		mainComponent = c;
 		cardProps = new Rectangle(220, 414);
-		spaltenZeilenPic = new int[]{14, 1};
+		spaltenZeilenPic = new int[]{21, 2};
 		spalteZeile = new int[]{0, 0};
 		
 		try {

@@ -1,20 +1,12 @@
 package com.JanTlk.BesseresHearthstone.Karten;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.JanTlk.BesseresHearthstone.Deck;
@@ -180,7 +172,7 @@ public class Karte extends JPanel
 		
 		moved = false;
 	}
-	
+
 	/**
 	 * clones a card, creating a new Karte object in the process
 	 */

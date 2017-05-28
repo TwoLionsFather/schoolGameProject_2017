@@ -19,12 +19,15 @@ public class DrawHud
 	private Rectangle hud; //all locations relative to this
 	private Rectangle nextRoundB;
 	
-	public DrawHud(File hudTextur, Rectangle nextRoundB) 
+	public DrawHud(Rectangle nextRoundB) 
 	{
 		this.nextRoundB = nextRoundB;
 		
 		try {
-			hudtexture = ImageIO.read(hudTextur);
+			hudtexture = (ImageIO.read(Hearthstone.allImportedFiles()[5]));
+			
+//			Testing went wrong
+//			hudtexture = DrawDeck.rescaledBufferedimage((ImageIO.read(Hearthstone.allImportedFiles()[5])), 300, 170);
 		} catch (IOException e) {
 			hudtexture = null;
 			e.printStackTrace();

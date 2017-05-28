@@ -15,8 +15,6 @@ public class KI
 	private int nextPlayField;
 	private int maxCardRow;
 	
-	
-	
 	public KI(int maxCardRow, Rectangle[][] kartenFelder, DeckHandler dH) 
 	{
 		this.deck = dH.getPCDeck();
@@ -27,7 +25,6 @@ public class KI
 		this.maxCardRow = maxCardRow;
 	}
 
-	
 	/**
 	 * plays next Round for PC
 	 * @param kartenAufFelder these cards are on the field rN
@@ -95,7 +92,6 @@ public class KI
 			}
 		}
 	}
-
 
 	/**
 	 * lays all possible cards
@@ -264,7 +260,6 @@ public class KI
 		System.out.println(playableCs.get(idxTop).toString());
 		return playableCs.get(idxTop);
 	}
-
 
 	/**
 	 * sets the next spot a Card will get placed on

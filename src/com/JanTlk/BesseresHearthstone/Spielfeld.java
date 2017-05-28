@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Random;
 
 import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
@@ -17,13 +18,13 @@ public class Spielfeld
 	private DeckHandler dH;
 	private Deck dPL;
 	private Deck dPC;
-	private int idxMovedC;
 	
 	private boolean playersMove;	
-	private boolean playerFirstMove = true;
+	private final boolean playerFirstMove;
 	private boolean attackUpdate;
 	private int[] gameStats;
 	
+	private int idxMovedC;
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
 	
@@ -33,9 +34,6 @@ public class Spielfeld
 	private DrawHud hudDrawer;
 	private KI pcController;
 
-	private boolean drawHelp = false;
-	
-	
 	/**
 	 * used to set up the game
 	 * @param c used to redraw
@@ -50,11 +48,14 @@ public class Spielfeld
 		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
 								, 30, 20);
 		
-		hudDrawer = new DrawHud(Hearthstone.allImportedFiles()[5], nextRoundB);
-		deckDrawer = new DrawDeck(dH, new File("Graphics\\CardBack.png"));
+		hudDrawer = new DrawHud(nextRoundB);
+		deckDrawer = new DrawDeck(dH);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
 		kartenAufFelder = new Karte [deckDrawer.getAnzRectInR()][2];
+		
+		Random r = new Random();
+		playerFirstMove = r.nextBoolean();
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -140,7 +141,11 @@ public class Spielfeld
 		//if it is PCs move
 		if (playersMove == false)
 		{
-			gameStats[5]++;					//increase PC Mana Pool by one
+			if (gameStats[5] < 5)
+			{
+				gameStats[5]++;					//increase PC Mana Pool by one
+			}
+			
 			gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
 			dPC.ziehen();					//draws new Card from Deck		
 			pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
@@ -150,7 +155,11 @@ public class Spielfeld
 		
 		else if (playersMove)
 		{
-			gameStats[2]++;
+			if (gameStats[2] < 5)
+			{
+				gameStats[2]++;
+			}
+			
 			gameStats[1] = gameStats[2];
 			dPL.ziehen();
 			dPL.repaint();
@@ -163,14 +172,15 @@ public class Spielfeld
 	 * @param g the Graphics that every Card in the Game gets drawn with
 	 */
 	public void render(Graphics g) 
-	{		
-		deckDrawer.render(gameStats, playersMove, g);
-		hudDrawer.render(playersMove, detailedCard, gameStats, g);
-		
-		if(drawHelp)
+	{	
+		if(Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
+			drawHelpHud(g);
 		}
+
+		deckDrawer.render(gameStats, playersMove, g);
+		hudDrawer.render(playersMove, detailedCard, gameStats, g);
 		
 		if (gameStats[0] <= 0
 		|| gameStats[3] <= 0
@@ -183,6 +193,21 @@ public class Spielfeld
 		
 	}
 	
+	private void drawHelpHud(Graphics g) 
+	{
+		if (detailedCard != null)
+		{
+			Rectangle dChome = detailedCard.getBounds();
+			int rimWidth = 3;
+			
+			g.setColor(Color.orange);
+			g.fillRect((int) dChome.getX() - rimWidth
+					, (int) dChome.getY() - rimWidth
+					, (int) dChome.getWidth() + rimWidth * 2
+					, (int) dChome.getHeight() + rimWidth * 2);
+		}
+	}
+
 	/**
 	 *  used to draw lines around rectangles that cards use to navigate
 	 * @param g graphics component that graphics get drwn on

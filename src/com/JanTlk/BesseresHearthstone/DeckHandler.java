@@ -35,7 +35,7 @@ public class DeckHandler
 			return;
 		} 
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 1; i <= 32; i++)
 		{
 			player.addKarte(cC.nextCard());
 			player.getKarten().getLast().setDeck(player);

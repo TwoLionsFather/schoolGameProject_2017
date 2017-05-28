@@ -5,9 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 
@@ -24,10 +28,12 @@ public class Hearthstone extends Canvas
 		, BEATEN();
 	}
 	
-	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
-	public static final float BREITE = 1920; 			// 1920 für Fullscreen
-	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
-	public static STATE gameState = STATE.GAME;
+	public static final String TITEL = "Gwint";	//Titel für das Spiel
+	public static float BREITE; 			// 1920 für Fullscreen
+	public static float HOEHE; 	// 3/4 der Breite -> Höhe
+	public static STATE gameState;
+	private static boolean debug;
+	private static boolean drawHelp;
 	
 	private BufferedImage background;
 	private Spielfeld spielfeld;
@@ -36,6 +42,12 @@ public class Hearthstone extends Canvas
 	public Hearthstone()
 	{	
 		this.setBackground(Color.black);
+		try {
+			setup();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			System.err.println("Settup failed");
+		}
 		
 		try {
 			background = ImageIO.read(allImportedFiles()[0]);
@@ -54,7 +66,6 @@ public class Hearthstone extends Canvas
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 		
 	}
-	
 	
 	/**
 	 * "G\\backGround.png"[0]; 
@@ -92,6 +103,87 @@ public class Hearthstone extends Canvas
 		}
 		
 		return allImportedFiles;
+	}
+	
+	
+	/**
+	 * reads and sets up Game
+	 * @throws IOException
+	 */
+	public void setup() throws IOException 
+	{
+		BufferedReader br = null;
+		
+		try {
+			br =  new BufferedReader(new FileReader(new File("Einstellungen.txt")));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.err.println("No Config File Found, fatal error!");
+			System.exit(1);
+		}
+		
+		for (int i = 1; i <= 3; i++)
+		{
+			String line = br.readLine();
+			
+			if((line == null)
+			|| (line.isEmpty())
+			&& i != 3)
+			{
+				System.err.println("Config File ran out of lines");
+				System.exit(1);
+			}
+			
+			Scanner s = new Scanner(line);
+			switch (i)
+			{
+			case 1:
+				BREITE = s.nextInt();
+				break;
+				
+			case 2:
+				s.useDelimiter("/");
+				HOEHE = BREITE / s.nextInt() * s.nextInt();
+				break;
+				
+			case 3:
+				String GameMode = s.next();
+				
+				if (GameMode.equalsIgnoreCase("NoobMode")) 
+				{
+					gameState = STATE.MENU;
+					debug = false;
+					drawHelp = true;
+					break;
+				}
+				
+				else if (GameMode.equalsIgnoreCase("Debug")) 
+				{
+					gameState = STATE.GAME;
+					debug = true;
+					drawHelp = true;
+					break;
+				}
+				
+				else if (GameMode.equalsIgnoreCase("TestGame")) 
+				{
+					gameState = STATE.MENU;
+					debug = true;
+					drawHelp = false;
+					break;
+				}
+				
+				else
+				{
+					gameState = STATE.MENU;
+					debug = false;
+					drawHelp = false;
+					break;
+				}
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -153,6 +245,16 @@ public class Hearthstone extends Canvas
 		
 		else 
 			return var;
+	}
+
+
+	public static boolean isDebugMode() {
+		return debug;
+	}
+
+
+	public static boolean isDrawhelpActive() {
+		return drawHelp;
 	}
 	
 }
