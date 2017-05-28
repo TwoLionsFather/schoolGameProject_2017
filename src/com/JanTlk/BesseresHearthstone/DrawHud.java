@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -48,13 +47,6 @@ public class DrawHud
 	 */
 	public void render(boolean playersMove, Karte cardInDetail, int[] gameStats, Graphics g)
 	{		
-		//next Round Button
-		g.setColor((playersMove) ? Color.green : Color.red);
-		g.drawRect((int) nextRoundB.getX()
-				, (int) nextRoundB.getY()
-				, (int) nextRoundB.getWidth()
-				, (int) nextRoundB.getHeight());	
-		
 		//hud texture
 		g.drawImage(hudtexture
 	            , (int) hud.getX()

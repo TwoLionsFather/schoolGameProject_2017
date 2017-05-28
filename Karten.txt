@@ -30,6 +30,3 @@ Endrega;M;N;2;3;2
 Dethmold;M;N;3;4;2
 Sabrina Glevissig;M;N;3;4;3
 Sheldon Skaggs;M;N;1;1;2
-
-
-

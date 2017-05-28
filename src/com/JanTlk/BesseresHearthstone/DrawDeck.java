@@ -1,11 +1,8 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -33,7 +30,7 @@ public class DrawDeck
 		this.deckHandler = dH;
 		
 		try {
-			this.cardBack = rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4]), 100, 200);
+			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4]), 100, 200);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cardBack = null;
@@ -56,33 +53,6 @@ public class DrawDeck
 		
 	}
 	
-	/**
-	 * used to convert scaled image of original Buffered Image
-	 * @param img the image object that will get converted
-	 * @return a new buffered image with correct scale
-	 */
-	public static BufferedImage rescaledBufferedimage(BufferedImage bimg, int width, int height)
-	{
-		
-		Image img = bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-		
-	    if (img instanceof BufferedImage)
-	    {
-	        return (BufferedImage) img;
-	    }
-
-	    // Create a buffered image with transparency
-	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-	    // Draw the image on to the buffered image
-	    Graphics2D bGr = bimage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
-
-	    // Return the buffered image
-	    return bimage;
-	}
-
 	/**
 	 * this displays all Cards on the Game
 	 * @param playersMove if this is true, players Cards will get displayed on top

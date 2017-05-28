@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.Random;
 
 import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
@@ -19,12 +18,11 @@ public class Spielfeld
 	private Deck dPL;
 	private Deck dPC;
 	
-	private boolean playersMove;	
-	private final boolean playerFirstMove;
-	private boolean attackUpdate;
+	private final boolean PCFirstMove;
 	private int[] gameStats;
 	
 	private int idxMovedC;
+	private boolean attackUpdate;
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
 	
@@ -55,7 +53,7 @@ public class Spielfeld
 		kartenAufFelder = new Karte [deckDrawer.getAnzRectInR()][2];
 		
 		Random r = new Random();
-		playerFirstMove = r.nextBoolean();
+		PCFirstMove = r.nextBoolean();
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -74,16 +72,15 @@ public class Spielfeld
 		gameStats[0] = 20;
 		gameStats[3] = 20;
 		
-		gameStats[1] = (playerFirstMove) ? 1 : 0;		
-		gameStats[2] = (playerFirstMove) ? 1 : 0;
+		gameStats[1] = (!PCFirstMove) ? 1 : 0;		
+		gameStats[2] = (!PCFirstMove) ? 1 : 0;
 		
-		gameStats[4] = (!playerFirstMove) ? 1 : 0;
-		gameStats[5] = (!playerFirstMove) ? 1 : 0;
+		gameStats[4] = (PCFirstMove) ? 1 : 0;
+		gameStats[5] = (PCFirstMove) ? 1 : 0;
 		
 		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
-		playersMove = playerFirstMove;
 		
-		if(!playersMove)
+		if(PCFirstMove)
 		{
 			pcController.nextRound(kartenAufFelder, gameStats);
 		}
@@ -93,11 +90,49 @@ public class Spielfeld
 	/**
 	 * used to set up next Round
 	 * this is a project for the future
-	 * @param toggelRound 
 	 * @param playerPC if true, its the players turn
 	 */
-	public void nextRound()
-	{		
+	public void nextRound(boolean playersTurn)
+	{	
+		if (detailedCard != null)
+		{
+			detailedCard.setDisplayed(false);
+			detailedCard = null;
+		}
+		
+		if(playersTurn)
+		{
+			attackUpdate();
+			
+			if (gameStats[2] < 5)
+			{
+				gameStats[2]++;
+			}
+			
+			gameStats[1] = gameStats[2];
+			dPL.ziehen();
+			dPL.repaint();
+			return;
+		}
+		
+		attackUpdate();
+		if (gameStats[5] < 5)
+		{
+			gameStats[5]++;					//increase PC Mana Pool by one
+		}
+		
+		gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
+		dPC.ziehen();					//draws new Card from Deck		
+		pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
+		attackUpdate = true;
+		return;		
+	}
+	
+	/**
+	 * after PCs turn, player needs to click once to see move of PC
+	 */
+	public void attackUpdate() 
+	{
 		//atacking cards get moved back to their origin position
 		for (Karte tempC : dH.getAllCards()) 
 		{
@@ -122,49 +157,9 @@ public class Spielfeld
 
 		}
 		
+		attackUpdate = false;
 		remDeadCardsFromRectangles();
-		
-		if(attackUpdate)
-		{
-			attackUpdate = false;
-			
-			if (playersMove)
-				playersMove = false;
-			else 
-				playersMove = true;
-			
-			dPL.repaint();
-			nextRound();
-			return;
-		}
-		
-		//if it is PCs move
-		if (playersMove == false)
-		{
-			if (gameStats[5] < 5)
-			{
-				gameStats[5]++;					//increase PC Mana Pool by one
-			}
-			
-			gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
-			dPC.ziehen();					//draws new Card from Deck		
-			pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
-			attackUpdate = true;
-			nextRound();
-		}
-		
-		else if (playersMove)
-		{
-			if (gameStats[2] < 5)
-			{
-				gameStats[2]++;
-			}
-			
-			gameStats[1] = gameStats[2];
-			dPL.ziehen();
-			dPL.repaint();
-		}
-
+		dPC.repaint();
 	}
 	
 	/**
@@ -176,11 +171,11 @@ public class Spielfeld
 		if(Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
-			drawHelpHud(g);
 		}
 
-		deckDrawer.render(gameStats, playersMove, g);
-		hudDrawer.render(playersMove, detailedCard, gameStats, g);
+		drawHelpHud(g);
+		deckDrawer.render(gameStats, MouseInput.isPlayersMove(), g);
+		hudDrawer.render(MouseInput.isPlayersMove(), detailedCard, gameStats, g);
 		
 		if (gameStats[0] <= 0
 		|| gameStats[3] <= 0
@@ -193,9 +188,30 @@ public class Spielfeld
 		
 	}
 	
+	/**
+	 * draws Card Details
+	 * and other usefull info
+	 * @param g
+	 */
 	private void drawHelpHud(Graphics g) 
 	{
-		if (detailedCard != null)
+		//next Round Button
+		g.setColor((MouseInput.isPlayersMove()) ? Color.green : Color.red);
+		g.drawRect((int) nextRoundB.getX()
+				, (int) nextRoundB.getY()
+				, (int) nextRoundB.getWidth()
+				, (int) nextRoundB.getHeight());
+		
+		if (attackUpdate)
+		{
+			g.drawLine((int) nextRoundB.getX()
+					, (int) nextRoundB.getY()
+					, (int) (nextRoundB.getX() + nextRoundB.getWidth())
+					, (int) (nextRoundB.getY() + nextRoundB.getHeight()));
+		}
+			
+		if ((detailedCard != null)
+		&& detailedCard.getStatus() != Status.ABBLAGE)
 		{
 			Rectangle dChome = detailedCard.getBounds();
 			int rimWidth = 3;
@@ -205,6 +221,39 @@ public class Spielfeld
 					, (int) dChome.getY() - rimWidth
 					, (int) dChome.getWidth() + rimWidth * 2
 					, (int) dChome.getHeight() + rimWidth * 2);
+		}
+		
+		for (Karte tCard : dH.getAllCards())
+		{
+			if ((tCard.getStatus() == Status.ATTACKC)
+			|| (tCard.getStatus() == Status.ATTACKP))
+			{
+				Rectangle dChome = tCard.getHome();
+				int rimWidth = 3;
+				
+				g.setColor(Color.darkGray);
+				g.drawRect((int) dChome.getX() - rimWidth
+						, (int) dChome.getY() - rimWidth
+						, (int) dChome.getWidth() + rimWidth * 2
+						, (int) dChome.getHeight() + rimWidth * 2);
+				
+				g.drawLine((int) dChome.getX()
+						, (int) dChome.getY()
+						, (int) (dChome.getX() + dChome.getWidth())
+						, (int) (dChome.getY() + dChome.getHeight()));
+			}
+			
+			else if (tCard.getStatus() == Status.FELD)
+			{
+				Rectangle dChome = tCard.getHome();
+				int rimWidth = 3;
+				
+				g.setColor(Color.orange);
+				g.drawRect((int) dChome.getX() - rimWidth
+						, (int) dChome.getY() - rimWidth
+						, (int) dChome.getWidth() + rimWidth * 2
+						, (int) dChome.getHeight() + rimWidth * 2);
+			}
 		}
 	}
 
@@ -266,8 +315,7 @@ public class Spielfeld
 			if (inBounds(cEvent, tKarte.getBounds())
 			&& (tKarte.getStatus() != Status.ABBLAGE)
 			&& (tKarte.getStatus() != Status.STAPEL)
-			&& ((tKarte.getStatus() == Status.HAND) ? (gameStats[1] - tKarte.getMana() >= 0) : true)
-			&& playersMove) 
+			&& ((tKarte.getStatus() == Status.HAND) ? (gameStats[1] - tKarte.getMana() >= 0) : true)) 
 			{
 				highestID = i;
 			}
@@ -422,58 +470,31 @@ public class Spielfeld
 	public void cardDetailsAt(MouseEvent arg0) 
 	{
 		Point cEvent = arg0.getPoint();
-		int idxDetailedCard = -1;
-		boolean playersDeck = false;
 		
-		for(int i = 0; i < dPL.getAnzKarten(); i++)
+		int idx = -1;
+		for (Karte tCard : dH.getAllCards())
 		{
-			Karte tKarte = dPL.getKarten().get(i);
+			idx++;
 			
-			if(inBounds(cEvent, tKarte.getBounds())) 
+			if(inBounds(cEvent, tCard.getBounds())
+			&& tCard.getStatus() != Status.ABBLAGE
+			&& tCard.getStatus() != Status.STAPEL) 
 			{
-				idxDetailedCard = i;
-				playersDeck = true;
-			}
-		}
-		
-		if (idxDetailedCard == -1)
-		{
-			for(int i = 0; i < dPC.getAnzKarten(); i++)
-			{
-				Karte tKarte = dPC.getKarten().get(i);
-				
-				if(inBounds(cEvent, tKarte.getBounds())) 
+				if (detailedCard != tCard)
 				{
-					idxDetailedCard = i;
-					playersDeck = false;
+					if (detailedCard != null)
+					{
+						detailedCard.setDisplayed(false);
+					}
+					
+					detailedCard = dH.getAllCards().get(idx);
+					detailedCard.setDisplayed(true);
+					detailedCard.getComponent().repaint();
 				}
+				
 			}
-		}		
-		
-		if(idxDetailedCard == -1)
-		{
-			if (detailedCard != null)
-			{
-				detailedCard.setDisplayed(false);
-				detailedCard = null;
-			}
-			return;
 		}
 		
-		Karte atDisplay = (playersDeck) ? dPL.getKarten().get(idxDetailedCard) : dPC.getKarten().get(idxDetailedCard);
-		
-		if (!atDisplay.isDisplayed())
-		{
-			if (detailedCard != null)
-			{
-				detailedCard.setDisplayed(false);
-				detailedCard = null;
-			}
-			
-			atDisplay.setDisplayed(true);
-			detailedCard = atDisplay;			
-			detailedCard.getComponent().repaint();
-		}
 	}
 	
 	/**
@@ -484,10 +505,6 @@ public class Spielfeld
 	public boolean clickedNR(MouseEvent arg0)
 	{
 		Point cEvent = arg0.getPoint();
-		if (inBounds(cEvent, nextRoundB))
-		{
-			playersMove = !playersMove;
-		}
 		return inBounds(cEvent, nextRoundB);
 	}
 	
@@ -534,11 +551,6 @@ public class Spielfeld
 			}
 		}
 	}
-	
-	public boolean isPlayersMove() 
-	{
-		return playersMove;
-	}
 
 	
 	public Karte getDetailedCard() 
@@ -552,14 +564,9 @@ public class Spielfeld
 		this.detailedCard = detailedCard;
 	}
 
-	public boolean getAttackUpdate()
+	public boolean getAttackUpdate() 
 	{
 		return attackUpdate;
-	}
-
-	public void setAttackUpdate(boolean attackUpdate) 
-	{
-		this.attackUpdate = attackUpdate;
 	}
 
 }

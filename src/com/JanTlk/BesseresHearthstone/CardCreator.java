@@ -1,8 +1,6 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -127,7 +125,7 @@ public class CardCreator
 			}
 			
 			
-			cardTexture = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_SMOOTH));
+			cardTexture = Hearthstone.rescaledBufferedimage(subImage, 100, 200);
 		}
 		
 		else
@@ -153,30 +151,6 @@ public class CardCreator
 		//Debugg output
 //		System.out.println(nextCard.toString());
 		return nextCard;
-	}
-	
-	/**
-	 * used to convert scaled subimage to cardimage
-	 * @param img the image object that will get converted
-	 * @return a new buffered image of the image
-	 */
-	public static BufferedImage toBufferedImage(Image img)
-	{
-	    if (img instanceof BufferedImage)
-	    {
-	        return (BufferedImage) img;
-	    }
-
-	    // Create a buffered image with transparency
-	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-	    // Draw the image on to the buffered image
-	    Graphics2D bGr = bimage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
-
-	    // Return the buffered image
-	    return bimage;
 	}
 
 }

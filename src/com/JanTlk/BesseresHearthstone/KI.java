@@ -68,7 +68,7 @@ public class KI
 			}
 		}
 		
-		layNextCard(playableCs, kartenAufFelder, gameStats);
+		gameStats = layNextCard(playableCs, kartenAufFelder, gameStats);
 		chooseCardToAttack(enemysCs, ownCs, gameStats);
 		
 		if (allCardsUnderAttack(kartenAufFelder))
@@ -101,7 +101,7 @@ public class KI
 	 * @return returns gameStats after card is played
 	 */
 	
-	private void layNextCard(LinkedList<Karte> playableCs, Karte[][] kartenAufFelder, int[] gameStats) 
+	private int[] layNextCard(LinkedList<Karte> playableCs, Karte[][] kartenAufFelder, int[] gameStats) 
 	{
 		if (!playableCs.isEmpty())
 		{
@@ -109,7 +109,7 @@ public class KI
 			
 			if (cardToPlay == null)
 			{
-				return;
+				return gameStats;
 			}
 			
 			cardToPlay.setStatus(Status.LAYED);
@@ -132,6 +132,7 @@ public class KI
 			this.layNextCard(playableCs, kartenAufFelder, gameStats);
 		}
 
+		return gameStats;
 	}
 	
 	/**
@@ -178,7 +179,7 @@ public class KI
 
 			Karte chosenCard = enemysCs.get(idxTop);
 			
-			chosenCard.setNewPos(new Rectangle((int) (chosenCard.getBounds().getX() + (chosenCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
+			ownCard.setNewPos(new Rectangle((int) (chosenCard.getBounds().getX() + (chosenCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
 										, (int) chosenCard.getBounds().getY()
 										, (int) ownCard.getBounds().getWidth()
 										, (int) ownCard.getBounds().getHeight()));

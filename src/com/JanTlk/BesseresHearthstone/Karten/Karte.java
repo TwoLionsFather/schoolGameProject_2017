@@ -15,6 +15,7 @@ public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
 
+	//System currently not in use, only for debugging
 	private static int numberOfInstances = 0;
 	private final int cardID;	//every instance of Card gets its own id
 	
@@ -104,6 +105,11 @@ public class Karte extends JPanel
 		if(this.leben <= 0)
 		{
 			this.status = Status.ABBLAGE;
+		}
+		
+		else 
+		{
+			this.status = Status.FELD;
 		}
 		
 		if(attackCard.getLeben() <= 0)
@@ -301,6 +307,11 @@ public class Karte extends JPanel
 		this.homeRect = homeRect;
 		placeHome();
 		this.component.repaint();
+	}
+	
+	public Rectangle getHome() 
+	{
+		return homeRect;
 	}
 	
 	/**

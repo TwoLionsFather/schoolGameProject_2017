@@ -5,27 +5,35 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
-import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 
 public class Menu 
 {
 	private Rectangle[] buttons;
 	private BufferedImage helpSheet;
+	private BufferedImage playerWin;
+	private BufferedImage pcWin;
 	
-	public Menu() 
+	public Menu()
 	{
 		try {
-			helpSheet = ImageIO.read(new File("Graphics\\helpSheet.png"));
+			helpSheet = ImageIO.read(Hearthstone.allImportedFiles()[6]);
+
+			playerWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[7])
+														, (int) Hearthstone.BREITE
+														, (int) Hearthstone.HOEHE);
+
+			playerWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[8])
+														, (int) Hearthstone.BREITE
+														, (int) Hearthstone.HOEHE);
+			
 		} catch (IOException e) {
-			System.err.println("Found no Help File");
-			helpSheet = null;
+			e.printStackTrace();
+			System.err.println("File not found for menu build.");
 		}
-		
+
 		buttons = new Rectangle[3];
 		for(int i = 0; i < buttons.length; i++)
 		{
@@ -49,8 +57,9 @@ public class Menu
 				, (int) Hearthstone.BREITE
 				, (int) Hearthstone.HOEHE);
 		
-		if(Hearthstone.gameState == STATE.MENU)
+		switch (Hearthstone.gameState)
 		{
+		case MENU:
 			for (int i = 0; i < buttons.length; i++)
 			{
 				Rectangle button = buttons[i];
@@ -85,34 +94,46 @@ public class Menu
 				}
 				
 			}
-			
-		}
+			break;
 		
-		else if(Hearthstone.gameState == STATE.END) 
-		{
+		case END:
 			g.setColor(Color.white);
 			g.setFont(new Font("Ende", Font.BOLD, 50));
 			g.drawString("Spiel Ende"
-					, (int) Hearthstone.BREITE / 2 - "Spiel Ende".length() * 10
-					, (int) Hearthstone.HOEHE / 2);
-		}
-		
-		else if(Hearthstone.gameState == STATE.HELP
-		&& helpSheet != null)
-		{
-			g.drawImage(helpSheet
-					, (int) (Hearthstone.BREITE / 2 - helpSheet.getWidth() / 2)
-					, 0
-					, null);
-		}
-		
-		else if(Hearthstone.gameState == STATE.BEATEN) 
-		{
+						, (int) Hearthstone.BREITE / 2 - "Spiel Ende".length() * 10
+						, (int) Hearthstone.HOEHE / 2);
+			break;
+			
+		case HELP:
+			if (helpSheet != null)
+			{
+				g.drawImage(helpSheet
+						, (int) (Hearthstone.BREITE / 2 - helpSheet.getWidth() / 2)
+						, 0
+						, null);
+			}
+			
+			else 
+			{
+				g.setColor(Color.white);
+				g.setFont(new Font("Arial", Font.PLAIN, 12));;
+				g.drawString("No Help File"
+						, (int) Hearthstone.BREITE / 2 - ("No Help File".length() * 5)
+						, (int) Hearthstone.HOEHE / 2 - 6);
+			}
+			
+			break;
+			
+		case BEATEN:
 			g.setColor(Color.white);
 			g.setFont(new Font("Ende", Font.BOLD, 50));
 			g.drawString("Gewonnen/Verloren , cool"
-					, (int) Hearthstone.BREITE / 2 - "Gewonnen/Verloren , cool".length() * 10
-					, (int) Hearthstone.HOEHE / 2);
+						, (int) Hearthstone.BREITE / 2 - "Gewonnen/Verloren , cool".length() * 10
+						, (int) Hearthstone.HOEHE / 2);
+			break;
+			
+		default: 
+			break;
 		}
 		
 		

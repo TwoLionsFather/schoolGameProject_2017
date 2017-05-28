@@ -3,6 +3,8 @@ package com.JanTlk.BesseresHearthstone;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -57,6 +59,7 @@ public class Hearthstone extends Canvas
 		}
 		
 		this.menu = new Menu();
+
 		this.spielfeld = new Spielfeld(this);
 		
 		MouseInput mouseStuff = new MouseInput(spielfeld, menu, this);
@@ -73,7 +76,10 @@ public class Hearthstone extends Canvas
 	 * "Karten.txt"[2]; 
 	 * "G\\allCards.png"[3];
 	 * "G\\CardBack.png"[4];
-	 * "G\\HudPlayer.png"[5]; 
+	 * "G\\HudPlayer.png"[5];
+	 * "G\\helpSheet.png"[6]; 
+	 * "G\\playerWin.png"[7]; 
+	 * "G\\pcWin.png"[8];  
 	 * @return list of listed Files
 	 */
 	public static File[] allImportedFiles()
@@ -85,6 +91,9 @@ public class Hearthstone extends Canvas
 		paths.add("Graphics\\allCards.png"); //CardCreator.CardCreator
 		paths.add("Graphics\\CardBack.png"); //DrawDeck.DrawDeck
 		paths.add("Graphics\\HudPlayer.png"); //Spielfeld.Spielfeld
+		paths.add("Graphics\\helpSheet.png"); //Menu.Menu
+		paths.add("Graphics\\playerWin.png"); //Menu.Menu
+		paths.add("Graphics\\pcWin.png"); //Menu.Menu
 		
 		File[] allImportedFiles = new File[paths.size()];
 		
@@ -182,6 +191,7 @@ public class Hearthstone extends Canvas
 				}
 			}
 			
+			s.close();
 		}
 		
 	}
@@ -247,7 +257,33 @@ public class Hearthstone extends Canvas
 			return var;
 	}
 
+	/**
+	 * used to convert scaled image of original Buffered Image
+	 * @param img the image object that will get converted
+	 * @return a new buffered image with correct scale
+	 */
+	public static BufferedImage rescaledBufferedimage(BufferedImage bimg, int width, int height)
+	{
+		
+		Image img = bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		
+	    if (img instanceof BufferedImage)
+	    {
+	        return (BufferedImage) img;
+	    }
 
+	    // Create a buffered image with transparency
+	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+
+	    // Return the buffered image
+	    return bimage;
+	}
+	
 	public static boolean isDebugMode() {
 		return debug;
 	}
