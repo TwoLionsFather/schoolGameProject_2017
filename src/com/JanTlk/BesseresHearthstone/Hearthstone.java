@@ -7,6 +7,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -37,7 +38,7 @@ public class Hearthstone extends Canvas
 		this.setBackground(Color.black);
 		
 		try {
-			background = ImageIO.read(new File("Graphics\\backGround.png"));
+			background = ImageIO.read(allImportedFiles()[0]);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Backgound not found");
@@ -54,9 +55,53 @@ public class Hearthstone extends Canvas
 		
 	}
 	
-	public File importFiles(String path)
+	
+	/**
+	 * "G\\backGround.png"[0]; 
+	 * "G\\CardBluePrint.png"[1]; 
+	 * "Karten.txt"[2]; 
+	 * "G\\allCards.png"[3];
+	 * "G\\CardBack.png"[4];
+	 * "G\\HudPlayer.png"[5]; 
+	 * @return list of listed Files
+	 */
+	public static File[] allImportedFiles()
 	{
-		return null;
+		ArrayList<String> paths = new ArrayList<String>();
+		paths.add("Graphics\\backGround.png"); //Hearthstone.Hearthstone
+		paths.add("Graphics\\CardBluePrint.png"); //CardCreator.nextCard
+		paths.add("Karten.txt"); //CardCreator.CardCreator 
+		paths.add("Graphics\\allCards.png"); //CardCreator.CardCreator
+		paths.add("Graphics\\CardBack.png"); //DrawDeck.DrawDeck
+		paths.add("Graphics\\HudPlayer.png"); //Spielfeld.Spielfeld
+		
+		File[] allImportedFiles = new File[paths.size()];
+		
+		int counter = -1;
+		for (File tempF : allImportedFiles)
+		{
+			counter++;
+			tempF = importFiles(paths.get(counter));
+			
+			if (tempF == null)
+			{
+				System.err.printf("The %d.File was not found at %s", counter + 1, paths.get(counter));
+			}
+			
+			allImportedFiles[counter] = tempF;
+		}
+		
+		return allImportedFiles;
+	}
+	
+	/**
+	 * this will create a new File from path
+	 * @param path the Path where the File that needs to get imported is at
+	 * @return the new File
+	 */
+	private static File importFiles(String path)
+	{		
+		return new File(path);
 	}
 	
 	/**

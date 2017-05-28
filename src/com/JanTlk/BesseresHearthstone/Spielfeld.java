@@ -50,7 +50,7 @@ public class Spielfeld
 		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
 								, 30, 20);
 		
-		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
+		hudDrawer = new DrawHud(Hearthstone.allImportedFiles()[5], nextRoundB);
 		deckDrawer = new DrawDeck(dH, new File("Graphics\\CardBack.png"));
 		
 		kartenFelder = deckDrawer.getKartenFelder();

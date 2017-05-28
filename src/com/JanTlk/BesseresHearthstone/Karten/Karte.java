@@ -124,92 +124,6 @@ public class Karte extends JPanel
 	}
 	
 	/**
-	 * Mainmethod for Testing only!
-	 * @param args
-	 * @throws IOException
-	 */
-//	public static void main(String[] args) throws IOException 
-//	{
-//		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
-//		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
-//		
-//		
-//		//Create JFrame to display the Card
-//		JFrame window = new JFrame("Display");
-//		window.setSize(400, 800);
-//		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//		window.setVisible(true);
-//		
-//		
-//		//Creates JPanel to display card
-//		JPanel contentPane = new JPanel(new BorderLayout());
-//		
-//		JLabel cardLabel = firstTestCard.cardToJLabel();
-//		cardLabel.setSize((int) 100, (int) 164);	
-//		
-//		contentPane.add(cardLabel);
-//		window.add(contentPane);
-//	}
-	
-	/**
-	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
-	 * if clicked on the Label the Card clicked on will identify itself for development purpose
-	 * @return a JLabel that can be put on a JPanel for simple display and debug purpose
-	 */
-	public JLabel cardToJLabel()
-	{		
-		JLabel cardLabel = new JLabel()
-				{
-					private static final long serialVersionUID = -3561533864873217494L;
-					
-					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
-					protected void paintChildren(Graphics g)
-					{
-						super.paintChildren(g);						
-						g.drawImage(textur, 0, 0, null);
-
-						g.setFont(new Font("Freestyle Script", Font.BOLD, 15));
-						/**
-						 * used to debug with cards main method
-						 */	
-						if (Karte.this.typ == Typ.Monster)
-						{
-							g.setColor(checkForChange(schadenInit, schaden));			
-							g.drawString("" + Karte.this.getSchaden()
-										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
-										, textur.getHeight() - 73);
-							
-							
-							g.setColor(checkForChange(lebenInit, leben));			
-							g.drawString("" + Karte.this.getLeben()
-										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
-										, textur.getHeight() - 73);
-						}
-						
-						g.setColor((isLegendary) ? Color.white : Color.black);
-						g.setFont(new Font("Freestyle Script", Font.BOLD, 35));
-						g.drawString("" + Karte.this.getMana()
-									, (Karte.this.getMana() < 10) ? 45 : 30
-									, 57);
-					}
-				};		
-				
-				/**
-				 * fügt JLabel der Karte einen MouseListener hinzu
-				 * da nicht alle MausFunktionen geutzt werden wird ein Adapter benutzt
-				 */
-				cardLabel.addMouseListener(new MouseAdapter() 
-				{
-					public void mouseClicked(MouseEvent e)
-					{
-						System.out.println("Ich bin " + name);
-					}
-				});
-		
-		return cardLabel;
-	}
-	
-	/**
 	 * this should be used to draw a Card with Graphics class
 	 * @param x position of the top left corner
 	 * @param y position of the corner
@@ -535,5 +449,95 @@ public class Karte extends JPanel
 	{
 		this.inDeck = deck;
 	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//DevelopmentOnly sector
+	
+	/**
+	 * Mainmethod for Testing only!
+	 * @param args
+	 * @throws IOException
+	 */
+//	public static void main(String[] args) throws IOException 
+//	{
+//		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
+//		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
+//		
+//		
+//		//Create JFrame to display the Card
+//		JFrame window = new JFrame("Display");
+//		window.setSize(400, 800);
+//		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		window.setVisible(true);
+//		
+//		
+//		//Creates JPanel to display card
+//		JPanel contentPane = new JPanel(new BorderLayout());
+//		
+//		JLabel cardLabel = firstTestCard.cardToJLabel();
+//		cardLabel.setSize((int) 100, (int) 164);	
+//		
+//		contentPane.add(cardLabel);
+//		window.add(contentPane);
+//	}
+	
+	/**
+	 * Not in use
+	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
+	 * if clicked on the Label the Card clicked on will identify itself for development purpose
+	 * @return a JLabel that can be put on a JPanel for simple display and debug purpose
+	 */
+//	public JLabel cardToJLabel()
+//	{		
+//		JLabel cardLabel = new JLabel()
+//				{
+//					private static final long serialVersionUID = -3561533864873217494L;
+//					
+//					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
+//					protected void paintChildren(Graphics g)
+//					{
+//						super.paintChildren(g);						
+//						g.drawImage(textur, 0, 0, null);
+//
+//						g.setFont(new Font("Freestyle Script", Font.BOLD, 15));
+//						/**
+//						 * used to debug with cards main method
+//						 */	
+//						if (Karte.this.typ == Typ.Monster)
+//						{
+//							g.setColor(checkForChange(schadenInit, schaden));			
+//							g.drawString("" + Karte.this.getSchaden()
+//										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
+//										, textur.getHeight() - 73);
+//							
+//							
+//							g.setColor(checkForChange(lebenInit, leben));			
+//							g.drawString("" + Karte.this.getLeben()
+//										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
+//										, textur.getHeight() - 73);
+//						}
+//						
+//						g.setColor((isLegendary) ? Color.white : Color.black);
+//						g.setFont(new Font("Freestyle Script", Font.BOLD, 35));
+//						g.drawString("" + Karte.this.getMana()
+//									, (Karte.this.getMana() < 10) ? 45 : 30
+//									, 57);
+//					}
+//				};		
+//				
+//				/**
+//				 * fügt JLabel der Karte einen MouseListener hinzu
+//				 * da nicht alle MausFunktionen geutzt werden wird ein Adapter benutzt
+//				 */
+//				cardLabel.addMouseListener(new MouseAdapter() 
+//				{
+//					public void mouseClicked(MouseEvent e)
+//					{
+//						System.out.println("Ich bin " + name);
+//					}
+//				});
+//		
+//		return cardLabel;
+//	}
 
 }

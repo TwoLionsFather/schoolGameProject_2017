@@ -38,7 +38,7 @@ public class CardCreator
 	private String line;
 	private Scanner s;
 
-	public CardCreator(String pathCardCretorFile, Component c) throws FileNotFoundException 
+	public CardCreator(Component c) throws FileNotFoundException 
 	{
 		mainComponent = c;
 		cardProps = new Rectangle(220, 414);
@@ -46,12 +46,13 @@ public class CardCreator
 		spalteZeile = new int[]{0, 0};
 		
 		try {
-			allCards = ImageIO.read(new File("Graphics\\allCards.png"));
+			allCards = ImageIO.read(Hearthstone.allImportedFiles()[3]);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("no Graphics File");
 		}
-		br = new BufferedReader(new FileReader(pathCardCretorFile));
+		
+		br = new BufferedReader(new FileReader(Hearthstone.allImportedFiles()[2]));
 		
 	}
 
@@ -133,7 +134,7 @@ public class CardCreator
 		else
 		{
 			try {
-				cardTexture = ImageIO.read(new File("Graphics\\CardBluePrint.png"));
+				cardTexture = ImageIO.read(Hearthstone.allImportedFiles()[1]);
 			} catch (IOException e) {
 				System.err.println("The Default BluePrint for emergencies got lost!");
 			}

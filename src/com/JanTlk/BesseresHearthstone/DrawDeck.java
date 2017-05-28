@@ -33,7 +33,7 @@ public class DrawDeck
 		this.deckHandler = dH;
 		
 		try {
-			this.cardBack = rescaledBufferedimage(ImageIO.read(cardBackF), 100, 200);
+			this.cardBack = rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4]), 100, 200);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cardBack = null;

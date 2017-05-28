@@ -28,7 +28,7 @@ public class DeckHandler
 		
 		CardCreator cC;
 		try {
-			cC = new CardCreator("Karten.txt", c);
+			cC = new CardCreator(c);
 		} catch (FileNotFoundException e) {
 			System.err.println("Card creator File not Found! \nGame cannot be started!");
 			System.err.println("Please create a Card Creator Text Document.");
