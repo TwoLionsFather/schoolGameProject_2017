@@ -44,6 +44,11 @@ public class Karte extends JPanel
 	
 	
 	/**
+	 * since time is running low, there will be no Magic Card System for now
+	 * everything to implement it is already in place though
+	 */
+	
+	/**
 	 * textur will get standardiced Graphic from a composed image, when set up
 	 * bounds will hopefully be used to check if the card got clicked on
 	 */
@@ -123,28 +128,28 @@ public class Karte extends JPanel
 	 * @param args
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws IOException 
-	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
-		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
-		
-		
-		//Create JFrame to display the Card
-		JFrame window = new JFrame("Display");
-		window.setSize(400, 800);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
-		
-		
-		//Creates JPanel to display card
-		JPanel contentPane = new JPanel(new BorderLayout());
-		
-		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize((int) 100, (int) 164);	
-		
-		contentPane.add(cardLabel);
-		window.add(contentPane);
-	}
+//	public static void main(String[] args) throws IOException 
+//	{
+//		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
+//		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
+//		
+//		
+//		//Create JFrame to display the Card
+//		JFrame window = new JFrame("Display");
+//		window.setSize(400, 800);
+//		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		window.setVisible(true);
+//		
+//		
+//		//Creates JPanel to display card
+//		JPanel contentPane = new JPanel(new BorderLayout());
+//		
+//		JLabel cardLabel = firstTestCard.cardToJLabel();
+//		cardLabel.setSize((int) 100, (int) 164);	
+//		
+//		contentPane.add(cardLabel);
+//		window.add(contentPane);
+//	}
 	
 	/**
 	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
@@ -163,27 +168,26 @@ public class Karte extends JPanel
 						super.paintChildren(g);						
 						g.drawImage(textur, 0, 0, null);
 
+						g.setFont(new Font("Freestyle Script", Font.BOLD, 15));
 						/**
 						 * used to debug with cards main method
 						 */	
 						if (Karte.this.typ == Typ.Monster)
 						{
 							g.setColor(checkForChange(schadenInit, schaden));			
-							g.setFont(new Font("Damage", Font.BOLD, 25));
 							g.drawString("" + Karte.this.getSchaden()
 										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
-										, textur.getHeight() - 70);
+										, textur.getHeight() - 73);
 							
 							
 							g.setColor(checkForChange(lebenInit, leben));			
-							g.setFont(new Font("Live", Font.BOLD, 25));
 							g.drawString("" + Karte.this.getLeben()
 										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
-										, textur.getHeight() - 70);
+										, textur.getHeight() - 73);
 						}
 						
 						g.setColor((isLegendary) ? Color.white : Color.black);
-						g.setFont(new Font("Mana", Font.PLAIN, 35));
+						g.setFont(new Font("Freestyle Script", Font.BOLD, 35));
 						g.drawString("" + Karte.this.getMana()
 									, (Karte.this.getMana() < 10) ? 45 : 30
 									, 57);
@@ -225,35 +229,36 @@ public class Karte extends JPanel
 					, textur.getWidth()
 					, textur.getHeight());
 		}
-		
+
 		g.drawImage(textur, x, y, null);
 		
 		if (this.typ == Typ.Monster)
 		{
+			//draws Damage
+			g.setFont(new Font("Century", Font.BOLD, 18));
 			g.setColor(checkForChange(schadenInit, schaden));			
-			g.setFont(new Font("Damage", Font.BOLD, 15));
 			g.drawString("" + Karte.this.getSchaden()
-						, ((Karte.this.getSchaden() < 10) ? 15 : 10) + x
+						, ((Karte.this.getSchaden() < 10) ? 18 : 23) + x
 						, textur.getHeight() - 25 + y);
 			
-			
+			//draws Life
 			g.setColor(checkForChange(lebenInit, leben));			
-			g.setFont(new Font("Live", Font.BOLD, 15));
 			g.drawString("" + Karte.this.getLeben()
-						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 20 : 25) + x
+						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + x
 						, textur.getHeight() - 25 + y);
 		}
 				
+		//draws mana, chooses color based on background (L/N)
 		g.setColor((isLegendary) ? Color.white : Color.black);
-		g.setFont(new Font("Mana", Font.PLAIN, 15));
+		g.setFont(new Font("Century", Font.BOLD, 15));
 		g.drawString("" + Karte.this.getMana()
-					, x + ((Karte.this.getMana() < 10) ? 10 : 6)
+					, x + ((Karte.this.getMana() < 10) ? 11 : 6)
 					, y + 20);
 			
 		if (drawTitle)
 		{
 			g.setColor(Color.black);
-			g.setFont(new Font("CardInfo", Font.BOLD, 11));
+			g.setFont(new Font("Arial", Font.BOLD, 11));
 			g.drawString(Karte.this.getName()
 						, 22 + x
 						, 22 + y);

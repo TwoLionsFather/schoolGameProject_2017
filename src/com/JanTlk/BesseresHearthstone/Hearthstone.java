@@ -26,7 +26,7 @@ public class Hearthstone extends Canvas
 	public static final String TITEL = "Hearthstone";	//Titel für das Spiel
 	public static final float BREITE = 1920; 			// 1920 für Fullscreen
 	public static final float HOEHE = BREITE / 16 * 9; 	// 3/4 der Breite -> Höhe
-	public static STATE gameState = STATE.MENU;
+	public static STATE gameState = STATE.GAME;
 	
 	private BufferedImage background;
 	private Spielfeld spielfeld;
@@ -52,8 +52,6 @@ public class Hearthstone extends Canvas
 		
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 		
-//		float tst = (float) ((-1/(3 - 5)) * 2 + 1);
-//		System.out.printf("%.3f \n", tst);
 	}
 	
 	/**

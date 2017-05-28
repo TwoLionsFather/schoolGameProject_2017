@@ -60,6 +60,7 @@ public class DrawHud
 	            , (int) hud.getHeight()
 	            , null);
 		
+		g.setFont(new Font("Century", Font.BOLD, 14));
 		//Overlay on Hud texture
 		if((cardInDetail != null)
 		&& cardInDetail.getStatus() != Status.ABBLAGE)
@@ -84,7 +85,6 @@ public class DrawHud
 
 		}
 		
-		g.setFont(new Font("Info", Font.BOLD , 12));
 		drawInfo(gameStats, g);
 		drawDeckInfo(gameStats, g);
 	}
@@ -123,41 +123,36 @@ public class DrawHud
 	public void drawInfo(int[] gameStats, Graphics g)
 	{
 		g.setColor(Color.white); //possibly change this to RGB of Gold for looks
-		//lifeDisplay Player
-		g.drawString("" + gameStats[0]
-				, (int) (hud.getX() + ((gameStats[0] > 9) ? 9 : 12))
-				, (int) (hud.getY() + 87));
 		
-		g.drawString("Life Player"
-				, (int) (hud.getX() + 50)
-				, (int) (hud.getY() + 87));
+		//lifeDisplay Player
+		String lifePL = String.format("%-5d %-15s", gameStats[1], "Leben Player");
+		
+		g.drawString(lifePL
+				, (int) (hud.getX() + 12)
+				, (int) (hud.getY() + hud.getHeight() - 45));
 		
 		//manaDisplay Player
-		g.drawString("" + gameStats[1]
-				, (int) (hud.getX() + ((gameStats[1] > 9) ? 9 : 12))
-				, (int) (hud.getY() + 120));
+		String manaPL = String.format("%-5d %-15s", gameStats[1], "Mana Player");
+				
+		g.drawString(manaPL
+				, (int) (hud.getX() + 12)
+				, (int) (hud.getY() + hud.getHeight() - 12));
 		
-		g.drawString("Mana Player"
-				, (int) (hud.getX() + 50)
-				, (int) (hud.getY() + 120));
 		
 		//lifeDisplay PC
-		g.drawString("" + gameStats[3]
-				, (int) (hud.getX() + hud.getWidth() - ((gameStats[3] > 9) ? 20 : 17))
-				, (int) (hud.getY() + 87));
+		String lifePC = String.format("%15s %5d", "Leben PC", gameStats[3]);
 		
-		g.drawString("Life PC"
-				, (int) (hud.getX() + hud.getWidth() - "Life PC".length() * 6 - 50)
-				, (int) (hud.getY() + 87));
+		g.drawString(lifePC
+				, (int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - 8)
+				, (int) (hud.getY() + hud.getHeight() - 45));
 		
 		//manaDisplay PC
-		g.drawString("" + gameStats[5]
-				, (int) (hud.getX() + hud.getWidth() - ((gameStats[4] > 9) ? 20 : 17))
-				, (int) (hud.getY() + 120));
+		String manaPC = String.format("%15s %5d", "Mana PC Max", gameStats[5]);
 		
-		g.drawString("Mana PC Max"
-				, (int) (hud.getX() + hud.getWidth() - "Mana PC Max".length() * 6 - 50)
-				, (int) (hud.getY() + 120));
+		g.drawString(manaPC
+				, (int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - 8)
+				, (int) (hud.getY() + hud.getHeight() - 12));
+
 	}
 	
 }

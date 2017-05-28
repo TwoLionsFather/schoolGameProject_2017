@@ -164,7 +164,7 @@ public class KI
 				int eL = potTarget.getLeben();
 				int eA = potTarget.getSchaden();
 
-				float tempRating = (float) 0.1 - (-1/((eL - oA) * 2 + 1));
+				float tempRating = (float) (-1.0/((eL - oA) * 2 + 1));
 				
 				if (tempRating > topCardRating
 				|| idxE == 0
