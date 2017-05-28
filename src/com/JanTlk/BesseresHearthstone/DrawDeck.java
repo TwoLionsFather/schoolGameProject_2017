@@ -1,8 +1,15 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
@@ -13,15 +20,25 @@ public class DrawDeck
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	private Rectangle [][] kartenFelder;
 	
+	private BufferedImage cardBack;
+	
 	private DeckHandler deckHandler;
 	private Deck dPL;
 	private Deck dPC;
 	
-	public DrawDeck(DeckHandler dH) 
+	public DrawDeck(DeckHandler dH, File cardBackF) 
 	{
 		this.dPL = dH.getPlayerDeck();
 		this.dPC = dH.getPCDeck();
 		this.deckHandler = dH;
+		
+		try {
+			this.cardBack = rescaledBufferedimage(ImageIO.read(cardBackF), 100, 200);
+		} catch (IOException e) {
+			e.printStackTrace();
+			cardBack = null;
+			System.err.println("No Cardback File found");
+		}
 		
 		kartenFelder = new Rectangle [anzRectInR][2];
 		
@@ -38,6 +55,33 @@ public class DrawDeck
 		}	
 		
 	}
+	
+	/**
+	 * used to convert scaled image of original Buffered Image
+	 * @param img the image object that will get converted
+	 * @return a new buffered image with correct scale
+	 */
+	public static BufferedImage rescaledBufferedimage(BufferedImage bimg, int width, int height)
+	{
+		
+		Image img = bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		
+	    if (img instanceof BufferedImage)
+	    {
+	        return (BufferedImage) img;
+	    }
+
+	    // Create a buffered image with transparency
+	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+
+	    // Return the buffered image
+	    return bimage;
+	}
 
 	/**
 	 * this displays all Cards on the Game
@@ -46,6 +90,8 @@ public class DrawDeck
 	 */
 	public void render(int[] gameStats, boolean playersMove, Graphics g) 
 	{
+		boolean debugMode = false;
+		
 		//reset counter to start counting while checking Status of every Card
 		gameStats[6] = 0;
 		gameStats[7] = 0;
@@ -119,8 +165,8 @@ public class DrawDeck
 			drawField(fieldKartenPC, g);
 		}
 		
-		drawHand(true, handKartenPL, g);
-		drawHand(false, handKartenPC, g);		
+		drawHand(debugMode, true, handKartenPL, g);
+		drawHand(debugMode, false, handKartenPC, g);		
 	}
 	
 	/**
@@ -129,9 +175,26 @@ public class DrawDeck
 	 * @param handCards these cards are on the hand of a player and need to be drawn
 	 * @param g used to draw the graphics of the card on
 	 */
-	public void drawHand(boolean player, ArrayList<Karte> handCards, Graphics g)
+	public void drawHand(boolean debugMode, boolean player, ArrayList<Karte> handCards, Graphics g)
 	{
 		int kartenCount = 0;
+		
+		if (!player 
+		&& !debugMode
+		&& cardBack != null)
+		{
+			for(Karte tCard : handCards)
+			{
+				g.drawImage(cardBack
+						, (int) (Hearthstone.BREITE / 2 
+														- ((tCard.getBounds().getWidth() - 55) * handCards.size()) / 2
+														+ 55 * kartenCount++)
+						, (int) ((player) ? Hearthstone.HOEHE - (Hearthstone.HOEHE / 5) : 0)
+						, null);
+			}
+			return;
+		}
+		
 		for(Karte tCard : handCards)
 		{
 			tCard.drawCard((int) (Hearthstone.BREITE / 2 
@@ -141,6 +204,7 @@ public class DrawDeck
 						, g
 						, false);
 		}
+		
 	}
 	
 	/**

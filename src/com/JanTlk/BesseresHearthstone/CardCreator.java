@@ -127,7 +127,7 @@ public class CardCreator
 			}
 			
 			
-			cardTexture = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_DEFAULT));
+			cardTexture = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_SMOOTH));
 		}
 		
 		else

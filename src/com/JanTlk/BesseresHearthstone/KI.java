@@ -34,7 +34,7 @@ public class KI
 	 * @param gameStats
 	 * @return
 	 */
-	public int[] nextRound(Karte[][] kartenAufFelder, int[] gameStats) 
+	public void nextRound(Karte[][] kartenAufFelder, int[] gameStats) 
 	{
 		LinkedList<Karte> playableCs = new LinkedList<Karte>();
 		
@@ -71,15 +71,13 @@ public class KI
 			}
 		}
 		
-		gameStats = layNextCard(playableCs, kartenAufFelder, gameStats);
+		layNextCard(playableCs, kartenAufFelder, gameStats);
 		chooseCardToAttack(enemysCs, ownCs, gameStats);
 		
 		if (allCardsUnderAttack(kartenAufFelder))
 		{
 			attackPlayer(ownCs);
-		}
-		
-		return gameStats;		
+		}		
 		
 	}
 
@@ -107,11 +105,16 @@ public class KI
 	 * @return returns gameStats after card is played
 	 */
 	
-	private int[] layNextCard(LinkedList<Karte> playableCs, Karte[][] kartenAufFelder, int[] gameStats) 
+	private void layNextCard(LinkedList<Karte> playableCs, Karte[][] kartenAufFelder, int[] gameStats) 
 	{
 		if (!playableCs.isEmpty())
 		{
 			Karte cardToPlay = chooseCardToPlay(playableCs, gameStats);
+			
+			if (cardToPlay == null)
+			{
+				return;
+			}
 			
 			cardToPlay.setStatus(Status.LAYED);
 			gameStats[4] -= cardToPlay.getMana();
@@ -130,12 +133,9 @@ public class KI
 			
 			playableCs.remove(cardToPlay);
 			
-			this.chooseCardToPlay(playableCs, gameStats);
+			this.layNextCard(playableCs, kartenAufFelder, gameStats);
 		}
-		
-		else return gameStats;
-		
-		return gameStats;
+
 	}
 	
 	/**

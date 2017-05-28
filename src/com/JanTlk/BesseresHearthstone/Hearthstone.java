@@ -54,6 +54,11 @@ public class Hearthstone extends Canvas
 		
 	}
 	
+	public File importFiles(String path)
+	{
+		return null;
+	}
+	
 	/**
 	 * used by the Component Class to repaint the "Game" Component
 	 * Updates get stored in Buffer so only changes get rendered

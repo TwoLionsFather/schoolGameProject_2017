@@ -65,24 +65,21 @@ public class DrawHud
 		if((cardInDetail != null)
 		&& cardInDetail.getStatus() != Status.ABBLAGE)
 		{
-			g.setColor((!cardInDetail.getDeck().toString().contains("PC")) ? Color.GREEN : Color.RED);
+			g.setColor((cardInDetail.getDeck().toString().contains("PC") ? Color.red : Color.green));
 			
-			g.drawString("" + cardInDetail.getSchaden()
-					, (int) (hud.getX() + ((cardInDetail.getSchaden() > 9) ? 9 : 12))
-					, (int) (hud.getY() + 22));
+			//lifeDisplay Player
+			String dmgCard = String.format("%2d%5s%-25s", cardInDetail.getSchaden(), "", "Schaden von " + cardInDetail.getName());
 			
-			g.drawString("Schaden von " + cardInDetail.getName()
-					, (int) (hud.getX() + 50)
-					, (int) (hud.getY() + 22));
+			g.drawString(dmgCard
+					, (int) (hud.getX() + 25)
+					, (int) (hud.getY() + 62));
 			
-			g.drawString("" + cardInDetail.getLeben()
-					, (int) (hud.getX() + ((cardInDetail.getLeben() > 9) ? 9 : 12))
-					, (int) (hud.getY() + 55));
-			
-			g.drawString("Leben von " + cardInDetail.getName()
-					, (int) (hud.getX() + 50)
-					, (int) (hud.getY() + 55));
-
+			//manaDisplay Player
+			String lifeCard = String.format("%2d%5s%-25s", cardInDetail.getLeben(), "", "Leben von " + cardInDetail.getName());
+					
+			g.drawString(lifeCard
+					, (int) (hud.getX() + 25)
+					, (int) (hud.getY() + 95));
 		}
 		
 		drawInfo(gameStats, g);
@@ -122,36 +119,36 @@ public class DrawHud
 	 */
 	public void drawInfo(int[] gameStats, Graphics g)
 	{
-		g.setColor(Color.white); //possibly change this to RGB of Gold for looks
+		g.setColor(new Color(160, 151, 16)); //possibly change this to RGB of Gold for looks
 		
 		//lifeDisplay Player
-		String lifePL = String.format("%-5d %-15s", gameStats[1], "Leben Player");
+		String lifePL = String.format("%2d%5s%-15s", gameStats[0], "", "Leben Player");
 		
 		g.drawString(lifePL
-				, (int) (hud.getX() + 12)
-				, (int) (hud.getY() + hud.getHeight() - 45));
+				, (int) (hud.getX() + 25)
+				, (int) (hud.getY() + hud.getHeight() - 85));
 		
 		//manaDisplay Player
-		String manaPL = String.format("%-5d %-15s", gameStats[1], "Mana Player");
+		String manaPL = String.format("%2d%5s%-15s", gameStats[1], "", "Mana Player");
 				
 		g.drawString(manaPL
-				, (int) (hud.getX() + 12)
-				, (int) (hud.getY() + hud.getHeight() - 12));
+				, (int) (hud.getX() + 25)
+				, (int) (hud.getY() + hud.getHeight() - 53));
 		
 		
 		//lifeDisplay PC
 		String lifePC = String.format("%15s %5d", "Leben PC", gameStats[3]);
 		
 		g.drawString(lifePC
-				, (int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - 8)
-				, (int) (hud.getY() + hud.getHeight() - 45));
+				, (int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - 20)
+				, (int) (hud.getY() + hud.getHeight() - 85));
 		
 		//manaDisplay PC
 		String manaPC = String.format("%15s %5d", "Mana PC Max", gameStats[5]);
 		
 		g.drawString(manaPC
-				, (int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - 8)
-				, (int) (hud.getY() + hud.getHeight() - 12));
+				, (int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - 20)
+				, (int) (hud.getY() + hud.getHeight() - 53));
 
 	}
 	

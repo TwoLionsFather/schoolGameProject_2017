@@ -20,7 +20,7 @@ public class Spielfeld
 	private int idxMovedC;
 	
 	private boolean playersMove;	
-	private boolean playerFirstMove = false;
+	private boolean playerFirstMove = true;
 	private boolean attackUpdate;
 	private int[] gameStats;
 	
@@ -51,7 +51,7 @@ public class Spielfeld
 								, 30, 20);
 		
 		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
-		deckDrawer = new DrawDeck(dH);
+		deckDrawer = new DrawDeck(dH, new File("Graphics\\CardBack.png"));
 		
 		kartenFelder = deckDrawer.getKartenFelder();
 		kartenAufFelder = new Karte [deckDrawer.getAnzRectInR()][2];
@@ -143,7 +143,7 @@ public class Spielfeld
 			gameStats[5]++;					//increase PC Mana Pool by one
 			gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
 			dPC.ziehen();					//draws new Card from Deck		
-			gameStats = pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
+			pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
 			attackUpdate = true;
 			nextRound();
 		}
