@@ -45,8 +45,13 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	{
 		spielfeld.cardDetailsAt(arg0);
 		
-		if (Hearthstone.gameState == STATE.END
-		|| Hearthstone.gameState == STATE.BEATEN)
+		if (Hearthstone.gameState == STATE.BEATEN)
+		{
+			Hearthstone.gameState = STATE.MENU;
+			hs.repaint();
+		}
+		
+		else if (Hearthstone.gameState == STATE.END)
 		{
 			System.exit(0);
 		}

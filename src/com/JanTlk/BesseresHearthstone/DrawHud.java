@@ -16,12 +16,9 @@ public class DrawHud
 {
 	private BufferedImage hudtexture;
 	private Rectangle hud; //all locations relative to this
-	private Rectangle nextRoundB;
 	
-	public DrawHud(Rectangle nextRoundB) 
+	public DrawHud() 
 	{
-		this.nextRoundB = nextRoundB;
-		
 		try {
 			hudtexture = (ImageIO.read(Hearthstone.allImportedFiles()[5]));
 			
@@ -88,20 +85,24 @@ public class DrawHud
 	 */
 	public void drawDeckInfo(int[] gameStats, Graphics g)
 	{
+		//Stapel PC
 		g.setColor(Color.green);
 		g.drawString("" + gameStats[6]
 					, 20
 					, (int) Hearthstone.HOEHE - 40);
 		
+		//Stapel Player
 		g.drawString("" + gameStats[7]
 					, (int) Hearthstone.BREITE - 25
 					, (int) Hearthstone.HOEHE - 40);
 		
+		//Abblage PC
 		g.setColor(Color.red);
 		g.drawString("" + gameStats[8]
 					, 15
 					, 15);
 		  
+		//Abblage Player
 		g.drawString("" + gameStats[9]
 					, (int) Hearthstone.BREITE - 25
 					, 15);

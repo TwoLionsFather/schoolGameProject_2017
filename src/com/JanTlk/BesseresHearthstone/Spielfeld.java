@@ -46,7 +46,7 @@ public class Spielfeld
 		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
 								, 30, 20);
 		
-		hudDrawer = new DrawHud(nextRoundB);
+		hudDrawer = new DrawHud();
 		deckDrawer = new DrawDeck(dH);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
@@ -182,15 +182,6 @@ public class Spielfeld
 		drawHelpHud(g);
 		deckDrawer.render(gameStats, MouseInput.isPlayersMove(), g);
 		hudDrawer.render(MouseInput.isPlayersMove(), detailedCard, gameStats, g);
-		
-		if (gameStats[0] <= 0
-		|| gameStats[3] <= 0
-		|| gameStats[7] >= dPL.getAnzKarten()
-		|| gameStats[9] >= dPC.getAnzKarten())
-		{
-			Hearthstone.gameState = STATE.BEATEN;
-			dPC.repaint();
-		}
 		
 	}
 	
@@ -625,6 +616,11 @@ public class Spielfeld
 	public boolean getAttackUpdate() 
 	{
 		return attackUpdate;
+	}
+
+	public int[] getGameStats() 
+	{
+		return gameStats;
 	}
 
 }

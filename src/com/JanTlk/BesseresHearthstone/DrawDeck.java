@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
@@ -62,6 +63,16 @@ public class DrawDeck
 	 */
 	public void render(int[] gameStats, boolean playersMove, Graphics g) 
 	{
+		if ((gameStats[0] <= 0)
+		|| (gameStats[3] <= 0)
+		|| gameStats[7] >= dPL.getAnzKarten()
+		|| gameStats[9] >= dPC.getAnzKarten())
+		{
+			Hearthstone.gameState = STATE.BEATEN;
+			dPC.repaint();
+			return;
+		}
+		
 		//reset counter to start counting while checking Status of every Card
 		gameStats[6] = 0;
 		gameStats[7] = 0;

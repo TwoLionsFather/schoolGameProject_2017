@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -97,8 +98,8 @@ public class Hearthstone extends Canvas
 		paths.add("Graphics\\CardBack.png"); //DrawDeck.DrawDeck
 		paths.add("Graphics\\HudPlayer.png"); //Spielfeld.Spielfeld
 		paths.add("Graphics\\helpSheet.png"); //Menu.Menu
-		paths.add("Graphics\\playerWin.png"); //Menu.Menu
-		paths.add("Graphics\\pcWin.png"); //Menu.Menu
+		paths.add("Graphics\\EndScreenW.png"); //Menu.Menu
+		paths.add("Graphics\\EndScreenL.png"); //Menu.Menu
 		paths.add("Graphics\\v_attack.png"); //Karte.Karte
 		paths.add("Graphics\\v_life.png"); //Karte.Karte
 		paths.add("Graphics\\GameIcon.png"); //Fenster:Fenster
@@ -230,7 +231,8 @@ public class Hearthstone extends Canvas
 		
 		Graphics gb = bs.getDrawGraphics();
 		
-		if (gameState == STATE.GAME)
+		if (gameState == STATE.GAME
+		&& gameState != STATE.BEATEN)
 		{
 			gb.drawImage(background, 0, 0, null);	
 			spielfeld.render(gb);
@@ -238,9 +240,9 @@ public class Hearthstone extends Canvas
 		
 		else
 		{
-			menu.render(gb);
+			menu.render(spielfeld.getGameStats()[0] > spielfeld.getGameStats()[3] ,gb);
 		}
-		
+
 		gb.dispose();
 		bs.show();
 	}

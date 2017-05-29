@@ -25,12 +25,14 @@ public class Menu
 														, (int) Hearthstone.BREITE
 														, (int) Hearthstone.HOEHE);
 
-			playerWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[8])
+			pcWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[8])
 														, (int) Hearthstone.BREITE
 														, (int) Hearthstone.HOEHE);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+			playerWin = null;
+			pcWin = null;
 			System.err.println("File not found for menu build.");
 		}
 
@@ -47,10 +49,11 @@ public class Menu
 	}
 	
 	/**
-	 * draws menu and buttons on the screen, MouseInputClass handles their effect
+	 *  draws menu and buttons on the screen, MouseInputClass handles their effect
+	 * @param gameStats this is needed to check if game is over
 	 * @param g
 	 */
-	public void render(Graphics g)
+	public void render(boolean playerW, Graphics g)
 	{
 		g.setColor(Color.black);
 		g.fillRect(0, 0
@@ -125,11 +128,26 @@ public class Menu
 			break;
 			
 		case BEATEN:
-			g.setColor(Color.white);
-			g.setFont(new Font("Ende", Font.BOLD, 50));
-			g.drawString("Gewonnen/Verloren , cool"
-						, (int) Hearthstone.BREITE / 2 - "Gewonnen/Verloren , cool".length() * 10
-						, (int) Hearthstone.HOEHE / 2);
+			if (playerW
+			&& playerWin != null)
+			{
+				g.drawImage(playerWin, 0, 0, null);
+			}
+			
+			else if (!playerW
+			&& playerWin != null)
+			{
+				g.drawImage(pcWin, 0, 0, null);
+						
+			}
+			else 
+			{
+				g.setColor(Color.white);
+				g.setFont(new Font("Ende", Font.BOLD, 50));
+				g.drawString("Gewonnen/Verloren , cool"
+							, (int) Hearthstone.BREITE / 2 - "Gewonnen/Verloren , cool".length() * 10
+							, (int) Hearthstone.HOEHE / 2);
+			}
 			break;
 			
 		default: 
