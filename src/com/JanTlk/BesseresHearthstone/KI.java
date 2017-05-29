@@ -52,12 +52,12 @@ public class KI
 				
 			case FELD:
 			case ATTACKC:
-				if (tCard.getDeck() == deck)
+				if (deck.isInDeck(tCard))
 				{
 					ownCs.add(tCard);
 				}
 				
-				else if (tCard.getDeck() == deckHandler.getPlayerDeck())
+				else if (deckHandler.getPlayerDeck().isInDeck(tCard))
 				{
 					enemysCs.add(tCard);
 				}
@@ -106,7 +106,6 @@ public class KI
 											, (int) tempC.getBounds().getWidth()
 											, (int) tempC.getBounds().getHeight()));
 				
-				
 			}
 		}
 	}
@@ -125,7 +124,9 @@ public class KI
 		{
 			Karte cardToPlay = chooseCardToPlay(playableCs, gameStats);
 			
-			if (cardToPlay == null)
+			//if PC has no Hand cars or not enough Mana
+			if (cardToPlay == null
+			|| gameStats[4] - cardToPlay.getMana() < 0)
 			{
 				return gameStats;
 			}
@@ -212,12 +213,13 @@ public class KI
 			ownCard.attackedCard(chosenCard);
 			ownCard.setStatus(Status.ATTACKC);
 			
-			System.out.printf("attacking card %s\n", ownCard.getName());
+			System.out.printf("Attacking card %s\n", ownCard.getName());
 			System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
 			enemysCs.remove(idxTop);
 			idxTop = 0;
 		}
 		
+		System.out.println();
 	}
 
 	/**
@@ -230,7 +232,7 @@ public class KI
 	 */
 	private Karte chooseCardToPlay(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
-		if (gameStats[4] == 0)
+		if (gameStats[4] <= 0)
 		{
 			return null;
 		}
@@ -250,7 +252,7 @@ public class KI
 			//offensive Card if PLLife < Own life
 			if (offensive)
 			{
-				float tempRating = (float) ((gameStats[3] / gameStats[0]) * cL + 1.001 * cA);
+				float tempRating = (float) ((gameStats[3] / gameStats[0]) * cL + 1.01 * cA);
 				
 				if (tempRating > topCardRating
 				|| idx == 0)
@@ -263,7 +265,7 @@ public class KI
 			//deffensive Card is played if PLLife > OwnLife
 			else 
 			{
-				float tempRating = (float) ((gameStats[3] / gameStats[0]) * cA + 1.001 * cL);
+				float tempRating = (float) ((gameStats[3] / gameStats[0]) * cA + 1.01 * cL);
 				
 				if (tempRating > topCardRating
 				|| idx == 0)
@@ -273,9 +275,13 @@ public class KI
 				}
 			}
 			
-			//debugg output to check for smart choices
-			System.out.printf("%-20s value of: %.3f\n", cardToValue.getName(), topCardRating);
-			System.out.printf("It deals %d damage and has %d life\n", cardToValue.getSchaden(), cardToValue.getLeben());
+			//debugg output to check plays
+			if (Hearthstone.isDebugMode())
+			{
+				System.out.printf("%-20s value of: %.3f\n", cardToValue.getName(), topCardRating);
+				System.out.printf("It deals %d damage and has %d life\n", cardToValue.getSchaden(), cardToValue.getLeben());
+			}
+			
 		}
 		
 		if (idxTop < 0)

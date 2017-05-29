@@ -58,6 +58,7 @@ public class MouseInput implements MouseMotionListener, MouseListener
 				if(playersMove)
 				{
 					spielfeld.attackUpdate();
+					spielfeld.updateCardRectangles();
 				}
 					
 				if (spielfeld.getAttackUpdate())

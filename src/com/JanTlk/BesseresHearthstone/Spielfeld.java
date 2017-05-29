@@ -538,7 +538,7 @@ public class Spielfeld
 	 * checks if moved card is checked in on any of the rectangles and delets it from the array
 	 * @param remC the card choosen to get removed
 	 */
-	private void updateCardRectangles() 
+	public void updateCardRectangles() 
 	{
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{

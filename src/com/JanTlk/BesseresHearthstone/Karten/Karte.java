@@ -396,7 +396,6 @@ public class Karte extends JPanel
 	{
 		gameStats[(playerPC) ? 0 : 3] -= schaden;
 		
-		this.status = Status.FELD;
 		placeHome();
 		return;
 	}
