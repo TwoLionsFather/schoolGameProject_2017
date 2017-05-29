@@ -2,7 +2,9 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 public class Fenster extends Canvas 
@@ -26,6 +28,10 @@ public class Fenster extends Canvas
 		frame.setMaximumSize(new Dimension((int) breite, (int) hoehe));
 		frame.setMinimumSize(new Dimension((int) breite, (int) hoehe));		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		try {
+			frame.setIconImage(ImageIO.read(Hearthstone.allImportedFiles()[11]));
+		} catch (IOException e) {	}
 		
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);

@@ -52,7 +52,9 @@ public class Hearthstone extends Canvas
 		}
 		
 		try {
-			background = ImageIO.read(allImportedFiles()[0]);
+			background = rescaledBufferedimage(ImageIO.read(allImportedFiles()[0])
+											, (int) BREITE
+											, (int) HOEHE);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Backgound not found");
@@ -82,6 +84,7 @@ public class Hearthstone extends Canvas
 	 * "G\\pcWin.png"[8];  
 	 * "G\\v_attack.png"[9];
 	 * "G\\v_life.png"[10];
+	 * "Graphics\\GameIcon.png"[11];
 	 * @return list of listed Files
 	 */
 	public static File[] allImportedFiles()
@@ -98,6 +101,7 @@ public class Hearthstone extends Canvas
 		paths.add("Graphics\\pcWin.png"); //Menu.Menu
 		paths.add("Graphics\\v_attack.png"); //Karte.Karte
 		paths.add("Graphics\\v_life.png"); //Karte.Karte
+		paths.add("Graphics\\GameIcon.png"); //Fenster:Fenster
 		
 		File[] allImportedFiles = new File[paths.size()];
 		
