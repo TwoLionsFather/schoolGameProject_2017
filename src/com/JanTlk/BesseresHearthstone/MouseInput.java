@@ -47,7 +47,7 @@ public class MouseInput implements MouseMotionListener, MouseListener
 		
 		if (Hearthstone.gameState == STATE.BEATEN)
 		{
-			Hearthstone.gameState = STATE.MENU;
+			Hearthstone.gameState = STATE.RESETGAME;
 			hs.repaint();
 		}
 		

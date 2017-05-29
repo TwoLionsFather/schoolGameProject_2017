@@ -493,6 +493,16 @@ public class Karte extends JPanel
 	{
 		this.inDeck = deck;
 	}
+
+	public int getSchadenInit() 
+	{
+		return schadenInit;
+	}
+
+	public int getLebenInit() 
+	{
+		return lebenInit;
+	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //DevelopmentOnly sector

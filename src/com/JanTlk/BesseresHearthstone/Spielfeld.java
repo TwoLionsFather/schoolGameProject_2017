@@ -169,6 +169,31 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{	
+		if (Hearthstone.gameState == STATE.RESETGAME)
+		{
+			dH.reset();
+			
+			gameStats[0] = 20;
+			gameStats[3] = 20;
+			
+			gameStats[1] = 1;		
+			gameStats[2] = 1;
+			
+			gameStats[4] = 1;
+			gameStats[5] = 1;
+			
+			for (int i = 0; i < 3; i++)
+			{
+				dPC.ziehen();
+				dPL.ziehen();
+			}
+			
+			Hearthstone.gameState = STATE.MENU;
+			removeAllCards();
+			dPL.repaint();			
+			return;
+		}
+		
 		if (Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
@@ -177,7 +202,7 @@ public class Spielfeld
 		if (Hearthstone.isDebugMode()) 
 		{
 			drawDebugInfo(g);
-		}
+		}		
 
 		drawHelpHud(g);
 		deckDrawer.render(gameStats, MouseInput.isPlayersMove(), g);
@@ -185,6 +210,20 @@ public class Spielfeld
 		
 	}
 	
+	/**
+	 * the card "Map" gets reset
+	 */
+	private void removeAllCards() 
+	{
+		for (int playerPC = 0; playerPC < 2; playerPC++) 
+		{
+			for (int i = 0; i < kartenAufFelder.length; i++) 
+			{
+				kartenAufFelder[i][playerPC] = null;
+			}
+		}
+	}
+
 	/**
 	 * this draws additional Card info to debug game
 	 * @param g

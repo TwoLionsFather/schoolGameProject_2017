@@ -51,9 +51,30 @@ public class DeckHandler
 		for(int startKartren = 0; startKartren < 3; startKartren ++)
 		{
 			player.ziehen();
-			pc.ziehen();
+			pc.ziehen();                   
 		}
 		
+	}
+	
+	/**
+	 * resets the game
+	 */
+	public void reset()
+	{	
+		for (Karte tCard : getAllCards())
+		{
+			tCard.setStatus(Status.STAPEL);
+			tCard.setAttacked(false);
+			tCard.attackedCard(null);
+			
+			tCard.setLeben(tCard.getLebenInit());
+			tCard.setSchaden(tCard.getSchadenInit());
+		}
+		
+		player.setDrawCounter(0);
+		pc.setDrawCounter(0);
+		player.mischen();
+		pc.mischen();
 	}
 	
 	public LinkedList<Karte> getAllCards()

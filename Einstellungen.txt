@@ -1,15 +1,19 @@
-1280
-4/3
-Default				
+1920
+16/9
+Default
 
+The First line is used to tell game's width
+the secound setst up the window's aspect ration
+the third sets the Game mode
+below is a list of game modes and their effect
 
-Default				
-gameState = STATE.MENU;
+Default
+STATE.MENU;
 debug = false;
 drawHelp = true;
 
 ProMode
-STATE.MENU;
+gameState = STATE.MENU;
 debug = false;
 drawHelp = false;
 								
@@ -19,6 +23,6 @@ debug = true;
 drawHelp = true;
 				
 TestGame
-gameState = STATE.Game;
+gameState = STATE.MENU;
 debug = true;
 drawHelp = false;

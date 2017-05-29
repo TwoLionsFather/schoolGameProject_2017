@@ -12,6 +12,7 @@ public class Deck
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	private int drawCounter = 0;
+
 	private String name;
 	
 	/**
@@ -123,6 +124,11 @@ public class Deck
 		Karte playedC = karten.get(idxMovedC);
 		this.karten.remove(idxMovedC);
 		this.karten.add(playedC);	
+	}
+	
+	public void setDrawCounter(int drawCounter) 
+	{
+		this.drawCounter = drawCounter;
 	}
 
 	public void setKarten(LinkedList<Karte> karten) 

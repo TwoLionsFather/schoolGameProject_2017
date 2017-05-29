@@ -28,7 +28,8 @@ public class Hearthstone extends Canvas
 		, END()
 		, GAME()
 		, HELP()
-		, BEATEN();
+		, BEATEN()
+		, RESETGAME();
 	}
 	
 	public static final String TITEL = "Gwint";	//Titel für das Spiel
@@ -232,7 +233,8 @@ public class Hearthstone extends Canvas
 		Graphics gb = bs.getDrawGraphics();
 		
 		if (gameState == STATE.GAME
-		&& gameState != STATE.BEATEN)
+		&& gameState != STATE.BEATEN
+		|| gameState == STATE.RESETGAME)
 		{
 			gb.drawImage(background, 0, 0, null);	
 			spielfeld.render(gb);
