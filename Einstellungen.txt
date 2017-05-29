@@ -1,17 +1,17 @@
 1920
 16/9
-TestGame
+Debug
 
 
 Default				
 gameState = STATE.MENU;
 debug = false;
-drawHelp = false;
+drawHelp = true;
 
-NoobMode
+ProMode
 STATE.MENU;
 debug = false;
-drawHelp = true;
+drawHelp = false;
 								
 Debug
 gameState = STATE.GAME;
@@ -19,6 +19,6 @@ debug = true;
 drawHelp = true;
 				
 TestGame
-gameState = STATE.MENU;
+gameState = STATE.Game;
 debug = true;
 drawHelp = false;

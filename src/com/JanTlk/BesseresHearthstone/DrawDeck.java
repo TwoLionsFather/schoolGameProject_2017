@@ -195,6 +195,7 @@ public class DrawDeck
 			//Es ist nicht ostern, doch ostereier suchen macht immer Spaß
 			if (tempC.getCardID() == 16
 			&& !Hearthstone.isDrawhelpActive()
+			&& !Hearthstone.isDebugMode()
 			&& kartenFelder[(anzRectInR / 2) + ((anzRectInR % 2 == 0) ? 1 : 0)][1].contains(tempC.getHome()))
 			{
 				g.setColor(Color.red);

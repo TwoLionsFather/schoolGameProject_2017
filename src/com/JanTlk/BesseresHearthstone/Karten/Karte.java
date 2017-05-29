@@ -326,6 +326,11 @@ public class Karte extends JPanel
 			moved = true;
 		}
 		
+		if ((this.status != Status.LAYED)
+		&& this.status != Status.ABBLAGE)
+		{
+			this.status = Status.FELD;
+		}
 	}
 	
 	/**
@@ -395,7 +400,6 @@ public class Karte extends JPanel
 	public void attackPlayer(boolean playerPC, int[] gameStats) 
 	{
 		gameStats[(playerPC) ? 0 : 3] -= schaden;
-		
 		placeHome();
 		return;
 	}

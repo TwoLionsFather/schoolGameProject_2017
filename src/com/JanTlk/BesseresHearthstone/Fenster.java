@@ -2,6 +2,7 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -33,6 +34,15 @@ public class Fenster extends Canvas
 			frame.setIconImage(ImageIO.read(Hearthstone.allImportedFiles()[11]));
 		} catch (IOException e) {	}
 		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		
+		if (Hearthstone.BREITE >= screenSize.getWidth()
+		&& Hearthstone.HOEHE >= screenSize.getHeight())
+		{
+			frame.setUndecorated(true);
+		}
+		
+		frame.setAlwaysOnTop(true);
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.add(spiel);

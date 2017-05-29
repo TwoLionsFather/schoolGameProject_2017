@@ -12,6 +12,7 @@ public class KI
 	private Deck deck;
 	
 	private Rectangle[][] kartenFelder;
+	private Karte[][] kartenAufFelder;
 	private int nextPlayField;
 	private int maxCardRow;
 	
@@ -38,6 +39,8 @@ public class KI
 		LinkedList<Karte> ownCs = new LinkedList<Karte>();
 		LinkedList<Karte> enemysCs = new LinkedList<Karte>();
 		
+		this.kartenAufFelder = kartenAufFelder;
+		
 		for(Karte tCard : deckHandler.getAllCards())
 		{
 			switch(tCard.getStatus())
@@ -52,6 +55,7 @@ public class KI
 				
 			case FELD:
 			case ATTACKC:
+			case ATTACKP:
 				if (deck.isInDeck(tCard))
 				{
 					ownCs.add(tCard);
@@ -68,44 +72,54 @@ public class KI
 			}
 		}
 		
-		gameStats = layNextCard(playableCs, kartenAufFelder, gameStats);
+		layNextCard(playableCs, gameStats);
 		chooseCardToAttack(enemysCs, ownCs, gameStats);
 		
-		if (allCardsUnderAttack(kartenAufFelder)
-		|| noCardsToAttack(kartenAufFelder))
+		if (noCardsToAttack()
+		||allCardsUnderAttack())
 		{
-			attackPlayer(ownCs, kartenAufFelder);
+			attackPlayer(ownCs);
 		}		
 		
 	}
 
-	private boolean noCardsToAttack(Karte[][] kartenAufFelder) 
+	/**
+	 * checks enemy side for cards
+	 * @param kartenAufFelder this map is used to do so
+	 * @return true if no cards where found
+	 */
+	private boolean noCardsToAttack() 
 	{		
-		return (nextPlayField(kartenAufFelder, 1) == -1);
+		return (nextAttackField() == -1);
 	}
 
 	/**
 	 * all cards that have no target, attack the player
-	 * @param ownCs
+	 * @param ownCs the list of cards, that attacks the player
+	 * @param kartenAufFelder this is to determin space for the attacking card
 	 */
-	private void attackPlayer(LinkedList<Karte> ownCs, Karte[][] kartenAufFelder) 
+	private void attackPlayer(LinkedList<Karte> ownCs) 
 	{
 		for (Karte tempC : ownCs)
 		{
 			if (tempC.getStatus() == Status.FELD)
 			{
-				tempC.setStatus(Status.ATTACKP);				
-				int placeOn = nextPlayField(kartenAufFelder, 1);
+				int posAttack = nextAttackField();
+								
+				kartenAufFelder[posAttack][1] = tempC;
+				Rectangle attackPos = kartenFelder[posAttack][1];
 				
-				Rectangle attackPlayer = kartenFelder[placeOn][1];
-				kartenAufFelder[placeOn][1] = tempC;
-				
-				System.out.println("KI.attackPlayer Reminder for positioning");
-				tempC.setNewPos(new Rectangle((int) (attackPlayer.getX() + (attackPlayer.getWidth() - tempC.getBounds().getWidth()) / 2)
-											, (int) attackPlayer.getY() - 60
+				if (Hearthstone.isDebugMode())
+				{
+					System.out.println("KI.attackPlayer Reminder for positioning");
+				}
+				tempC.setNewPos(new Rectangle((int) (attackPos.getX() + (attackPos.getWidth() - tempC.getBounds().getWidth()) / 2)
+											, (int) attackPos.getY() - 60
 											, (int) tempC.getBounds().getWidth()
 											, (int) tempC.getBounds().getHeight()));
 				
+				tempC.setStatus(Status.ATTACKP);
+				System.out.printf("%20s attacks player for %d\n", tempC.getName(), tempC.getSchaden());
 			}
 		}
 	}
@@ -118,46 +132,41 @@ public class KI
 	 * @return returns gameStats after card is played
 	 */
 	
-	private int[] layNextCard(LinkedList<Karte> playableCs, Karte[][] kartenAufFelder, int[] gameStats) 
+	private void layNextCard(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
 		if (!playableCs.isEmpty())
 		{
 			Karte cardToPlay = chooseCardToPlay(playableCs, gameStats);
 			
-			//if PC has no Hand cars or not enough Mana
+			//if PC has no Hand cars or not enough Mana, secound catch
 			if (cardToPlay == null
 			|| gameStats[4] - cardToPlay.getMana() < 0)
 			{
-				return gameStats;
+				return;
 			}
 			
-			nextPlayField = nextPlayField(kartenAufFelder, 0);
+			nextPlayField();
 			
-			//If there is no place, no card will get played
+			//If there is no space, no card will get played
 			if (nextPlayField == -1)
 			{
-				return gameStats;
+				return;
 			}
-			
-			cardToPlay.setStatus(Status.LAYED);
-			gameStats[4] -= cardToPlay.getMana();
 			
 			Rectangle tempRect = kartenFelder[nextPlayField][0];
 			kartenAufFelder[nextPlayField][0] = cardToPlay;
-			
-			
 			
 			cardToPlay.setHome(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - cardToPlay.getBounds().getWidth()) / 2)
 										, (int) (tempRect.getY() + (tempRect.getHeight() - cardToPlay.getBounds().getHeight()) / 2)
 										, (int) cardToPlay.getBounds().getWidth()
 										, (int) cardToPlay.getBounds().getHeight()));
 			
+			gameStats[4] -= cardToPlay.getMana();
 			playableCs.remove(cardToPlay);
-			
-			this.layNextCard(playableCs, kartenAufFelder, gameStats);
+			cardToPlay.setStatus(Status.LAYED);			
+			this.layNextCard(playableCs, gameStats);
 		}
 
-		return gameStats;
 	}
 	
 	/**
@@ -202,19 +211,22 @@ public class KI
 				return;
 			}
 
-			Karte chosenCard = enemysCs.get(idxTop);
+			Karte targetCard = enemysCs.get(idxTop);
 			
-			System.out.println("KI.chooseAttack Reminder for positioning");
-			ownCard.setNewPos(new Rectangle((int) (chosenCard.getBounds().getX() + (chosenCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
-												, (int) chosenCard.getBounds().getY() - 60
+			if (Hearthstone.isDebugMode())
+			{
+				System.out.println("KI.chooseAttack Reminder for positioning <------------------------------------------------------------------------------");
+				System.out.printf("Attacking card %s\n", ownCard.getName());
+				System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
+			}
+			
+			ownCard.setNewPos(new Rectangle((int) (targetCard.getBounds().getX() + (targetCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
+												, (int) targetCard.getBounds().getY() - 60
 												, (int) ownCard.getBounds().getWidth()
 												, (int) ownCard.getBounds().getHeight()));
 			
-			ownCard.attackedCard(chosenCard);
+			ownCard.attackedCard(targetCard);
 			ownCard.setStatus(Status.ATTACKC);
-			
-			System.out.printf("Attacking card %s\n", ownCard.getName());
-			System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
 			enemysCs.remove(idxTop);
 			idxTop = 0;
 		}
@@ -232,6 +244,7 @@ public class KI
 	 */
 	private Karte chooseCardToPlay(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
+		//no need to look for a card, if mana reached zero
 		if (gameStats[4] <= 0)
 		{
 			return null;
@@ -297,27 +310,51 @@ public class KI
 	/**
 	 * looks for next free spot, close to the mid
 	 * @param kartenAufFelder
-	 * @param playerPC 0 for PC, 1 for Player
 	 * @return free place in row
 	 */
-	public int nextPlayField(Karte[][] kartenAufFelder, int playerPC) 
+	public void nextPlayField() 
 	{		
 		for (int i = 0; i < maxCardRow / 2 + 1; i++)
 		{
-			if (kartenAufFelder[maxCardRow / 2 + i][playerPC] == null)
+			if (kartenAufFelder[maxCardRow / 2 + i][0] == null)
 			{
-				nextPlayField = maxCardRow / 2 + i;
-				return nextPlayField;
+				this.nextPlayField = maxCardRow / 2 + i;
+				return;
 			}
-			else if (kartenAufFelder[maxCardRow / 2 - i][playerPC] == null)
+			else if (kartenAufFelder[maxCardRow / 2 - i][0] == null)
 			{
-				nextPlayField = maxCardRow / 2 - i;
-				return nextPlayField;
+				this.nextPlayField = maxCardRow / 2 - i;
+				return;
+			}
+		
+		}
+		
+		nextPlayField = -1;
+	}
+	
+	/**
+	 * searches players Rectangels for next free spot
+	 * @param kartenAufFelder uses this cardmap to determin this spot
+	 * @return the idx of next attack fild and -1 if non found
+	 */
+	public int nextAttackField() 
+	{		
+		for (int i = 0; i < maxCardRow / 2 + 1; i++)
+		{
+			if (kartenAufFelder[maxCardRow / 2 + i][1] == null)
+			{
+				return maxCardRow / 2 + i;
+			}
+			else if (kartenAufFelder[maxCardRow / 2 - i][1] == null)
+			{
+				return maxCardRow / 2 - i;
 			}
 		}
 		
 		return -1;
 	}
+
+	
 	
 	/**
 	 * checks if it is possible to attack the enemy player
@@ -325,7 +362,7 @@ public class KI
 	 * @param playerPC if 0, cards on PCs half get checked
 	 * @return true if all cards are under attack
 	 */
-	private boolean allCardsUnderAttack(Karte[][] kartenAufFelder) 
+	private boolean allCardsUnderAttack() 
 	{
 		for (int i = 0; i < kartenAufFelder.length; i++)
 		{

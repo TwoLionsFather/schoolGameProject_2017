@@ -12,7 +12,7 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	private Menu menu;
 	private Hearthstone hs;
 	private boolean cardMoved;
-	private static boolean playersMove = true;
+	private static boolean playersMove = false;
 	
 	/**
 	 * this is used to handle mouseinput
@@ -58,18 +58,15 @@ public class MouseInput implements MouseMotionListener, MouseListener
 				if(playersMove)
 				{
 					spielfeld.attackUpdate();
-					spielfeld.updateCardRectangles();
 				}
 					
-				if (spielfeld.getAttackUpdate())
+				else if (spielfeld.getAttackUpdate())
 				{
 					spielfeld.attackUpdate();
 				}
 				
 				playersMove = !playersMove;
 				spielfeld.nextRound(playersMove);
-				
-				
 				return;
 			}
 			
@@ -158,5 +155,10 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	public static boolean isPlayersMove() 
 	{
 		return playersMove;
+	}
+
+	public static void setPlayersMove(boolean playersMove) 
+	{
+		MouseInput.playersMove = playersMove;
 	}
 }

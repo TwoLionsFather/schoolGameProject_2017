@@ -54,6 +54,7 @@ public class Spielfeld
 		
 		Random r = new Random();
 		PCFirstMove = r.nextBoolean();
+		MouseInput.setPlayersMove(!PCFirstMove);
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -168,9 +169,14 @@ public class Spielfeld
 	 */
 	public void render(Graphics g) 
 	{	
-		if(Hearthstone.isDrawhelpActive())
+		if (Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
+		}
+		
+		if (Hearthstone.isDebugMode()) 
+		{
+			drawDebugInfo(g);
 		}
 
 		drawHelpHud(g);
@@ -189,12 +195,50 @@ public class Spielfeld
 	}
 	
 	/**
+	 * this draws additional Card info to debug game
+	 * @param g
+	 */
+	private void drawDebugInfo(Graphics g) 
+	{
+		for (int playerPC = 0; playerPC < 2; playerPC++) 
+		{
+			for (int i = 0; i < kartenAufFelder.length; i++) 
+			{
+				if (kartenAufFelder[i][playerPC] != null)
+				{
+					Karte tempC = kartenAufFelder[i][playerPC];
+					
+					int rimC = 6;
+					g.setColor(Color.black);
+					g.drawRect((int) tempC.getHome().getX() - rimC / 2
+							, (int) tempC.getHome().getY() - rimC / 2
+							, (int) tempC.getHome().getWidth() + rimC
+							, (int) tempC.getHome().getHeight() + rimC);
+					
+					if (tempC.getHome() != null)
+					{
+						int rimH = 2;
+						g.setColor(Color.white);
+						g.fillRect((int) tempC.getHome().getX() - rimH / 2
+								, (int) tempC.getHome().getY() - rimH / 2
+								, (int) tempC.getHome().getWidth() + rimH
+								, (int) tempC.getHome().getHeight() + rimH);
+						
+					}
+					
+				}
+			}
+		}
+
+	}
+
+	/**
 	 * draws Card Details
 	 * and other usefull info
 	 * @param g
 	 */
 	private void drawHelpHud(Graphics g) 
-	{
+	{		
 		//next Round Button
 		g.setColor((MouseInput.isPlayersMove()) ? Color.green : Color.red);
 		g.drawRect((int) nextRoundB.getX()
@@ -202,6 +246,7 @@ public class Spielfeld
 				, (int) nextRoundB.getWidth()
 				, (int) nextRoundB.getHeight());
 		
+		//cross out if attackUpdate
 		if (attackUpdate)
 		{
 			g.drawLine((int) nextRoundB.getX()
@@ -535,28 +580,35 @@ public class Spielfeld
 	}
 	
 	/**
-	 * checks if moved card is checked in on any of the rectangles and delets it from the array
-	 * @param remC the card choosen to get removed
+	 * delets old cards from rect.
 	 */
 	public void updateCardRectangles() 
 	{
-		for(int playerPC = 0; playerPC < 2; playerPC++)
+		for (Karte tCard : dH.getAllCards())
 		{
-			for(int i = 0; i < kartenAufFelder.length; i++)
+			if (tCard.getStatus() == Status.ABBLAGE)
 			{
-				if (kartenAufFelder[i][playerPC] != null)
+				remCardFromRectangles(tCard);
+			}
+			
+			if (dPC.isInDeck(tCard)
+			&& tCard.getStatus() == Status.FELD)
+			{
+				for (int idx = 0; idx < kartenAufFelder.length; idx++)
 				{
-					if ((kartenAufFelder[i][playerPC].getStatus() == Status.ABBLAGE)
-					|| (kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKP)
-					|| (kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKC))
+					if(kartenAufFelder[idx][1] == tCard)
 					{
-						kartenAufFelder[i][playerPC] = null;
+						kartenAufFelder[idx][1] = null;
 					}
 					
 				}
+
 			}
+			
 		}
+			
 	}
+	
 
 	
 	public Karte getDetailedCard() 

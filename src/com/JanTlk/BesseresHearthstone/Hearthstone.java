@@ -166,11 +166,11 @@ public class Hearthstone extends Canvas
 			case 3:				
 				String GameMode = s.next();
 				
-				if (GameMode.equalsIgnoreCase("NoobMode")) 
+				if (GameMode.equalsIgnoreCase("ProMode")) 
 				{
 					gameState = STATE.MENU;
 					debug = false;
-					drawHelp = true;
+					drawHelp = false;
 					break;
 				}
 				
@@ -184,7 +184,7 @@ public class Hearthstone extends Canvas
 				
 				else if (GameMode.equalsIgnoreCase("TestGame")) 
 				{
-					gameState = STATE.MENU;
+					gameState = STATE.GAME;
 					debug = true;
 					drawHelp = false;
 					break;
@@ -194,7 +194,7 @@ public class Hearthstone extends Canvas
 				{
 					gameState = STATE.MENU;
 					debug = false;
-					drawHelp = false;
+					drawHelp = true;
 					break;
 				}
 			}
