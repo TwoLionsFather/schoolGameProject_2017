@@ -88,7 +88,7 @@ public class Deck
 		LinkedList<Karte> old = this.getKarten();
 		LinkedList<Karte> temp = new LinkedList<Karte>();		//neue temporäre Liste um gemischtes Deck zu speichern
 		
-		int anzKarten = old.size();					//Anzahl an zu mischenden Karten
+		int anzKarten = old.size();					//Anzahl an zu mischenden Karten, bevor die Liste des Zufalls wegen gekürzt wird
 		
 		for(int i = 0; i < anzKarten; i++) 					//solange Karten zu mischen sind
 		{
@@ -99,6 +99,46 @@ public class Deck
 		}
 		
 		this.setKarten(temp);
+	}
+	
+	/**
+	 * 
+	 */
+	public void mischenA() 
+	{
+		Random r = new SecureRandom();
+		LinkedList<Karte> old = this.getKarten();
+		LinkedList<Karte> temp = new LinkedList<Karte>();
+		float[] posValue = new float[old.size()];
+		
+		
+		do {
+			for (int idx = 0; idx < old.size(); idx++)
+			{
+				posValue[idx] = (float) (Math.pow((old.get(idx).getMana() * (old.get(idx).getLeben() / old.get(idx).getSchaden()) / 3), 2) 
+								* (r.nextInt((old.get(idx).getLeben() / old.get(idx).getSchaden()) + 30) * 1.2));
+			}
+			
+			int idxHigh = 0;
+			for (int i = 1; i < old.size(); i++)
+			{
+				if (posValue[i] > posValue[idxHigh])
+				{
+					idxHigh = i;
+				}
+			}
+			
+			temp.add(old.get(idxHigh));
+			old.remove(idxHigh);
+			
+		} while (temp.size() < old.size());
+		
+		for (Karte tCard : temp)
+		{
+			System.out.println(tCard.toString());
+		}
+		
+//		this.setKarten(temp);
 	}
 	
 	public boolean isInDeck(Karte cKarte)

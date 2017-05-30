@@ -19,7 +19,7 @@ public class Spielfeld
 	private Deck dPL;
 	private Deck dPC;
 	
-	private final boolean PCFirstMove;
+	private boolean PCFirstMove;
 	private int[] gameStats;
 	
 	private int idxMovedC;
@@ -82,19 +82,15 @@ public class Spielfeld
 		gameStats[0] = 20;
 		gameStats[3] = 20;
 		
-		gameStats[1] = 1;		
-		gameStats[2] = 1;
+		gameStats[1] = 0;		
+		gameStats[2] = 0;
 		
-		gameStats[4] = 1;
-		gameStats[5] = 1;
+		gameStats[4] = 0;
+		gameStats[5] = 0;
 		
 		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
 		
-		if(PCFirstMove)
-		{
-			pcController.nextRound(kartenAufFelder, gameStats);
-			attackUpdate = true;
-		}
+		nextRound(!PCFirstMove);
 		
 	}
 	
@@ -105,6 +101,7 @@ public class Spielfeld
 	 */
 	public void nextRound(boolean playersTurn)
 	{	
+		//Reset detailed Card
 		if (detailedCard != null)
 		{
 			detailedCard.setDisplayed(false);
@@ -122,7 +119,7 @@ public class Spielfeld
 			dPL.ziehen();
 			dPL.repaint();
 			return;
-		}
+		} 
 		
 		attackUpdate();
 		
@@ -138,6 +135,7 @@ public class Spielfeld
 		if (!attackUpdate)
 		{
 			UIInput.setPlayersMove(true);
+			nextRound(true);			
 		}
 		
 		return;		
@@ -190,17 +188,27 @@ public class Spielfeld
 			gameStats[0] = 20;
 			gameStats[3] = 20;
 			
-			gameStats[1] = 1;		
-			gameStats[2] = 1;
+			gameStats[1] = 0;		
+			gameStats[2] = 0;
 			
-			gameStats[4] = 1;
-			gameStats[5] = 1;
+			gameStats[4] = 0;
+			gameStats[5] = 0;
 			
 			for (int i = 0; i < 3; i++)
 			{
 				dPC.ziehen();
 				dPL.ziehen();
 			}
+			
+			if (detailedCard != null)
+			{
+				detailedCard.setDisplayed(false);
+				detailedCard = null;
+			}
+			
+			Random r = new Random();
+			PCFirstMove = r.nextBoolean();
+			nextRound(!PCFirstMove);
 			
 			Hearthstone.gameState = STATE.MENU;
 			removeAllCards();

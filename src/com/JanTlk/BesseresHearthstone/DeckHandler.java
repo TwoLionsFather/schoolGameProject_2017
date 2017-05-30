@@ -44,8 +44,19 @@ public class DeckHandler
 		
 		pc = player.clone(new Deck("PC")); 
 		
-		player.mischen();
-		pc.mischen();
+		if (!Hearthstone.isDrawhelpActive()
+		|| Hearthstone.isDebugMode())
+		{
+			player.mischenA();
+			pc.mischenA();
+		}
+		
+		else 
+		{
+			player.mischen();
+			pc.mischen();
+		}
+		
 		
 		//Starthand ziehen
 		for(int startKartren = 0; startKartren < 3; startKartren ++)

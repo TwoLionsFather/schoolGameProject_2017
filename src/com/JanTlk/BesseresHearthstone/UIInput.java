@@ -64,6 +64,14 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				break;
 			}
 			
+		case KeyEvent.VK_DELETE:
+			if (Hearthstone.gameState == STATE.GAME
+			&& Hearthstone.isDebugMode())
+			{
+				Hearthstone.gameState = STATE.RESETGAME;
+				hs.repaint();
+			}
+			
 		}
 		
 		e.consume();

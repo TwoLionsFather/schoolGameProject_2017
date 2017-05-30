@@ -85,7 +85,6 @@ public class KI
 		
 		if (attacksUpdated || attacksOnPlayer)
 		{
-			System.out.println("KI.nextRound A card has attacked");
 			return true;
 		}
 		

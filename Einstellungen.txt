@@ -1,6 +1,6 @@
 1920
 16/9
-ProMode
+TestGame
 
 The First line is used to tell game's width
 the secound setst up the window's aspect ration
