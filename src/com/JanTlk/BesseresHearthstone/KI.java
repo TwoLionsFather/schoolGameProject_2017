@@ -30,12 +30,14 @@ public class KI
 	 * plays next Round for PC
 	 * @param kartenAufFelder these cards are on the field rN
 	 * @param gameStats
-	 * @return
+	 * @return true if a card has attacked
 	 */
-	public void nextRound(Karte[][] kartenAufFelder, int[] gameStats) 
+	public boolean nextRound(Karte[][] kartenAufFelder, int[] gameStats) 
 	{
-		LinkedList<Karte> playableCs = new LinkedList<Karte>();
+		boolean attacksUpdated = false;
+		boolean attacksOnPlayer = false;
 		
+		LinkedList<Karte> playableCs = new LinkedList<Karte>();
 		LinkedList<Karte> ownCs = new LinkedList<Karte>();
 		LinkedList<Karte> enemysCs = new LinkedList<Karte>();
 		
@@ -73,13 +75,21 @@ public class KI
 		}
 		
 		layNextCard(playableCs, gameStats);
-		chooseCardToAttack(enemysCs, ownCs, gameStats);
+		attacksUpdated = chooseCardToAttack(enemysCs, ownCs, gameStats);
 		
 		if (noCardsToAttack()
 		||allCardsUnderAttack())
 		{
-			attackPlayer(ownCs);
+			attacksOnPlayer = attackPlayer(ownCs);
 		}		
+		
+		if (attacksUpdated || attacksOnPlayer)
+		{
+			System.out.println("KI.nextRound A card has attacked");
+			return true;
+		}
+		
+		return false;
 		
 	}
 
@@ -97,9 +107,11 @@ public class KI
 	 * all cards that have no target, attack the player
 	 * @param ownCs the list of cards, that attacks the player
 	 * @param kartenAufFelder this is to determin space for the attacking card
+	 * @return true if at least one card is attacking the player
 	 */
-	private void attackPlayer(LinkedList<Karte> ownCs) 
+	private boolean attackPlayer(LinkedList<Karte> ownCs) 
 	{
+		boolean attacked = false;
 		for (Karte tempC : ownCs)
 		{
 			if (tempC.getStatus() == Status.FELD)
@@ -119,9 +131,11 @@ public class KI
 											, (int) tempC.getBounds().getHeight()));
 				
 				tempC.setStatus(Status.ATTACKP);
+				attacked = true;
 				System.out.printf("%20s attacks player for %d\n", tempC.getName(), tempC.getSchaden());
 			}
 		}
+		return attacked;
 	}
 
 	/**
@@ -129,11 +143,11 @@ public class KI
 	 * @param playableCs lays cards of this cards list
 	 * @param kartenAufFelder checks the layed card into this card map
 	 * @param gameStats updates mana using the games stats
-	 * @return returns gameStats after card is played
+	 * @return true if at least one card has been played
 	 */
-	
-	private void layNextCard(LinkedList<Karte> playableCs, int[] gameStats) 
+	private boolean layNextCard(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
+		boolean cardPlayed = false;
 		if (!playableCs.isEmpty())
 		{
 			Karte cardToPlay = chooseCardToPlay(playableCs, gameStats);
@@ -142,7 +156,7 @@ public class KI
 			if (cardToPlay == null
 			|| gameStats[4] - cardToPlay.getMana() < 0)
 			{
-				return;
+				return cardPlayed;
 			}
 			
 			nextPlayField();
@@ -150,11 +164,12 @@ public class KI
 			//If there is no space, no card will get played
 			if (nextPlayField == -1)
 			{
-				return;
+				return cardPlayed;
 			}
 			
 			Rectangle tempRect = kartenFelder[nextPlayField][0];
 			kartenAufFelder[nextPlayField][0] = cardToPlay;
+			cardPlayed = true;
 			
 			cardToPlay.setHome(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - cardToPlay.getBounds().getWidth()) / 2)
 										, (int) (tempRect.getY() + (tempRect.getHeight() - cardToPlay.getBounds().getHeight()) / 2)
@@ -166,7 +181,7 @@ public class KI
 			cardToPlay.setStatus(Status.LAYED);			
 			this.layNextCard(playableCs, gameStats);
 		}
-
+		return cardPlayed;
 	}
 	
 	/**
@@ -174,11 +189,13 @@ public class KI
 	 * @param enemysCs the enemys cards, from which opponents get chosen
 	 * @param ownCards the cards that an opponent is searched for
 	 * @param gameStats the game stats, to determine strategy and who to attack
+	 * @return true if at least one card has attacked
 	 */
-	private void chooseCardToAttack(LinkedList<Karte> enemysCs, LinkedList<Karte> ownCards, int[] gameStats)
+	private boolean chooseCardToAttack(LinkedList<Karte> enemysCs, LinkedList<Karte> ownCards, int[] gameStats)
 	{
 		float topCardRating = (float) 0.0;
 		int idxTop;
+		boolean attacked = false;
 		
 		System.out.println("KI.chooseCard Attacking Card Search ------------------------------------------------------------------------------------------------");
 		
@@ -208,7 +225,7 @@ public class KI
 			
 			if (idxTop < 0)
 			{
-				return;
+				return attacked;
 			}
 
 			Karte targetCard = enemysCs.get(idxTop);
@@ -224,7 +241,7 @@ public class KI
 												, (int) targetCard.getBounds().getY() - 60
 												, (int) ownCard.getBounds().getWidth()
 												, (int) ownCard.getBounds().getHeight()));
-			
+			attacked = true;
 			ownCard.attackedCard(targetCard);
 			ownCard.setStatus(Status.ATTACKC);
 			enemysCs.remove(idxTop);
@@ -232,6 +249,7 @@ public class KI
 		}
 		
 		System.out.println();
+		return attacked;
 	}
 
 	/**

@@ -30,7 +30,7 @@ public class DrawHud
 		}
 		
 		hud = new Rectangle(50
-						, (int) Hearthstone.HOEHE - hudtexture.getHeight() - 40
+						, (int) Hearthstone.HOEHE - hudtexture.getHeight() - 10
 						, hudtexture.getWidth()
 						, hudtexture.getHeight());
 	}
@@ -89,12 +89,12 @@ public class DrawHud
 		g.setColor(Color.green);
 		g.drawString("" + gameStats[6]
 					, 20
-					, (int) Hearthstone.HOEHE - 40);
+					, (int) Hearthstone.HOEHE - 10);
 		
 		//Stapel Player
 		g.drawString("" + gameStats[7]
 					, (int) Hearthstone.BREITE - 25
-					, (int) Hearthstone.HOEHE - 40);
+					, (int) Hearthstone.HOEHE - 10);
 		
 		//Abblage PC
 		g.setColor(Color.red);

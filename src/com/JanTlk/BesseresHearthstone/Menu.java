@@ -19,7 +19,9 @@ public class Menu
 	public Menu()
 	{
 		try {
-			helpSheet = ImageIO.read(Hearthstone.allImportedFiles()[6]);
+			helpSheet = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[6])
+														, (int) Hearthstone.BREITE
+														, (int) Hearthstone.HOEHE);
 
 			playerWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[7])
 														, (int) Hearthstone.BREITE

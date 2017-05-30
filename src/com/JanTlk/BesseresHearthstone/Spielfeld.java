@@ -2,6 +2,7 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -25,6 +26,7 @@ public class Spielfeld
 	private boolean attackUpdate;
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
+	private Rectangle skipAttacks;
 	
 	private Rectangle [][] kartenFelder;
 	private Karte [][] kartenAufFelder;
@@ -43,8 +45,15 @@ public class Spielfeld
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
-								, 30, 20);
+		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - ((Hearthstone.isDrawhelpActive()) ? 80 : 70))
+								, 70
+								, (Hearthstone.isDrawhelpActive()) ? 50 : 30
+								, (Hearthstone.isDrawhelpActive()) ? 30 : 20);
+		
+		skipAttacks =  new Rectangle((int) (Hearthstone.BREITE - 70)
+									, (int) (Hearthstone.HOEHE - 70)
+									, 30
+									, 20);
 		
 		hudDrawer = new DrawHud();
 		deckDrawer = new DrawDeck(dH);
@@ -54,7 +63,7 @@ public class Spielfeld
 		
 		Random r = new Random();
 		PCFirstMove = r.nextBoolean();
-		MouseInput.setPlayersMove(!PCFirstMove);
+		UIInput.setPlayersMove(!PCFirstMove);
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -124,8 +133,13 @@ public class Spielfeld
 		
 		gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
 		dPC.ziehen();					//draws new Card from Deck		
-		pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
-		attackUpdate = true;
+		attackUpdate = pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
+		
+		if (!attackUpdate)
+		{
+			UIInput.setPlayersMove(true);
+		}
+		
 		return;		
 	}
 	
@@ -204,9 +218,10 @@ public class Spielfeld
 			drawDebugInfo(g);
 		}		
 
+		drawButtons(g);
 		drawHelpHud(g);
-		deckDrawer.render(gameStats, MouseInput.isPlayersMove(), g);
-		hudDrawer.render(MouseInput.isPlayersMove(), detailedCard, gameStats, g);
+		deckDrawer.render(gameStats, UIInput.isPlayersMove(), g);
+		hudDrawer.render(UIInput.isPlayersMove(), detailedCard, gameStats, g);
 		
 	}
 	
@@ -268,23 +283,7 @@ public class Spielfeld
 	 * @param g
 	 */
 	private void drawHelpHud(Graphics g) 
-	{		
-		//next Round Button
-		g.setColor((MouseInput.isPlayersMove()) ? Color.green : Color.red);
-		g.drawRect((int) nextRoundB.getX()
-				, (int) nextRoundB.getY()
-				, (int) nextRoundB.getWidth()
-				, (int) nextRoundB.getHeight());
-		
-		//cross out if attackUpdate
-		if (attackUpdate)
-		{
-			g.drawLine((int) nextRoundB.getX()
-					, (int) nextRoundB.getY()
-					, (int) (nextRoundB.getX() + nextRoundB.getWidth())
-					, (int) (nextRoundB.getY() + nextRoundB.getHeight()));
-		}
-			
+	{	
 		if ((detailedCard != null)
 		&& detailedCard.getStatus() != Status.ABBLAGE)
 		{
@@ -300,36 +299,93 @@ public class Spielfeld
 		
 		for (Karte tCard : dH.getAllCards())
 		{
-			if ((tCard.getStatus() == Status.ATTACKC)
-			|| (tCard.getStatus() == Status.ATTACKP))
+			Rectangle dcHome = null;
+			int rimWidth = 3;
+			
+			if (tCard.getHome() != null)
 			{
-				Rectangle dChome = tCard.getHome();
-				int rimWidth = 3;
-				
-				g.setColor(Color.darkGray);
-				g.drawRect((int) dChome.getX() - rimWidth
-						, (int) dChome.getY() - rimWidth
-						, (int) dChome.getWidth() + rimWidth * 2
-						, (int) dChome.getHeight() + rimWidth * 2);
-				
-				g.drawLine((int) dChome.getX()
-						, (int) dChome.getY()
-						, (int) (dChome.getX() + dChome.getWidth())
-						, (int) (dChome.getY() + dChome.getHeight()));
+				dcHome = tCard.getHome();
 			}
 			
-			else if (tCard.getStatus() == Status.FELD
-			&& dPL.isInDeck(tCard))
+			switch (tCard.getStatus())
 			{
-				Rectangle dChome = tCard.getHome();
-				int rimWidth = 3;
+			case ATTACKC:
+			case ATTACKP:				
+				g.setColor(Color.darkGray);
+				g.drawRect((int) dcHome.getX() - rimWidth
+						, (int) dcHome.getY() - rimWidth
+						, (int) dcHome.getWidth() + rimWidth * 2
+						, (int) dcHome.getHeight() + rimWidth * 2);
 				
+				g.drawLine((int) dcHome.getX()
+						, (int) dcHome.getY()
+						, (int) (dcHome.getX() + dcHome.getWidth())
+						, (int) (dcHome.getY() + dcHome.getHeight()));
+				break;
+				
+			case FELD:				
 				g.setColor(Color.orange);
-				g.drawRect((int) dChome.getX() - rimWidth
-						, (int) dChome.getY() - rimWidth
-						, (int) dChome.getWidth() + rimWidth * 2
-						, (int) dChome.getHeight() + rimWidth * 2);
+				g.drawRect((int) dcHome.getX() - rimWidth
+						, (int) dcHome.getY() - rimWidth
+						, (int) dcHome.getWidth() + rimWidth * 2
+						, (int) dcHome.getHeight() + rimWidth * 2);
+				break;
+				
+			default:
+				break;
+			
 			}
+			
+		}
+	}
+	
+	/**
+	 * as the name implies, this is used to draw the Buttons on screen
+	 * @param g
+	 */
+	private void drawButtons(Graphics g)
+	{
+		g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+		
+		//next Round Button
+		if (Hearthstone.isDrawhelpActive()
+		|| Hearthstone.isDebugMode())
+		{
+			g.setFont(new Font("Century", Font.PLAIN, 12));
+			g.drawString("Spieler"
+					, (int) (nextRoundB.getX() + nextRoundB.getWidth() / 2 - "Spieler".length() * 3)
+					, (int) (nextRoundB.getY() + nextRoundB.getHeight() / 2 + 6)); 
+		}
+		
+		g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+		g.drawRect((int) nextRoundB.getX()
+				, (int) nextRoundB.getY()
+				, (int) nextRoundB.getWidth()
+				, (int) nextRoundB.getHeight());
+		
+		//skipp PCs Attacks Button
+		if (!Hearthstone.isDrawhelpActive()
+		|| Hearthstone.isDebugMode())
+		{
+			g.setFont(new Font("Arial", Font.PLAIN, 10));
+			g.drawString("Skipp"
+					, (int) (skipAttacks.getX() + nextRoundB.getWidth() / 2 - "Skipp".length() * 2.5)
+					, (int) (skipAttacks.getY() + nextRoundB.getHeight() / 2 + 6));
+			
+			g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+			g.drawRect((int) skipAttacks.getX()
+					, (int) skipAttacks.getY()
+					, (int) skipAttacks.getWidth()
+					, (int) skipAttacks.getHeight());
+		}
+		
+		//cross out if attackUpdate
+		if (attackUpdate)
+		{
+			g.drawLine((int) nextRoundB.getX()
+					, (int) nextRoundB.getY()
+					, (int) (nextRoundB.getX() + nextRoundB.getWidth())
+					, (int) (nextRoundB.getY() + nextRoundB.getHeight()));
 		}
 	}
 
@@ -582,6 +638,23 @@ public class Spielfeld
 	{
 		Point cEvent = arg0.getPoint();
 		return inBounds(cEvent, nextRoundB);
+	}
+	
+	/**
+	 * checks nextRoundButton on clickevent
+	 * @param arg0 clickevent to be tested
+	 * @return true if next round
+	 */
+	public boolean clickedSkipA(MouseEvent arg0)
+	{
+		if (Hearthstone.isDrawhelpActive()
+		&& !Hearthstone.isDebugMode())
+		{
+			return false;
+		}
+		
+		Point cEvent = arg0.getPoint();
+		return inBounds(cEvent, skipAttacks);
 	}
 	
 	/**

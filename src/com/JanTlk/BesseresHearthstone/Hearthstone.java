@@ -66,9 +66,11 @@ public class Hearthstone extends Canvas
 
 		this.spielfeld = new Spielfeld(this);
 		
-		MouseInput mouseStuff = new MouseInput(spielfeld, menu, this);
-		this.addMouseMotionListener(mouseStuff);
-		this.addMouseListener(mouseStuff);
+		UIInput uiStuff = new UIInput(spielfeld, menu, this);
+		this.addKeyListener(uiStuff);
+		this.addMouseMotionListener(uiStuff);
+		this.addMouseListener(uiStuff);
+		
 		
 		new Fenster(BREITE, HOEHE, TITEL, this);	
 		
@@ -224,6 +226,8 @@ public class Hearthstone extends Canvas
 	@Override
 	public void paint(Graphics g)
 	{
+		this.requestFocus();
+		
 		BufferStrategy bs = this.getBufferStrategy();
 		if (bs == null) {
 			this.createBufferStrategy(2);

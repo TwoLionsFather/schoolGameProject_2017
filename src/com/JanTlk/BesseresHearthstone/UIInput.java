@@ -1,12 +1,14 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 
-public class MouseInput implements MouseMotionListener, MouseListener
+public class UIInput extends KeyAdapter implements MouseMotionListener, MouseListener
 {
 	private Spielfeld spielfeld;
 	private Menu menu;
@@ -20,24 +22,51 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	 * @param spielfeld this is used to convert mouseevents into actions
 	 * @param menu 
 	 */
-	public MouseInput(Spielfeld spielfeld, Menu menu, Hearthstone hearthstone) 
+	public UIInput(Spielfeld spielfeld, Menu menu, Hearthstone hearthstone) 
 	{
 		this.spielfeld = spielfeld;
 		this.menu = menu;
 		this.hs = hearthstone;
 		this.cardMoved = false;
 	}
-
+	
 	@Override
-	public void mouseDragged(MouseEvent arg0) 
+	public void keyPressed(KeyEvent e) 
 	{
-		arg0.consume();	
-	}
+		int keyCode = e.getKeyCode();
 
-	@Override
-	public void mouseMoved(MouseEvent arg0) 
-	{
-		arg0.consume();
+		switch (keyCode)
+		{
+		case KeyEvent.VK_ESCAPE:
+			System.exit(0);
+			break;	
+		
+		case KeyEvent.VK_ENTER:
+			
+			if (Hearthstone.gameState == STATE.GAME
+			&& !Hearthstone.isDrawhelpActive()
+			|| Hearthstone.isDebugMode())
+			{
+				if (playersMove)
+				{
+					spielfeld.attackUpdate();
+					spielfeld.nextRound(!playersMove);
+					spielfeld.attackUpdate();
+					spielfeld.nextRound(playersMove);
+				}
+				
+				else if (spielfeld.getAttackUpdate())
+				{
+					spielfeld.attackUpdate();
+					playersMove = !playersMove;
+					spielfeld.nextRound(playersMove);
+				}
+				break;
+			}
+			
+		}
+		
+		e.consume();
 	}
 
 	@Override
@@ -45,20 +74,19 @@ public class MouseInput implements MouseMotionListener, MouseListener
 	{
 		spielfeld.cardDetailsAt(arg0);
 		
-		if (Hearthstone.gameState == STATE.BEATEN)
+		switch (Hearthstone.gameState)
 		{
+		case BEATEN:
 			Hearthstone.gameState = STATE.RESETGAME;
 			hs.repaint();
-		}
-		
-		else if (Hearthstone.gameState == STATE.END)
-		{
+			break;
+			
+		case END:
 			System.exit(0);
-		}
-		
-		else if (Hearthstone.gameState == STATE.GAME)
-		{
-			if(spielfeld.clickedNR(arg0))
+			break;
+			
+		case GAME:
+			if (spielfeld.clickedNR(arg0))
 			{
 				if(playersMove)
 				{
@@ -75,16 +103,31 @@ public class MouseInput implements MouseMotionListener, MouseListener
 				return;
 			}
 			
-		}			
-		
-		else if(Hearthstone.gameState == STATE.HELP)
-		{
+			if (spielfeld.clickedSkipA(arg0))
+			{
+				if (playersMove)
+				{
+					spielfeld.attackUpdate();
+					spielfeld.nextRound(!playersMove);
+					spielfeld.attackUpdate();
+					spielfeld.nextRound(playersMove);
+				}
+				
+				else if (spielfeld.getAttackUpdate())
+				{
+					spielfeld.attackUpdate();
+					playersMove = !playersMove;
+					spielfeld.nextRound(playersMove);
+				}
+			}
+			break;
+			
+		case HELP:
 			Hearthstone.gameState = STATE.MENU;
 			hs.repaint();
-		}
-		
-		else if(Hearthstone.gameState == STATE.MENU)
-		{
+			break;
+			
+		case MENU:
 			for(int i = 0; i < menu.getButtons().length; i++)
 			{
 				if (spielfeld.inBounds(arg0.getPoint(), menu.getButtons()[i]))
@@ -105,24 +148,16 @@ public class MouseInput implements MouseMotionListener, MouseListener
 				}
 				
 			}
+			break;
 			
+		default:
+			break;
+		
 		}
 		
 		arg0.consume();
 	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) 
-	{
-		arg0.consume();
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) 
-	{
-		arg0.consume();
-	}
-
+	
 	@Override
 	public void mousePressed(MouseEvent arg0) 
 	{
@@ -157,6 +192,30 @@ public class MouseInput implements MouseMotionListener, MouseListener
 		
 	}
 	
+	@Override
+	public void mouseDragged(MouseEvent arg0) 
+	{
+		arg0.consume();	
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) 
+	{
+		arg0.consume();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) 
+	{
+		arg0.consume();
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) 
+	{
+		arg0.consume();
+	}
+
 	public static boolean isPlayersMove() 
 	{
 		return playersMove;
@@ -164,6 +223,6 @@ public class MouseInput implements MouseMotionListener, MouseListener
 
 	public static void setPlayersMove(boolean playersMove) 
 	{
-		MouseInput.playersMove = playersMove;
+		UIInput.playersMove = playersMove;
 	}
 }

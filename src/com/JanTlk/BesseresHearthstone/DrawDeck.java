@@ -207,6 +207,7 @@ public class DrawDeck
 			if (tempC.getCardID() == 16
 			&& !Hearthstone.isDrawhelpActive()
 			&& !Hearthstone.isDebugMode()
+			&& !tempC.isDisplayed()
 			&& kartenFelder[(anzRectInR / 2) + ((anzRectInR % 2 == 0) ? 1 : 0)][1].contains(tempC.getHome()))
 			{
 				g.setColor(Color.red);
