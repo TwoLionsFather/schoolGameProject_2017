@@ -1,7 +1,6 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Rectangle;
-import java.security.SecureRandom;
 import java.util.LinkedList;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
@@ -147,8 +146,6 @@ public class KI
 	 */
 	private boolean layNextCard(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
-		System.out.println("KI.chooseCard Card to Play ------------------------------------------------------------------------------------------------");
-		
 		boolean cardPlayed = false;
 				
 		if (!playableCs.isEmpty())
@@ -179,9 +176,9 @@ public class KI
 										, (int) cardToPlay.getBounds().getWidth()
 										, (int) cardToPlay.getBounds().getHeight()));
 			
-			gameStats[4] -= cardToPlay.getMana();
 			playableCs.remove(cardToPlay);
-			cardToPlay.setStatus(Status.LAYED);			
+			cardToPlay.setStatus(Status.LAYED);		
+			gameStats[4] -= cardToPlay.getMana();
 			this.layNextCard(playableCs, gameStats);
 		}
 		return cardPlayed;
@@ -442,7 +439,7 @@ public class KI
 							if (score[idxOwnC][i] > score[idxOwnC][idxEnemy])
 							{
 								//the potential enemy is is no longer a valid choice
-								potEnemys[idxOwnC] = false;
+								potEnemys[idxEnemy] = false;
 								
 								int idxSecoundHighest = -1;		//this should throw exception if something goes wrong
 								float highest = score[0][idxEnemy];
@@ -490,48 +487,13 @@ public class KI
 	 */
 	private Karte chooseCardToPlay(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
+		System.out.println("KI.chooseCard Card to Play ------------------------------------------------------------------------------------------------");
+		
 		//no need to look for a card, if mana reached zero
 		if (gameStats[4] <= 0)
 		{
 			return null;
-		}
-		
-		//if simple mode, a random card gets chosen
-		if (Hearthstone.isDrawhelpActive())
-		{
-			SecureRandom r = new SecureRandom(); 
-			float topCardRating = (float) 0.0;
-			int idxTop = -1;
-			
-			for (int idx = 0; idx < playableCs.size(); idx++)
-			{
-				Karte cardRandom = playableCs.get(idx);
-				float tempRating = r.nextFloat();
-				
-				if (tempRating > topCardRating
-				|| idx == 0)
-				{
-					idxTop = idx;
-					topCardRating = tempRating;
-				}
-				
-				//debugg output to check plays
-				if (Hearthstone.isDebugMode())
-				{
-					System.out.printf("%-20s value of: %.3f\n", cardRandom.getName(), topCardRating);
-					System.out.printf("It deals %d damage and has %d life\n", cardRandom.getSchaden(), cardRandom.getLeben());
-				}
-				
-			}
-			
-			if (idxTop < 0)
-			{
-				return null;
-			}
-			
-			System.out.println(playableCs.get(idxTop).toString());
-			return playableCs.get(idxTop);
-		}
+		}	
 		
 		boolean offensive = gameStats[0] <= gameStats[3];
 		float topCardRating = (float) 0.0;
