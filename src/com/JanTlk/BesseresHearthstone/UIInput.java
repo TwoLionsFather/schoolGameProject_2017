@@ -71,7 +71,14 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				Hearthstone.gameState = STATE.RESETGAME;
 				hs.repaint();
 			}
+			break;
 			
+		case KeyEvent.VK_SHIFT:
+			if (Hearthstone.isDebugMode())
+			{
+				spielfeld.getdH().refillHands();
+				hs.repaint();
+			}
 		}
 		
 		e.consume();

@@ -183,36 +183,7 @@ public class Spielfeld
 	{	
 		if (Hearthstone.gameState == STATE.RESETGAME)
 		{
-			dH.reset();
-			
-			gameStats[0] = 20;
-			gameStats[3] = 20;
-			
-			gameStats[1] = 0;		
-			gameStats[2] = 0;
-			
-			gameStats[4] = 0;
-			gameStats[5] = 0;
-			
-			for (int i = 0; i < 3; i++)
-			{
-				dPC.ziehen();
-				dPL.ziehen();
-			}
-			
-			if (detailedCard != null)
-			{
-				detailedCard.setDisplayed(false);
-				detailedCard = null;
-			}
-			
-			Random r = new Random();
-			PCFirstMove = r.nextBoolean();
-			nextRound(!PCFirstMove);
-			
-			Hearthstone.gameState = STATE.MENU;
-			removeAllCards();
-			dPL.repaint();			
+			resetGame();			
 			return;
 		}
 		
@@ -231,6 +202,46 @@ public class Spielfeld
 		deckDrawer.render(gameStats, UIInput.isPlayersMove(), g);
 		hudDrawer.render(UIInput.isPlayersMove(), detailedCard, gameStats, g);
 		
+	}
+	
+	/**
+	 * used to reset Game into start condition
+	 */
+	private void resetGame()
+	{
+		removeAllCards();
+		dH.reset();
+		
+		if (detailedCard != null)
+		{
+			detailedCard.setDisplayed(false);
+			detailedCard = null;
+		}
+		
+		//life
+		gameStats[0] = 20;
+		gameStats[3] = 20;
+		//manaPlayer
+		gameStats[1] = 0;		
+		gameStats[2] = 0;
+		//manaPC
+		gameStats[4] = 0;
+		gameStats[5] = 0;
+		
+		for (int i = 0; i < 7; i++)
+		{
+			dPC.ziehen();
+			dPL.ziehen();
+		}
+				
+		Hearthstone.gameState = STATE.MENU;
+		
+		Random r = new Random();
+		PCFirstMove = r.nextBoolean();
+		nextRound(!PCFirstMove);
+		
+		dPL.repaint();			
+		return;
 	}
 	
 	/**
@@ -741,6 +752,11 @@ public class Spielfeld
 	public int[] getGameStats() 
 	{
 		return gameStats;
+	}
+
+	public DeckHandler getdH() 
+	{
+		return dH;
 	}
 
 }

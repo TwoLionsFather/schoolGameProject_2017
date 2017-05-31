@@ -44,27 +44,33 @@ public class DeckHandler
 		
 		pc = player.clone(new Deck("PC")); 
 		
-		if (!Hearthstone.isDrawhelpActive()
-		|| Hearthstone.isDebugMode())
-		{
-			player.mischenA();
-			pc.mischenA();
-		}
+		player.mischenA();
+		pc.mischenA();
 		
-		else 
-		{
-			player.mischen();
-			pc.mischen();
-		}
+//		real random Card shuffel, results in 50/50 Games
+//		player.mischen();
+//		pc.mischen();
 		
 		
 		//Starthand ziehen
-		for(int startKartren = 0; startKartren < 3; startKartren ++)
+		for(int startKartren = 0; startKartren < 7; startKartren ++)
 		{
 			player.ziehen();
 			pc.ziehen();                   
 		}
 		
+	}
+	
+	/**
+	 * both Player and PC draw 5 cards, only to use in Debug Mode
+	 */
+	public void refillHands()
+	{
+		for(int startKartren = 0; startKartren < 6; startKartren ++)
+		{
+			player.ziehen();
+			pc.ziehen();                   
+		}
 	}
 	
 	/**
@@ -84,8 +90,8 @@ public class DeckHandler
 		
 		player.setDrawCounter(0);
 		pc.setDrawCounter(0);
-		player.mischen();
-		pc.mischen();
+		player.mischenA();
+		pc.mischenA();
 	}
 	
 	public LinkedList<Karte> getAllCards()
