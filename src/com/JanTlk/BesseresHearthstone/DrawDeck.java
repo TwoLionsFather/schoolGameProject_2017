@@ -33,7 +33,9 @@ public class DrawDeck
 		this.deckHandler = dH;
 		
 		try {
-			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4]), 100, 200);
+			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4])
+															, (Hearthstone.BREITE < 1920) ? 70 : 100
+															, (Hearthstone.BREITE < 1920) ? 140 : 200);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cardBack = null;
@@ -168,9 +170,9 @@ public class DrawDeck
 			{
 				g.drawImage(cardBack
 						, (int) (Hearthstone.BREITE / 2 
-														- ((tCard.getBounds().getWidth() - 55) * handCards.size()) / 2
+														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
 														+ 55 * kartenCount++)
-						, (int) ((player) ? Hearthstone.HOEHE - (Hearthstone.HOEHE / 5) : 0)
+						, 0
 						, null);
 			}
 			return;
@@ -179,9 +181,9 @@ public class DrawDeck
 		for(Karte tCard : handCards)
 		{
 			tCard.drawCard((int) (Hearthstone.BREITE / 2 
-														- ((tCard.getBounds().getWidth() - 55) * handCards.size()) / 2
+														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
 														+ 55 * kartenCount++)
-						, (int) ((player) ? Hearthstone.HOEHE - (Hearthstone.HOEHE / 5) : 0)
+						, (int) ((player) ? Hearthstone.HOEHE - tCard.getBounds().getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : -10) : 0) // oder /5
 						, g
 						, false);
 		}

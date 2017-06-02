@@ -94,8 +94,14 @@ public class Karte extends JPanel
 		this.setStatus(Status.STAPEL);
 		
 		try {
-			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[9]), 12, 12);
-			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[10]), 12, 12);
+			int squareSize = (Hearthstone.BREITE < 1920) ? 11 : 12;
+			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[9])
+																, squareSize
+																, squareSize);
+			
+			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[10])
+																, squareSize
+																, squareSize);
 		} catch (IOException e) {
 			e.printStackTrace();
 			icon_Attack = null;
@@ -153,52 +159,52 @@ public class Karte extends JPanel
 		else 
 		{
 			bounds = new Rectangle(x, y
-					, textur.getWidth()
-					, textur.getHeight());
+								, textur.getWidth()
+								, textur.getHeight());
 		}
 
 		g.drawImage(textur, x, y, null);
 		
 		if (this.typ == Typ.Monster)
 		{
-			//draws Damage
-			g.setFont(new Font("Century", Font.BOLD, 18));
+			//draws Cs Damage
+			g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 16 : 18));
 
 			if(Hearthstone.isDrawhelpActive())
 			{
 				g.drawImage(icon_Attack
-							, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) + 10
-							, y + textur.getHeight() - 36
+							, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) + ((Hearthstone.BREITE < 1920) ? 5 : 10)
+							, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 27 : 36)
 							, null);
 			}
 			
 			g.setColor(checkForChange(schadenInit, schaden));			
 			g.drawString("" + Karte.this.getSchaden()
-						, x + ((Karte.this.getSchaden() < 10) ? 18 : 23)
-						, y + textur.getHeight() - 25);
+						, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) - ((Hearthstone.BREITE < 1920) ? 7 : 0)
+						, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 15 : 25));
 			
-			//draws Life
+			//draws Cs Life
 			if(Hearthstone.isDrawhelpActive())
 			{
 				g.drawImage(icon_Life
-							, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) - icon_Life.getWidth() - 1
-							, y + textur.getHeight() - 36
+							, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) - icon_Life.getWidth() - ((Hearthstone.BREITE < 1920) ? -3 : 1)
+							, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 27 : 36)
 							, null);
 			}
 			
 			g.setColor(checkForChange(lebenInit, leben));			
 			g.drawString("" + Karte.this.getLeben()
-						, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27)
-						, y + textur.getHeight() - 25);
+						, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + ((Hearthstone.BREITE < 1920) ? 5 : 0)
+						, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 15 : 25));
 			
 		}
 				
 		//draws mana, chooses color based on background (L/N)
 		g.setColor((isLegendary) ? Color.white : Color.black);
-		g.setFont(new Font("Century", Font.BOLD, 15));
+		g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 13 : 15));
 		g.drawString("" + Karte.this.getMana()
-					, x + ((Karte.this.getMana() < 10) ? 11 : 6)
-					, y + 20);
+					, x + ((Karte.this.getMana() < 10) ? 11 : 6) - ((Hearthstone.BREITE < 1920) ? 4 : 0)
+					, y + ((Hearthstone.BREITE < 1920) ? 15 : 20));
 			
 		if (drawTitle)
 		{

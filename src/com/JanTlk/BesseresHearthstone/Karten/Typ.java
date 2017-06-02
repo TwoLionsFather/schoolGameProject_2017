@@ -1,6 +1,7 @@
 package com.JanTlk.BesseresHearthstone.Karten;
 
-public enum Typ {
+public enum Typ 
+{
 	Zauber(),
 	Monster();
 }

@@ -20,7 +20,9 @@ public class DrawHud
 	public DrawHud() 
 	{
 		try {
-			hudtexture = (ImageIO.read(Hearthstone.allImportedFiles()[5]));
+			hudtexture = (Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[5])
+															, (Hearthstone.BREITE < 1920) ? 335 : 446
+															, (Hearthstone.BREITE < 1920) ? 175 : 211));
 			
 //			Testing went wrong
 //			hudtexture = DrawDeck.rescaledBufferedimage((ImageIO.read(Hearthstone.allImportedFiles()[5])), 300, 170);
@@ -30,7 +32,7 @@ public class DrawHud
 		}
 		
 		hud = new Rectangle(50
-						, (int) Hearthstone.HOEHE - hudtexture.getHeight() - 10
+						, (int) Hearthstone.HOEHE - hudtexture.getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : 10)
 						, hudtexture.getWidth()
 						, hudtexture.getHeight());
 	}
@@ -52,7 +54,7 @@ public class DrawHud
 	            , (int) hud.getHeight()
 	            , null);
 		
-		g.setFont(new Font("Century", Font.BOLD, 14));
+		g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 12 : 14));
 		//Overlay on Hud texture
 		if((cardInDetail != null)
 		&& cardInDetail.getStatus() != Status.ABBLAGE)
@@ -63,15 +65,15 @@ public class DrawHud
 			String dmgCard = String.format("%2d%5s%-25s", cardInDetail.getSchaden(), "", "Schaden von " + cardInDetail.getName());
 			
 			g.drawString(dmgCard
-					, (int) (hud.getX() + 25)
-					, (int) (hud.getY() + 62));
+					, (int) (hud.getX() + ((Hearthstone.BREITE < 1920) ? 18 : 25))
+					, (int) (hud.getY() + ((Hearthstone.BREITE < 1920) ? 52 : 62)));
 			
 			//manaDisplay Player
 			String lifeCard = String.format("%2d%5s%-25s", cardInDetail.getLeben(), "", "Leben von " + cardInDetail.getName());
 					
 			g.drawString(lifeCard
-					, (int) (hud.getX() + 25)
-					, (int) (hud.getY() + 95));
+					, (int) hud.getX() + ((Hearthstone.BREITE < 1920) ? 18 : 25)
+					, (int) hud.getY() + ((Hearthstone.BREITE < 1920) ? 79 : 95));
 		}
 		
 		drawInfo(gameStats, g);
@@ -85,24 +87,24 @@ public class DrawHud
 	 */
 	public void drawDeckInfo(int[] gameStats, Graphics g)
 	{
-		//Stapel PC
+		//Stapel Player
 		g.setColor(Color.green);
 		g.drawString("" + gameStats[6]
 					, 20
-					, (int) Hearthstone.HOEHE - 10);
+					, (int) Hearthstone.HOEHE - ((Hearthstone.BREITE < 1920) ? 35 : 10));
 		
-		//Stapel Player
+		//Abblage Player
 		g.drawString("" + gameStats[7]
 					, (int) Hearthstone.BREITE - 25
-					, (int) Hearthstone.HOEHE - 10);
+					, (int) Hearthstone.HOEHE - ((Hearthstone.BREITE < 1920) ? 35 : 10));
 		
-		//Abblage PC
+		//Stapel PC
 		g.setColor(Color.red);
 		g.drawString("" + gameStats[8]
 					, 15
 					, 15);
 		  
-		//Abblage Player
+		//Abblage PC
 		g.drawString("" + gameStats[9]
 					, (int) Hearthstone.BREITE - 25
 					, 15);
@@ -121,30 +123,30 @@ public class DrawHud
 		String lifePL = String.format("%2d%5s%-15s", gameStats[0], "", "Leben Player");
 		
 		g.drawString(lifePL
-				, (int) (hud.getX() + 25)
-				, (int) (hud.getY() + hud.getHeight() - 85));
+				, (int) (hud.getX() + ((Hearthstone.BREITE < 1920) ? 18 : 25))
+				, (int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 70 : 85)));
 		
 		//manaDisplay Player
 		String manaPL = String.format("%2d%5s%-15s", gameStats[1], "", "Mana Player");
 				
 		g.drawString(manaPL
-				, (int) (hud.getX() + 25)
-				, (int) (hud.getY() + hud.getHeight() - 53));
+				, (int) (hud.getX() + ((Hearthstone.BREITE < 1920) ? 18 : 25))
+				, (int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 43 : 53)));
 		
 		
 		//lifeDisplay PC
 		String lifePC = String.format("%15s %5d", "Leben PC", gameStats[3]);
 		
 		g.drawString(lifePC
-				, (int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - 20)
-				, (int) (hud.getY() + hud.getHeight() - 85));
+				, (int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - ((Hearthstone.BREITE < 1920) ? -9 : 20))
+				, (int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 70 : 85)));
 		
 		//manaDisplay PC
 		String manaPC = String.format("%15s %5d", "Mana PC Max", gameStats[5]);
 		
 		g.drawString(manaPC
-				, (int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - 20)
-				, (int) (hud.getY() + hud.getHeight() - 53));
+				, (int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - ((Hearthstone.BREITE < 1920) ? -12 : 20))
+				, (int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 43 : 53)));
 
 	}
 	

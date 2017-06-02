@@ -125,7 +125,9 @@ public class CardCreator
 			}
 			
 			
-			cardTexture = Hearthstone.rescaledBufferedimage(subImage, 100, 200);
+			cardTexture = Hearthstone.rescaledBufferedimage(subImage
+															, (Hearthstone.BREITE < 1920) ? 70 : 100
+															, (Hearthstone.BREITE < 1920) ? 140 : 200);
 		}
 		
 		else

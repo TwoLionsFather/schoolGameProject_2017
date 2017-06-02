@@ -125,7 +125,7 @@ public class KI
 					System.out.println("KI.attackPlayer Reminder for positioning");
 				}
 				tempC.setNewPos(new Rectangle((int) (attackPos.getX() + (attackPos.getWidth() - tempC.getBounds().getWidth()) / 2)
-											, (int) attackPos.getY() - 60
+											, (int) attackPos.getY() - ((Hearthstone.BREITE < 1920) ? 30 : 60)
 											, (int) tempC.getBounds().getWidth()
 											, (int) tempC.getBounds().getHeight()));
 				
@@ -255,7 +255,7 @@ public class KI
 			}
 			
 			ownCard.setNewPos(new Rectangle((int) (targetCard.getBounds().getX() + (targetCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
-												, (int) targetCard.getBounds().getY() - 60
+												, (int) targetCard.getBounds().getY() - ((Hearthstone.BREITE < 1920) ? 30 : 60)
 												, (int) ownCard.getBounds().getWidth()
 												, (int) ownCard.getBounds().getHeight()));
 			attacked = true;

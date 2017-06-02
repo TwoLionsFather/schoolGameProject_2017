@@ -382,13 +382,13 @@ public class Spielfeld
 				, (int) nextRoundB.getWidth()
 				, (int) nextRoundB.getHeight());
 		
-		//skipp PCs Attacks Button
+		//skip PCs Attacks Button
 		if (!Hearthstone.isDrawhelpActive()
 		|| Hearthstone.isDebugMode())
 		{
 			g.setFont(new Font("Arial", Font.PLAIN, 10));
-			g.drawString("Skipp"
-					, (int) (skipAttacks.getX() + nextRoundB.getWidth() / 2 - "Skipp".length() * 2.5)
+			g.drawString("Skip"
+					, (int) (skipAttacks.getX() + nextRoundB.getWidth() / 2 - "Skip".length() * 2.5)
 					, (int) (skipAttacks.getY() + nextRoundB.getHeight() / 2 + 6));
 			
 			g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);

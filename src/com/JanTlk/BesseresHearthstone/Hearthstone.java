@@ -163,7 +163,17 @@ public class Hearthstone extends Canvas
 				
 			case 2:
 				s.useDelimiter("/");
-				HOEHE = BREITE / s.nextInt() * s.nextInt();
+				
+				int temp1 = s.nextInt();
+				if (s.hasNext())
+				{
+					HOEHE = BREITE / temp1 * s.nextInt();
+				}
+				
+				else 
+				{
+					HOEHE = temp1;
+				}
 				break;
 				
 			case 3:				
