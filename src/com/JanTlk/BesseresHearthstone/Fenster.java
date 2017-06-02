@@ -31,7 +31,7 @@ public class Fenster extends Canvas
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		try {
-			frame.setIconImage(ImageIO.read(Hearthstone.allImportedFiles()[11]));
+			frame.setIconImage(ImageIO.read(Hearthstone.allImportedFiles[11]));
 		} catch (IOException e) {	}
 		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

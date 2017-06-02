@@ -302,7 +302,11 @@ public class KI
 				Karte own = ownCs.get(idxOwnC);
 				
 				//the score of this attack gets stored in the score array
-				score[idxOwnC][idxEnemy] = (float) (-(own.getLeben() - enemy.getSchaden())/((enemy.getLeben() - own.getSchaden()) * 3 + 1));
+				score[idxOwnC][idxEnemy] = (float) ((own.getLeben() - enemy.getSchaden()) 
+													* Math.pow(enemy.getSchaden() - own.getSchaden() 
+																* enemy.getLeben() - own.getLeben()
+																, (own.getLeben() - enemy.getSchaden() < 0) ? 2 : 1)
+													* enemy.getLeben() - own.getLeben());
 				
 				//if the score is very high or there is no top score yet 
 				if (idxOwnC == 0

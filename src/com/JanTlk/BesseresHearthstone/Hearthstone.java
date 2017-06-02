@@ -2,6 +2,7 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -16,10 +17,14 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 public class Hearthstone extends Canvas
 {
 	private static final long serialVersionUID = 2288248461332515463L;
+	
+	public static File[] allImportedFiles;
 
 	public enum STATE
 	{
@@ -44,16 +49,27 @@ public class Hearthstone extends Canvas
 	
 	public Hearthstone()
 	{	
+		JFrame loading = new JFrame("Loading Gwint");
+		JProgressBar loadingB = new JProgressBar(0, 10);
+		loadingB.setStringPainted(true);
+		loading.setLayout(new FlowLayout());
+		loading.setSize(300, 100);
+		loading.setLocationRelativeTo(null);
+		loading.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		loading.setVisible(true);
+		
 		this.setBackground(Color.black);
 		try {
-			setup();
+			setup(loading, loadingB);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.err.println("Settup failed");
 		}
 		
 		try {
-			background = rescaledBufferedimage(ImageIO.read(allImportedFiles()[0])
+			loadingB.setValue(5);
+			loadingB.setString("Rescaling background");
+			background = rescaledBufferedimage(ImageIO.read(allImportedFiles[0])
 											, (int) BREITE
 											, (int) HOEHE);
 		} catch (IOException e) {
@@ -61,18 +77,25 @@ public class Hearthstone extends Canvas
 			System.err.println("Backgound not found");
 		}
 		
+		loadingB.setValue(6);
+		loadingB.setString("Setting up menu");
 		this.menu = new Menu();
 
+		loadingB.setValue(7);
+		loadingB.setString("Init components");
 		this.spielfeld = new Spielfeld(this);
 		
+		loadingB.setValue(9);
+		loadingB.setString("Setting up User Input");
 		UIInput uiStuff = new UIInput(spielfeld, menu, this);
 		this.addKeyListener(uiStuff);
 		this.addMouseMotionListener(uiStuff);
 		this.addMouseListener(uiStuff);
 		
-		
+		loadingB.setValue(10);
+		loadingB.setString("Setting up Window");
 		new Fenster(BREITE, HOEHE, TITEL, this);	
-		
+		loading.dispose();
 	}
 	
 	/**
@@ -90,8 +113,8 @@ public class Hearthstone extends Canvas
 	 * "Graphics\\GameIcon.png"[11];
 	 * @return list of listed Files
 	 */
-	public static File[] allImportedFiles()
-	{
+	private void importAllFiles(JFrame loading)
+	{		
 		ArrayList<String> paths = new ArrayList<String>();
 		paths.add("Graphics\\backGround.png"); //Hearthstone.Hearthstone
 		paths.add("Graphics\\CardBluePrint.png"); //CardCreator.nextCard
@@ -106,12 +129,20 @@ public class Hearthstone extends Canvas
 		paths.add("Graphics\\v_life.png"); //Karte.Karte
 		paths.add("Graphics\\GameIcon.png"); //Fenster:Fenster
 		
-		File[] allImportedFiles = new File[paths.size()];
+		JProgressBar loadingB = new JProgressBar(0, paths.size()-1);
+		loadingB.setValue(0);
+		loadingB.setString("Importing files started");
+		loadingB.setStringPainted(true);
+		loading.add(loadingB);
+		
+		allImportedFiles = new File[paths.size()];
 		
 		int counter = -1;
 		for (File tempF : allImportedFiles)
 		{
 			counter++;
+			loadingB.setValue(counter);
+			loadingB.setString(paths.get(counter));
 			tempF = importFiles(paths.get(counter));
 			
 			if (tempF == null)
@@ -122,7 +153,8 @@ public class Hearthstone extends Canvas
 			allImportedFiles[counter] = tempF;
 		}
 		
-		return allImportedFiles;
+		loadingB.setToolTipText("File import complete");
+//		loadingB.setStringPainted(false);
 	}
 	
 	
@@ -130,12 +162,19 @@ public class Hearthstone extends Canvas
 	 * reads and sets up Game
 	 * @throws IOException
 	 */
-	public void setup() throws IOException 
+	public void setup(JFrame loading, JProgressBar loadingB) throws IOException 
 	{
-		BufferedReader br = null;
+		importAllFiles(loading);
 		
+		loading.add(loadingB);
+		loadingB.setValue(0);
+		loadingB.setString("Init Game");
+		
+		BufferedReader br = null;
 		try {
 			br =  new BufferedReader(new FileReader(new File("Einstellungen.txt")));
+			loadingB.setValue(1);
+			loadingB.setString("read Config File");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.err.println("No Config File Found, fatal error!");
@@ -159,6 +198,8 @@ public class Hearthstone extends Canvas
 			{
 			case 1:
 				BREITE = s.nextInt();
+				loadingB.setValue(2);
+				loadingB.setString("Setup width: " + BREITE);
 				break;
 				
 			case 2:
@@ -174,10 +215,15 @@ public class Hearthstone extends Canvas
 				{
 					HOEHE = temp1;
 				}
+				
+				loadingB.setValue(3);
+				loadingB.setString("Setup height: " + HOEHE);
 				break;
 				
 			case 3:				
 				String GameMode = s.next();
+				loadingB.setValue(4);
+				loadingB.setString("Setup mode: " + GameMode);
 				
 				if (GameMode.equalsIgnoreCase("ProMode")) 
 				{
@@ -210,11 +256,14 @@ public class Hearthstone extends Canvas
 					drawHelp = true;
 					break;
 				}
+				
 			}
 			
+			loadingB.setString("Initialisation complete");
 			s.close();
 		}
 		
+		br.close();
 	}
 	
 	/**

@@ -1,6 +1,6 @@
 1920
 1080
-ProMode 
+TestGame
 
 Default / ProMode / Debug / TestGame
 

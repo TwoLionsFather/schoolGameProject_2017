@@ -95,11 +95,11 @@ public class Karte extends JPanel
 		
 		try {
 			int squareSize = (Hearthstone.BREITE < 1920) ? 11 : 12;
-			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[9])
+			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[9])
 																, squareSize
 																, squareSize);
 			
-			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[10])
+			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[10])
 																, squareSize
 																, squareSize);
 		} catch (IOException e) {

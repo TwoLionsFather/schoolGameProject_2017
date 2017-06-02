@@ -43,13 +43,13 @@ public class CardCreator
 		spalteZeile = new int[]{0, 0};
 		
 		try {
-			allCards = ImageIO.read(Hearthstone.allImportedFiles()[3]);
+			allCards = ImageIO.read(Hearthstone.allImportedFiles[3]);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("no Graphics File");
 		}
 		
-		br = new BufferedReader(new FileReader(Hearthstone.allImportedFiles()[2]));
+		br = new BufferedReader(new FileReader(Hearthstone.allImportedFiles[2]));
 		
 	}
 
@@ -110,7 +110,8 @@ public class CardCreator
 		}
 
 		if(spalteZeile[0] <= spaltenZeilenPic[0]
-		&& spalteZeile[1] <= spaltenZeilenPic[1])
+		&& spalteZeile[1] <= spaltenZeilenPic[1]
+		&& allCards != null)
 		{
 			BufferedImage subImage = allCards.getSubimage((int) cardProps.getWidth() * spalteZeile[0]
 														, (int) cardProps.getHeight() * spalteZeile[1]
@@ -133,7 +134,7 @@ public class CardCreator
 		else
 		{
 			try {
-				cardTexture = ImageIO.read(Hearthstone.allImportedFiles()[1]);
+				cardTexture = ImageIO.read(Hearthstone.allImportedFiles[1]);
 			} catch (IOException e) {
 				System.err.println("The Default BluePrint for emergencies got lost!");
 			}

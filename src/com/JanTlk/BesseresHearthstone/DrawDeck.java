@@ -33,7 +33,7 @@ public class DrawDeck
 		this.deckHandler = dH;
 		
 		try {
-			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles()[4])
+			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[4])
 															, (Hearthstone.BREITE < 1920) ? 70 : 100
 															, (Hearthstone.BREITE < 1920) ? 140 : 200);
 		} catch (IOException e) {

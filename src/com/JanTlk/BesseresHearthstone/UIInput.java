@@ -16,7 +16,7 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 	private boolean cardMoved;
 	private static boolean playersMove = false;
 	
-	/**
+	/** User Interactive Input
 	 * this is used to handle mouseinput
 	 * dictates spiefeld how to handle mouseevent
 	 * @param spielfeld this is used to convert mouseevents into actions
@@ -51,8 +51,11 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				{
 					spielfeld.attackUpdate();
 					spielfeld.nextRound(!playersMove);
-					spielfeld.attackUpdate();
-					spielfeld.nextRound(playersMove);
+					if (spielfeld.getAttackUpdate())
+					{
+						spielfeld.attackUpdate();
+						spielfeld.nextRound(playersMove);
+					}
 				}
 				
 				else if (spielfeld.getAttackUpdate())
