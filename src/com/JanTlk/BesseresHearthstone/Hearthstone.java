@@ -56,6 +56,7 @@ public class Hearthstone extends Canvas
 		loading.setSize(300, 100);
 		loading.setLocationRelativeTo(null);
 		loading.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		loading.setResizable(false);
 		loading.setVisible(true);
 		
 		this.setBackground(Color.black);
@@ -78,10 +79,14 @@ public class Hearthstone extends Canvas
 		}
 		
 		loadingB.setValue(6);
+		loadingB.setString("Setting up music");
+		new DjukeBox();
+		
+		loadingB.setValue(7);
 		loadingB.setString("Setting up menu");
 		this.menu = new Menu();
 
-		loadingB.setValue(7);
+		loadingB.setValue(8);
 		loadingB.setString("Init components");
 		this.spielfeld = new Spielfeld(this);
 		
@@ -95,6 +100,7 @@ public class Hearthstone extends Canvas
 		loadingB.setValue(10);
 		loadingB.setString("Setting up Window");
 		new Fenster(BREITE, HOEHE, TITEL, this);	
+		DjukeBox.playBackGround();
 		loading.dispose();
 	}
 	
@@ -111,9 +117,8 @@ public class Hearthstone extends Canvas
 	 * "G\\v_attack.png"[9];
 	 * "G\\v_life.png"[10];
 	 * "Graphics\\GameIcon.png"[11];
-	 * @return list of listed Files
 	 */
-	private void importAllFiles(JFrame loading)
+	private void importFiles(JFrame loading)
 	{		
 		ArrayList<String> paths = new ArrayList<String>();
 		paths.add("Graphics\\backGround.png"); //Hearthstone.Hearthstone
@@ -154,9 +159,8 @@ public class Hearthstone extends Canvas
 		}
 		
 		loadingB.setToolTipText("File import complete");
-//		loadingB.setStringPainted(false);
+		loadingB.setStringPainted(false);
 	}
-	
 	
 	/**
 	 * reads and sets up Game
@@ -164,7 +168,7 @@ public class Hearthstone extends Canvas
 	 */
 	public void setup(JFrame loading, JProgressBar loadingB) throws IOException 
 	{
-		importAllFiles(loading);
+		importFiles(loading);
 		
 		loading.add(loadingB);
 		loadingB.setValue(0);

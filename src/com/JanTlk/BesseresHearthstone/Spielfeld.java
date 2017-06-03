@@ -210,6 +210,7 @@ public class Spielfeld
 	private void resetGame()
 	{
 		removeAllCards();
+		DjukeBox.playSFX(0);
 		dH.reset();
 		
 		if (detailedCard != null)
@@ -228,7 +229,7 @@ public class Spielfeld
 		gameStats[4] = 0;
 		gameStats[5] = 0;
 		
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			dPC.ziehen();
 			dPL.ziehen();

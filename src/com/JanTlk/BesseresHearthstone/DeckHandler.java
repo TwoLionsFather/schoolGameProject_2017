@@ -53,7 +53,7 @@ public class DeckHandler
 		
 		
 		//Starthand ziehen
-		for(int startKartren = 0; startKartren < 7; startKartren ++)
+		for(int startKartren = 0; startKartren < 5; startKartren ++)
 		{
 			player.ziehen();
 			pc.ziehen();                   
@@ -83,7 +83,7 @@ public class DeckHandler
 			tCard.setStatus(Status.STAPEL);
 			tCard.setAttacked(false);
 			tCard.attackedCard(null);
-			
+			tCard.setDisplayed(false);
 			tCard.setLeben(tCard.getLebenInit());
 			tCard.setSchaden(tCard.getSchadenInit());
 		}
