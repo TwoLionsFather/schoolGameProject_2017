@@ -303,23 +303,10 @@ public class Spielfeld
 	 */
 	private void drawHelpHud(Graphics g) 
 	{	
-		if ((detailedCard != null)
-		&& detailedCard.getStatus() != Status.ABBLAGE)
-		{
-			Rectangle dChome = detailedCard.getBounds();
-			int rimWidth = 3;
-			
-			g.setColor(Color.orange);
-			g.fillRect((int) dChome.getX() - rimWidth
-					, (int) dChome.getY() - rimWidth
-					, (int) dChome.getWidth() + rimWidth * 2
-					, (int) dChome.getHeight() + rimWidth * 2);
-		}
-		
 		for (Karte tCard : dH.getAllCards())
 		{
 			Rectangle dcHome = null;
-			int rimWidth = 3;
+			int rimWidth = 4;
 			
 			if (tCard.getHome() != null)
 			{
@@ -342,19 +329,45 @@ public class Spielfeld
 						, (int) (dcHome.getY() + dcHome.getHeight()));
 				break;
 				
-			case FELD:				
-				g.setColor(Color.orange);
-				g.drawRect((int) dcHome.getX() - rimWidth
-						, (int) dcHome.getY() - rimWidth
-						, (int) dcHome.getWidth() + rimWidth * 2
-						, (int) dcHome.getHeight() + rimWidth * 2);
+			case FELD:
+				if (Hearthstone.isDrawhelpActive()
+				&& dPL.isInDeck(tCard))
+				{
+					g.setColor(Color.green);
+					g.fillRect((int) dcHome.getX() - rimWidth
+							, (int) dcHome.getY() - rimWidth
+							, (int) dcHome.getWidth() + rimWidth * 2
+							, (int) dcHome.getHeight() + rimWidth * 2);
+				}
+				
+				else 
+				{
+					g.setColor(Color.orange);
+					g.drawRect((int) dcHome.getX() - rimWidth
+							, (int) dcHome.getY() - rimWidth
+							, (int) dcHome.getWidth() + rimWidth * 2
+							, (int) dcHome.getHeight() + rimWidth * 2);
+				}
+				
 				break;
 				
 			default:
 				break;
 			
 			}
+		}
+		
+		if ((detailedCard != null)
+		&& detailedCard.getStatus() != Status.ABBLAGE)
+		{
+			Rectangle dChome = detailedCard.getBounds();
+			int rimWidth = 2;
 			
+			g.setColor(Color.orange);
+			g.fillRect((int) dChome.getX() - rimWidth
+					, (int) dChome.getY() - rimWidth
+					, (int) dChome.getWidth() + rimWidth * 2
+					, (int) dChome.getHeight() + rimWidth * 2);
 		}
 	}
 	

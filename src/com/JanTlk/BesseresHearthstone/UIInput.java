@@ -151,7 +151,7 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				{
 					switch (i)
 					{
-					case 0: DjukeBox.playSFX(0);
+					case 0: DjukeBox.playSFX("CardShuffling");
 						Hearthstone.gameState = STATE.GAME;
 						break;
 						
