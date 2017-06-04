@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 
 public class Fenster extends Canvas 
 {
-
 	private static final long serialVersionUID = 8837313394937421756L;
 
 	/**
@@ -48,4 +47,5 @@ public class Fenster extends Canvas
 		frame.add(spiel);
 		frame.setVisible(true);		
 	}
+	
 }

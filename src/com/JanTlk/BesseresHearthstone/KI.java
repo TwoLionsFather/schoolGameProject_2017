@@ -301,12 +301,15 @@ public class KI
 			{
 				Karte own = ownCs.get(idxOwnC);
 				
+				int oL = own.getLeben();
+				int oA = own.getSchaden();
+				int eL = enemy.getLeben();
+				int eA = enemy.getSchaden();
+				
 				//the score of this attack gets stored in the score array
-				score[idxOwnC][idxEnemy] = (float) ((own.getLeben() - enemy.getSchaden()) 
-													* Math.pow(enemy.getSchaden() - own.getSchaden() 
-																* enemy.getLeben() - own.getLeben()
-																, (own.getLeben() - enemy.getSchaden() < 0) ? 2 : 1)
-													* enemy.getLeben() - own.getLeben());
+				score[idxOwnC][idxEnemy] = (float) ((-1.0/((eL - oA) * 2 + 1)) 
+													+ oL - eA
+													+ Math.pow(eA, (oL - eA <= 0 && eL - oA <= 0) ? 1 : 0));
 				
 				//if the score is very high or there is no top score yet 
 				if (idxOwnC == 0
@@ -366,6 +369,11 @@ public class KI
 							{
 								//the potential own card is no longer a valid choice
 								potOwnC[idxOwnC] = false;
+							}
+							//if the score is lower, the card is not an alternative
+							else 
+							{
+								potOwnC[i] = false;
 							}
 						}
 					}

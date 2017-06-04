@@ -210,7 +210,6 @@ public class Spielfeld
 	private void resetGame()
 	{
 		removeAllCards();
-		DjukeBox.playSFX(0);
 		dH.reset();
 		
 		if (detailedCard != null)
@@ -492,7 +491,7 @@ public class Spielfeld
 	public boolean moveCardAtRect(MouseEvent arg0) 
 	{
 		Point rEvent = arg0.getPoint();
-		
+	
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
@@ -539,6 +538,11 @@ public class Spielfeld
 					{
 						//in case this card owned a rectangle before, now it no longer does so
 						remCardFromRectangles(movedC);
+					}
+					
+					if (movedC.getStatus() == Status.ATTACKC)
+					{
+						remAttackers();
 					}
 					
 					//sets this cards default location to Recctangles center
@@ -594,6 +598,26 @@ public class Spielfeld
 			
 		}					
 		return false;
+	}
+
+	/**
+	 * removes Cards that attack the pc and sends them back home
+	 */
+	private void remAttackers() 
+	{
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int i = 0; i < kartenAufFelder.length; i++)
+			{
+				if ((kartenAufFelder[i][playerPC] != null)
+				&& kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKP)
+				{
+					kartenAufFelder[i][playerPC].placeHome();
+					kartenAufFelder[i][playerPC].setStatus(Status.FELD);
+				}
+			}
+		}
+
 	}
 
 	/**

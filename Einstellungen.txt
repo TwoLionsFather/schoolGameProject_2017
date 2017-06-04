@@ -1,13 +1,13 @@
 1920
-1080
-Default 
+16/9
+ProMode 
 
 Default / ProMode / Debug / TestGame
 
 Die erste Zeile ist die Breite des Spielfensters
 Die zweite Zeile ist entweder die Höhe oder das Bildverhältnis, geschrieben als x/y
 In der dritten Zeile wird der Spielmodus gesetzt
-Unten sind die Effekte der Auswahl
+Unten sind die Effekte der Auswahl beschrieben
 
 The First line is used to tell game's width
 The second setst up the window's height or aspect ration writen as x/y

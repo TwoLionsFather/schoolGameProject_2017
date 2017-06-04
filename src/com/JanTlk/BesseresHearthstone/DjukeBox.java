@@ -25,7 +25,7 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 	{
 		ArrayList<File> audioFiles = new ArrayList<File>();
 		audioFiles.add(soundFile("backGround"));		//First File is set to be background Music
-		audioFiles.add(soundFile("CardShuffling"));		//Spielfeld.resetGame
+		audioFiles.add(soundFile("CardShuffling"));		//UIInput.mouseClicked
 
 		audioImport(audioFiles);
 		
@@ -100,6 +100,7 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 	public static void stopBackGround()
 	{
 		backgroundMusic.stop();
+		backgroundMusic.setFramePosition(0); 
 	}
 	
 	/**

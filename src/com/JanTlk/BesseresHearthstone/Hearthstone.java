@@ -49,19 +49,19 @@ public class Hearthstone extends Canvas
 	
 	public Hearthstone()
 	{	
-		JFrame loading = new JFrame("Loading Gwint");
-		JProgressBar loadingB = new JProgressBar(0, 10);
+		JFrame loadingF = new JFrame("Loading Gwint");
+		JProgressBar loadingB = new JProgressBar(0, 11);
 		loadingB.setStringPainted(true);
-		loading.setLayout(new FlowLayout());
-		loading.setSize(300, 100);
-		loading.setLocationRelativeTo(null);
-		loading.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		loading.setResizable(false);
-		loading.setVisible(true);
+		loadingF.setLayout(new FlowLayout());
+		loadingF.setSize(300, 100);
+		loadingF.setLocationRelativeTo(null);
+		loadingF.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		loadingF.setResizable(false);
+		loadingF.setVisible(true);
 		
 		this.setBackground(Color.black);
 		try {
-			setup(loading, loadingB);
+			setup(loadingF, loadingB);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			System.err.println("Settup failed");
@@ -90,18 +90,17 @@ public class Hearthstone extends Canvas
 		loadingB.setString("Init components");
 		this.spielfeld = new Spielfeld(this);
 		
-		loadingB.setValue(9);
+		loadingB.setValue(10);
 		loadingB.setString("Setting up User Input");
 		UIInput uiStuff = new UIInput(spielfeld, menu, this);
 		this.addKeyListener(uiStuff);
 		this.addMouseMotionListener(uiStuff);
 		this.addMouseListener(uiStuff);
 		
-		loadingB.setValue(10);
+		loadingB.setValue(11);
 		loadingB.setString("Setting up Window");
 		new Fenster(BREITE, HOEHE, TITEL, this);	
-		DjukeBox.playBackGround();
-		loading.dispose();
+		loadingF.dispose();
 	}
 	
 	/**
@@ -212,7 +211,7 @@ public class Hearthstone extends Canvas
 				int temp1 = s.nextInt();
 				if (s.hasNext())
 				{
-					HOEHE = BREITE / temp1 * s.nextInt();
+					HOEHE = BREITE * s.nextInt() / temp1;
 				}
 				
 				else 
@@ -224,7 +223,7 @@ public class Hearthstone extends Canvas
 				loadingB.setString("Setup height: " + HOEHE);
 				break;
 				
-			case 3:				
+			case 3:
 				String GameMode = s.next();
 				loadingB.setValue(4);
 				loadingB.setString("Setup mode: " + GameMode);
