@@ -1,0 +1,40 @@
+1920
+16/9
+TestGame
+
+Default / ProMode / Debug / TestGame
+
+Die erste Zeile ist die Breite des Spielfensters
+Die zweite Zeile ist entweder die Höhe oder das Bildverhältnis, geschrieben als x/y
+In der dritten Zeile wird der Spielmodus gesetzt
+Unten sind die Effekte der Auswahl beschrieben
+
+The First line is used to tell game's width
+The second setst up the window's height or aspect ration writen as x/y
+The third sets the Game mode
+Below is a list of game modes and their effect
+
+Default ---------------------------------------------------------------------------------------------
+STATE.MENU;
+//game starts with normal menu
+debug = false;		
+drawHelp = true;		
+//game uses easier algorithm for attacks and shows rectangels to guide user input
+
+ProMode ---------------------------------------------------------------------------------------------
+gameState = STATE.MENU;
+debug = false;
+drawHelp = false;		
+//advanced AI gets used and no help gets shown, this mode also enabeles the skip feature on return key or HUD button
+								
+Debug ---------------------------------------------------------------------------------------------
+gameState = STATE.GAME;
+//game starts directly ingame
+debug = true;			
+//only for developing, all cards get shown, easy game reset / card redraw
+drawHelp = true;
+				
+TestGame ---------------------------------------------------------------------------------------------
+gameState = STATE.MENU;
+debug = true;
+drawHelp = false;

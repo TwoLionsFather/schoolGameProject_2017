@@ -1,12 +1,9 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,20 +35,21 @@ public class CardCreator
 	private String line;
 	private Scanner s;
 
-	public CardCreator(String pathCardCretorFile, Component c) throws FileNotFoundException 
+	public CardCreator(Component c) throws FileNotFoundException 
 	{
 		mainComponent = c;
 		cardProps = new Rectangle(220, 414);
-		spaltenZeilenPic = new int[]{14, 1};
+		spaltenZeilenPic = new int[]{21, 2};
 		spalteZeile = new int[]{0, 0};
 		
 		try {
-			allCards = ImageIO.read(new File("Graphics\\allCards.png"));
+			allCards = ImageIO.read(Hearthstone.allImportedFiles[3]);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("no Graphics File");
 		}
-		br = new BufferedReader(new FileReader(pathCardCretorFile));
+		
+		br = new BufferedReader(new FileReader(Hearthstone.allImportedFiles[2]));
 		
 	}
 
@@ -112,7 +110,8 @@ public class CardCreator
 		}
 
 		if(spalteZeile[0] <= spaltenZeilenPic[0]
-		&& spalteZeile[1] <= spaltenZeilenPic[1])
+		&& spalteZeile[1] <= spaltenZeilenPic[1]
+		&& allCards != null)
 		{
 			BufferedImage subImage = allCards.getSubimage((int) cardProps.getWidth() * spalteZeile[0]
 														, (int) cardProps.getHeight() * spalteZeile[1]
@@ -127,13 +126,15 @@ public class CardCreator
 			}
 			
 			
-			cardTexture = toBufferedImage(subImage.getScaledInstance(100, 200, Image.SCALE_DEFAULT));
+			cardTexture = Hearthstone.rescaledBufferedimage(subImage
+															, (Hearthstone.BREITE < 1920) ? 70 : 100
+															, (Hearthstone.BREITE < 1920) ? 140 : 200);
 		}
 		
 		else
 		{
 			try {
-				cardTexture = ImageIO.read(new File("Graphics\\CardBluePrint.png"));
+				cardTexture = ImageIO.read(Hearthstone.allImportedFiles[1]);
 			} catch (IOException e) {
 				System.err.println("The Default BluePrint for emergencies got lost!");
 			}
@@ -153,30 +154,6 @@ public class CardCreator
 		//Debugg output
 //		System.out.println(nextCard.toString());
 		return nextCard;
-	}
-	
-	/**
-	 * used to convert scaled subimage to cardimage
-	 * @param img the image object that will get converted
-	 * @return a new buffered image of the image
-	 */
-	public static BufferedImage toBufferedImage(Image img)
-	{
-	    if (img instanceof BufferedImage)
-	    {
-	        return (BufferedImage) img;
-	    }
-
-	    // Create a buffered image with transparency
-	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-	    // Draw the image on to the buffered image
-	    Graphics2D bGr = bimage.createGraphics();
-	    bGr.drawImage(img, 0, 0, null);
-	    bGr.dispose();
-
-	    // Return the buffered image
-	    return bimage;
 	}
 
 }
