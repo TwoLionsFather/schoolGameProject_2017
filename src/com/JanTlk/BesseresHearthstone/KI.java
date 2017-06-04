@@ -311,6 +311,16 @@ public class KI
 													+ oL - eA
 													+ Math.pow(eA, (oL - eA <= 0 && eL - oA <= 0) ? 1 : 0));
 				
+				if (Hearthstone.isDebugMode())
+				{
+					System.out.printf("Own Card %s/id %d attacks %s with after attack life of %d and overkill damage of %d\n"
+									, own.getName()
+									, own.getCardID()
+									, enemy.getName()
+									, oL - eA
+									, oA - eL);
+				}
+				
 				//if the score is very high or there is no top score yet 
 				if (idxOwnC == 0
 				|| score[idxOwnC][idxEnemy] >= score[idxHighestOwn][idxEnemy])
