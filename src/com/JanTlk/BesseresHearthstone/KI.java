@@ -37,12 +37,15 @@ public class KI
 		boolean attacksUpdated = false;
 		boolean attacksOnPlayer = false;
 		
+		//setup Lists to sort cards in
 		LinkedList<Karte> playableCs = new LinkedList<Karte>();
 		LinkedList<Karte> ownCs = new LinkedList<Karte>();
 		LinkedList<Karte> enemysCs = new LinkedList<Karte>();
 		
+		//update Card Map
 		this.kartenAufFelder = kartenAufFelder;
 		
+		//sort every card of interst in the lists above
 		for(Karte tCard : deckHandler.getAllCards())
 		{
 			switch(tCard.getStatus())
@@ -74,11 +77,14 @@ public class KI
 			}
 		}
 		
+		System.out.println("KI.nextRound Card to Play ------------------------------------------------------------------------------------------------");
 		layNextCard(playableCs, gameStats);
+		
+		System.out.println("KI.nextRound Attacking Card Search ------------------------------------------------------------------------------------------------");
 		attacksUpdated = chooseCardToAttack(enemysCs, ownCs);
 		
 		if (noCardsToAttack()
-		||allCardsUnderAttack())
+		|| allCardsUnderAttack())
 		{
 			attacksOnPlayer = attackPlayer(ownCs);
 		}		
@@ -146,6 +152,7 @@ public class KI
 	 */
 	private boolean layNextCard(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
+		//once aktivated, no way to reset until returned
 		boolean cardPlayed = false;
 				
 		if (!playableCs.isEmpty())
@@ -168,7 +175,7 @@ public class KI
 			}
 			
 			Rectangle tempRect = kartenFelder[nextPlayField][0];
-			kartenAufFelder[nextPlayField][0] = cardToPlay;
+			kartenAufFelder[nextPlayField][0] = cardToPlay;		//check in card to cardmap
 			cardPlayed = true;
 			
 			cardToPlay.setHome(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - cardToPlay.getBounds().getWidth()) / 2)
@@ -179,6 +186,8 @@ public class KI
 			playableCs.remove(cardToPlay);
 			cardToPlay.setStatus(Status.LAYED);		
 			gameStats[4] -= cardToPlay.getMana();
+			System.out.println("Card Played: " + cardToPlay.getName());
+			
 			this.layNextCard(playableCs, gameStats);
 		}
 		return cardPlayed;
@@ -193,8 +202,6 @@ public class KI
 	 */
 	private boolean chooseCardToAttack(LinkedList<Karte> enemysCs, LinkedList<Karte> ownCs)
 	{
-		System.out.println("KI.chooseCard Attacking Card Search ------------------------------------------------------------------------------------------------");
-		
 		if (Hearthstone.isDrawhelpActive())
 		{
 			return basicC(enemysCs, ownCs);
@@ -212,7 +219,7 @@ public class KI
 	 */
 	private boolean basicC(LinkedList<Karte> enemysCs, LinkedList<Karte> ownCs)
 	{
-		float topCardRating = (float) 0.0;
+		float topAttackRating = (float) 0.0;
 		int idxTop;
 		boolean attacked = false;
 		
@@ -231,15 +238,16 @@ public class KI
 
 				float tempRating = (float) (-1.0/((eL - oA) * 2 + 1));
 				
-				if (tempRating > topCardRating
+				if (tempRating > topAttackRating
 				|| idxE == 0
 				&& enemysCs.get(idxE) != null)
 				{
 					idxTop = idxE;
-					topCardRating = tempRating;
+					topAttackRating = tempRating;
 				}	
 			}
 			
+			//if there are no more enemys to attack
 			if (idxTop < 0)
 			{
 				return attacked;
@@ -249,9 +257,10 @@ public class KI
 			
 			if (Hearthstone.isDebugMode())
 			{
-				System.out.println("KI.chooseAttack Reminder for positioning <------------------------------------------------------------------------------");
-				System.out.printf("Attacking card %s\n", ownCard.getName());
-				System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxTop).getName(), topCardRating);
+				System.out.printf("Attacking card %20s attacks %20s with value of: %.3f\n"
+								, ownCard.getName()
+								, enemysCs.get(idxTop).getName()
+								, topAttackRating);
 			}
 			
 			ownCard.setNewPos(new Rectangle((int) (targetCard.getBounds().getX() + (targetCard.getBounds().getWidth() - ownCard.getBounds().getWidth()) / 2)
@@ -260,12 +269,11 @@ public class KI
 												, (int) ownCard.getBounds().getHeight()));
 			attacked = true;
 			ownCard.attackedCard(targetCard);
+			targetCard.setAttacked(true);
 			ownCard.setStatus(Status.ATTACKC);
 			enemysCs.remove(idxTop);
-			idxTop = 0;
-		}
+		} //for (Karte ownCard : ownCs)
 		
-		System.out.println();
 		return attacked;
 	}
 
@@ -286,11 +294,11 @@ public class KI
 		}
 		
 		boolean attacked = false;
-		boolean[][] isBest = new boolean[ownCs.size()][enemysCs.size()];
-		float[][] score = new float[ownCs.size()][enemysCs.size()];
+		boolean[][] isBest = new boolean[ownCs.size()][enemysCs.size()];	//if own card is the best attacker for en enemy this is set true
+		double[][] score = new double[ownCs.size()][enemysCs.size()];
 		int idxHighestOwn = -1;	//should throw an exception in case of error
 		
-		//setup of score array, this is final and won't get changed after init
+		//setup of score array, this is final and won't get changed after init, indexed are needed
 		//for every enemy
 		for (int idxEnemy = 0; idxEnemy < enemysCs.size(); idxEnemy++)
 		{
@@ -307,29 +315,30 @@ public class KI
 				int eA = enemy.getSchaden();
 				
 				//the score of this attack gets stored in the score array
-				score[idxOwnC][idxEnemy] = (float) ((-1.0/((eL - oA) * 2 + 1)) 
-													+ oL - eA
-													+ Math.pow(eA, (oL - eA <= 0 && eL - oA <= 0) ? 1 : 0));
+				score[idxOwnC][idxEnemy] = (-1.0/((eL - oA) * 2 + 1) 
+											+ oL - eA
+											+ Math.pow(eA, (oL - eA <= 0 && eL - oA <= 0) ? 1 : 0));	//the exponent might get changed for tuning AI
 				
 				if (Hearthstone.isDebugMode())
 				{
-					System.out.printf("Own Card %s/id %d attacks %s with after attack life of %d and overkill damage of %d\n"
+					System.out.printf("Own Card %20s/id %d attacks %20s with after attack life of %3d and overkill damage of %3d, attacks score: %.3f\n"
 									, own.getName()
 									, own.getCardID()
 									, enemy.getName()
 									, oL - eA
-									, oA - eL);
+									, oA - eL
+									, score[idxOwnC][idxEnemy]);
 				}
 				
-				//if the score is very high or there is no top score yet 
-				if (idxOwnC == 0
+				//if the score is higher than current topScore or there is no top score yet 
+				if ((idxOwnC == 0)
 				|| score[idxOwnC][idxEnemy] >= score[idxHighestOwn][idxEnemy])
 				{
 					idxHighestOwn = idxOwnC;
 				}
 			}
 			
-			//the highest scoreing own card for this enemy gets stored
+			//the highest scoreing own card for every enemy gets stored
 			isBest[idxHighestOwn][idxEnemy] = true;
 		}
 		
@@ -349,7 +358,7 @@ public class KI
 	 * @param ownCs cards that will attack
 	 * @return true if a card has attacked
 	 */
-	private boolean attackA(boolean[][] isBest, float[][] score, LinkedList<Karte> enemysCs, LinkedList<Karte> ownCs)
+	private boolean attackA(boolean[][] isBest, double[][] score, LinkedList<Karte> enemysCs, LinkedList<Karte> ownCs)
 	{
 		boolean attacked = false;
 		
@@ -400,9 +409,7 @@ public class KI
 					
 					if (Hearthstone.isDebugMode())
 					{
-						System.out.println("KI.chooseAttack Reminder for positioning <------------------------------------------------------------------------------");
-						System.out.printf("Attacking card %s\n", attackingCard.getName());
-						System.out.printf("attacks %-15s with value of: %.3f\n", enemysCs.get(idxEnemy).getName(), score[idxFinalChoice][idxEnemy]);
+						System.out.printf("Attacking card %20s attacks %20s with value of: %.3f\n", attackingCard.getName(), enemysCs.get(idxEnemy).getName(), score[idxFinalChoice][idxEnemy]);
 					}
 					
 					attackingCard.setNewPos(new Rectangle((int) (attackedCard.getBounds().getX() + (attackedCard.getBounds().getWidth() - attackingCard.getBounds().getWidth()))
@@ -416,7 +423,7 @@ public class KI
 					ownCs.remove(attackingCard);
 					enemysCs.remove(attackedCard);
 					
-					advancedC(enemysCs, ownCs);
+//					advancedC(enemysCs, ownCs);
 				}
 			}
 		}
@@ -432,8 +439,9 @@ public class KI
 	 * @param amOwnCard amount of own cards
 	 * @return the field, but for every own card, only one ememy is left
 	 */
-	private boolean[][] findBestA(float[][] score, boolean[][] isBest, int amEnemyCard, int amOwnCard)
+	private boolean[][] findBestA(double[][] score, boolean[][] isBest, int amEnemyCard, int amOwnCard)
 	{
+		//anti leak counter
 		int countLeak = -1;
 		
 		//for evey own card, there might be multiple enemy cards, that this card would top score against
@@ -455,7 +463,7 @@ public class KI
 					for (int i = 0; i < potEnemys.length; i++)
 					{
 						//if there is another enemy card, that the own card should attack
-						if(potEnemys[i] && i != idxOwnC)
+						if(potEnemys[i] && (i != idxOwnC))
 						{
 							//and the attack score is higher
 							if (score[idxOwnC][i] > score[idxOwnC][idxEnemy])
@@ -464,7 +472,7 @@ public class KI
 								potEnemys[idxEnemy] = false;
 								
 								int idxSecoundHighest = -1;		//this should throw exception if something goes wrong
-								float highest = score[0][idxEnemy];
+								double highest = score[0][idxEnemy];
 								//but there needs to be a replacement for this card
 								for (int idxReplacement = 0; idxReplacement < amOwnCard; idxReplacement++)
 								{
@@ -475,9 +483,9 @@ public class KI
 										idxSecoundHighest = idxReplacement;
 										highest = score[idxReplacement][idxEnemy];
 										//since there have been changes to the best enemy card to attack, every card needs to be checked again
-										if (countLeak < 5)
+										if (countLeak < 10)
 										{
-											idxEnemy = 0;	
+											idxOwnC = 0;	
 										}
 										countLeak++;
 									}
@@ -492,9 +500,9 @@ public class KI
 							}
 						}
 					}
-				}
-			}
-		}
+				} // if (isBest ...
+			} // for (int idxEnemy ...
+		} // for (int idxOwnC ...
 		
 		return isBest;
 	}
@@ -509,8 +517,6 @@ public class KI
 	 */
 	private Karte chooseCardToPlay(LinkedList<Karte> playableCs, int[] gameStats) 
 	{
-		System.out.println("KI.chooseCard Card to Play ------------------------------------------------------------------------------------------------");
-		
 		//no need to look for a card, if mana reached zero
 		if (gameStats[4] <= 0)
 		{
@@ -556,8 +562,7 @@ public class KI
 			//debugg output to check plays
 			if (Hearthstone.isDebugMode())
 			{
-				System.out.printf("%-20s value of: %.3f\n", cardToValue.getName(), topCardRating);
-				System.out.printf("It deals %d damage and has %d life\n", cardToValue.getSchaden(), cardToValue.getLeben());
+				System.out.printf("Card %20s has a value of: %.3f. It deals %d damage and has %d life\n", cardToValue.getName(), topCardRating, cardToValue.getSchaden(), cardToValue.getLeben());
 			}
 			
 		}
@@ -567,7 +572,6 @@ public class KI
 			return null;
 		}
 		
-		System.out.println(playableCs.get(idxTop).toString());
 		return playableCs.get(idxTop);
 	}
 

@@ -90,8 +90,6 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 	@Override
 	public void mouseClicked(MouseEvent arg0) 
 	{
-		spielfeld.cardDetailsAt(arg0);
-		
 		switch (Hearthstone.gameState)
 		{
 		case BEATEN:
@@ -121,7 +119,8 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				return;
 			}
 			
-			if (spielfeld.clickedSkipA(arg0))
+			if (spielfeld.clickedSkipA(arg0)
+			&& !Hearthstone.isDrawhelpActive())
 			{
 				if (playersMove)
 				{
@@ -182,16 +181,13 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 	{
 		if (Hearthstone.gameState == STATE.GAME)
 		{
+			spielfeld.cardDetailsAt(arg0);
+			
 			if (arg0.getButton() == MouseEvent.BUTTON1
 			&& spielfeld.playableCardAt(arg0)
 			&& playersMove)
 			{
 				cardMoved = true;	
-			}
-			
-			else
-			{
-				spielfeld.cardDetailsAt(arg0);
 			}
 		}	
 		

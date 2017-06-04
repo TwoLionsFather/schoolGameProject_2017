@@ -332,6 +332,7 @@ public class Karte extends JPanel
 			moved = true;
 		}
 		
+		//only set status to field if card returned from attack
 		if ((this.status != Status.LAYED)
 		&& this.status != Status.ABBLAGE)
 		{
