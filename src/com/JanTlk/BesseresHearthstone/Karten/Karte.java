@@ -1,28 +1,24 @@
 package com.JanTlk.BesseresHearthstone.Karten;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.JanTlk.BesseresHearthstone.Deck;
+import com.JanTlk.BesseresHearthstone.Hearthstone;
 
 public class Karte extends JPanel
 {
 	private static final long serialVersionUID = -4663989360172026366L;
 
+	//System currently not in use, only for debugging
 	private static int numberOfInstances = 0;
 	private final int cardID;	//every instance of Card gets its own id
 	
@@ -32,16 +28,23 @@ public class Karte extends JPanel
 	private final int mana;		//kosten bei Ausspielen der Karte
 	private Deck inDeck;	//in diesem Deck ist die Karte zu finden
 	
+	private BufferedImage icon_Attack;
+	private BufferedImage icon_Life;
+	
 	private int schaden;	//Schaden bei angriff auf andere Karte
 	private final int schadenInit;	//reverence to determine color of life display
 	private int leben;		//Leben, 0 Leben = Karte tot
-	private final int lebenInit;	//
+	private final int lebenInit;
 	private Status status; //this will be used to decide how the card gets handeled
 	
 	private boolean isDisplayed;
 	private boolean isAttacked;
 	private Karte attackCard;
 	
+	/**
+	 * since time is running low, there will be no Magic Card System for now
+	 * everything to implement it is already in place though
+	 */
 	
 	/**
 	 * textur will get standardiced Graphic from a composed image, when set up
@@ -88,7 +91,23 @@ public class Karte extends JPanel
 		this.attackCard = null;
 		
 		this.inDeck = inDeck;
-		this.setStatus(Status.Stapel);
+		this.setStatus(Status.STAPEL);
+		
+		try {
+			int squareSize = (Hearthstone.BREITE < 1920) ? 11 : 12;
+			this.icon_Attack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[9])
+																, squareSize
+																, squareSize);
+			
+			this.icon_Life = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[10])
+																, squareSize
+																, squareSize);
+		} catch (IOException e) {
+			e.printStackTrace();
+			icon_Attack = null;
+			icon_Life = null;
+			System.err.println("No Card Icon found");
+		}
 	}
 	
 	/**
@@ -106,103 +125,21 @@ public class Karte extends JPanel
 		
 		if(this.leben <= 0)
 		{
-			this.status = Status.Abblage;
+			this.status = Status.ABBLAGE;
+		}
+		
+		else 
+		{
+			this.status = Status.FELD;
 		}
 		
 		if(attackCard.getLeben() <= 0)
 		{
-			attackCard.setStatus(Status.Abblage);
+			attackCard.setStatus(Status.ABBLAGE);
 		}
 		
 		attackCard.setAttacked(false);
 		attackCard = null;
-	}
-	
-	/**
-	 * Mainmethod for Testing only!
-	 * @param args
-	 * @throws IOException
-	 */
-	public static void main(String[] args) throws IOException 
-	{
-		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
-		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
-		
-		
-		//Create JFrame to display the Card
-		JFrame window = new JFrame("Display");
-		window.setSize(400, 800);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setVisible(true);
-		
-		
-		//Creates JPanel to display card
-		JPanel contentPane = new JPanel(new BorderLayout());
-		
-		JLabel cardLabel = firstTestCard.cardToJLabel();
-		cardLabel.setSize((int) 100, (int) 164);	
-		
-		contentPane.add(cardLabel);
-		window.add(contentPane);
-	}
-	
-	/**
-	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
-	 * if clicked on the Label the Card clicked on will identify itself for development purpose
-	 * @return a JLabel that can be put on a JPanel for simple display and debug purpose
-	 */
-	public JLabel cardToJLabel()
-	{		
-		JLabel cardLabel = new JLabel()
-				{
-					private static final long serialVersionUID = -3561533864873217494L;
-					
-					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
-					protected void paintChildren(Graphics g)
-					{
-						super.paintChildren(g);						
-						g.drawImage(textur, 0, 0, null);
-
-						/**
-						 * used to debug with cards main method
-						 */	
-						if (Karte.this.typ == Typ.Monster)
-						{
-							g.setColor(checkForChange(schadenInit, schaden));			
-							g.setFont(new Font("Damage", Font.BOLD, 25));
-							g.drawString("" + Karte.this.getSchaden()
-										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
-										, textur.getHeight() - 70);
-							
-							
-							g.setColor(checkForChange(lebenInit, leben));			
-							g.setFont(new Font("Live", Font.BOLD, 25));
-							g.drawString("" + Karte.this.getLeben()
-										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
-										, textur.getHeight() - 70);
-						}
-						
-						g.setColor((isLegendary) ? Color.white : Color.black);
-						g.setFont(new Font("Mana", Font.PLAIN, 35));
-						g.drawString("" + Karte.this.getMana()
-									, (Karte.this.getMana() < 10) ? 45 : 30
-									, 57);
-					}
-				};		
-				
-				/**
-				 * fügt JLabel der Karte einen MouseListener hinzu
-				 * da nicht alle MausFunktionen geutzt werden wird ein Adapter benutzt
-				 */
-				cardLabel.addMouseListener(new MouseAdapter() 
-				{
-					public void mouseClicked(MouseEvent e)
-					{
-						System.out.println("Ich bin " + name);
-					}
-				});
-		
-		return cardLabel;
 	}
 	
 	/**
@@ -222,46 +159,65 @@ public class Karte extends JPanel
 		else 
 		{
 			bounds = new Rectangle(x, y
-					, textur.getWidth()
-					, textur.getHeight());
+								, textur.getWidth()
+								, textur.getHeight());
 		}
-		
+
 		g.drawImage(textur, x, y, null);
 		
 		if (this.typ == Typ.Monster)
 		{
-			g.setColor(checkForChange(schadenInit, schaden));			
-			g.setFont(new Font("Damage", Font.BOLD, 15));
-			g.drawString("" + Karte.this.getSchaden()
-						, ((Karte.this.getSchaden() < 10) ? 15 : 10) + x
-						, textur.getHeight() - 25 + y);
+			//draws Cs Damage
+			g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 16 : 18));
+
+			if(Hearthstone.isDrawhelpActive())
+			{
+				g.drawImage(icon_Attack
+							, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) + ((Hearthstone.BREITE < 1920) ? 5 : 10)
+							, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 27 : 36)
+							, null);
+			}
 			
+			g.setColor(checkForChange(schadenInit, schaden));			
+			g.drawString("" + Karte.this.getSchaden()
+						, x + ((Karte.this.getSchaden() < 10) ? 18 : 23) - ((Hearthstone.BREITE < 1920) ? 7 : 0)
+						, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 15 : 25));
+			
+			//draws Cs Life
+			if(Hearthstone.isDrawhelpActive())
+			{
+				g.drawImage(icon_Life
+							, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) - icon_Life.getWidth() - ((Hearthstone.BREITE < 1920) ? -3 : 1)
+							, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 27 : 36)
+							, null);
+			}
 			
 			g.setColor(checkForChange(lebenInit, leben));			
-			g.setFont(new Font("Live", Font.BOLD, 15));
 			g.drawString("" + Karte.this.getLeben()
-						, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 20 : 25) + x
-						, textur.getHeight() - 25 + y);
+						, x + textur.getWidth() - ((Karte.this.getLeben() < 10) ? 22 : 27) + ((Hearthstone.BREITE < 1920) ? 5 : 0)
+						, y + textur.getHeight() - ((Hearthstone.BREITE < 1920) ? 15 : 25));
+			
 		}
 				
+		//draws mana, chooses color based on background (L/N)
 		g.setColor((isLegendary) ? Color.white : Color.black);
-		g.setFont(new Font("Mana", Font.PLAIN, 15));
+		g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 13 : 15));
 		g.drawString("" + Karte.this.getMana()
-					, x + ((Karte.this.getMana() < 10) ? 10 : 6)
-					, y + 20);
+					, x + ((Karte.this.getMana() < 10) ? 11 : 6) - ((Hearthstone.BREITE < 1920) ? 4 : 0)
+					, y + ((Hearthstone.BREITE < 1920) ? 15 : 20));
 			
 		if (drawTitle)
 		{
 			g.setColor(Color.black);
-			g.setFont(new Font("CardInfo", Font.BOLD, 11));
+			g.setFont(new Font("Arial", Font.BOLD, 11));
 			g.drawString(Karte.this.getName()
-						, 22 + x
-						, 22 + y);
+						, x + 22
+						, y + 22);
 		}
 		
 		moved = false;
 	}
-	
+
 	/**
 	 * clones a card, creating a new Karte object in the process
 	 */
@@ -370,12 +326,17 @@ public class Karte extends JPanel
 	 */
 	public void placeHome() 
 	{
-		if(this.status != Status.Abblage)
+		if(this.status != Status.ABBLAGE)
 		{
 			bounds = homeRect;
 			moved = true;
 		}
 		
+		if ((this.status != Status.LAYED)
+		&& this.status != Status.ABBLAGE)
+		{
+			this.status = Status.FELD;
+		}
 	}
 	
 	/**
@@ -390,6 +351,11 @@ public class Karte extends JPanel
 		this.homeRect = homeRect;
 		placeHome();
 		this.component.repaint();
+	}
+	
+	public Rectangle getHome() 
+	{
+		return homeRect;
 	}
 	
 	/**
@@ -430,6 +396,18 @@ public class Karte extends JPanel
 			this.attackCard = karte;
 			karte.setAttacked(true);
 		}
+	}
+	
+	/**
+	 * removes life from selected Player
+	 * @param playerPC if true, the player gets attacked
+	 * @param gameStats these Stats get used to damage player/PC
+	 */
+	public void attackPlayer(boolean playerPC, int[] gameStats) 
+	{
+		gameStats[(playerPC) ? 0 : 3] -= schaden;
+		placeHome();
+		return;
 	}
 	
 	public String getName()
@@ -497,6 +475,11 @@ public class Karte extends JPanel
 		return attackCard;
 	}
 
+	public int getCardID() 
+	{
+		return cardID;
+	}
+
 	public boolean isDisplayed() 
 	{
 		return isDisplayed;
@@ -516,5 +499,105 @@ public class Karte extends JPanel
 	{
 		this.inDeck = deck;
 	}
+
+	public int getSchadenInit() 
+	{
+		return schadenInit;
+	}
+
+	public int getLebenInit() 
+	{
+		return lebenInit;
+	}
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//DevelopmentOnly sector
+	
+	/**
+	 * Mainmethod for Testing only!
+	 * @param args
+	 * @throws IOException
+	 */
+//	public static void main(String[] args) throws IOException 
+//	{
+//		Karte firstTestCard = new Karte("FireStarter", Typ.Monster, false, 12, 9, 12, null);
+//		firstTestCard.setCardImage(ImageIO.read(new File("Graphics\\Test.png")));
+//		
+//		
+//		//Create JFrame to display the Card
+//		JFrame window = new JFrame("Display");
+//		window.setSize(400, 800);
+//		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		window.setVisible(true);
+//		
+//		
+//		//Creates JPanel to display card
+//		JPanel contentPane = new JPanel(new BorderLayout());
+//		
+//		JLabel cardLabel = firstTestCard.cardToJLabel();
+//		cardLabel.setSize((int) 100, (int) 164);	
+//		
+//		contentPane.add(cardLabel);
+//		window.add(contentPane);
+//	}
+	
+	/**
+	 * Not in use
+	 * retuns a JLabel with the Cards Graphic and current Life and Damage on it
+	 * if clicked on the Label the Card clicked on will identify itself for development purpose
+	 * @return a JLabel that can be put on a JPanel for simple display and debug purpose
+	 */
+//	public JLabel cardToJLabel()
+//	{		
+//		JLabel cardLabel = new JLabel()
+//				{
+//					private static final long serialVersionUID = -3561533864873217494L;
+//					
+//					//wird die Karte gemalt, dann mit einer Beschreibung unter sich
+//					protected void paintChildren(Graphics g)
+//					{
+//						super.paintChildren(g);						
+//						g.drawImage(textur, 0, 0, null);
+//
+//						g.setFont(new Font("Freestyle Script", Font.BOLD, 15));
+//						/**
+//						 * used to debug with cards main method
+//						 */	
+//						if (Karte.this.typ == Typ.Monster)
+//						{
+//							g.setColor(checkForChange(schadenInit, schaden));			
+//							g.drawString("" + Karte.this.getSchaden()
+//										, ((Karte.this.getSchaden() < 10) ? 80 : 70)
+//										, textur.getHeight() - 73);
+//							
+//							
+//							g.setColor(checkForChange(lebenInit, leben));			
+//							g.drawString("" + Karte.this.getLeben()
+//										, textur.getWidth() - ((Karte.this.getLeben() < 10) ? 50 : 60)
+//										, textur.getHeight() - 73);
+//						}
+//						
+//						g.setColor((isLegendary) ? Color.white : Color.black);
+//						g.setFont(new Font("Freestyle Script", Font.BOLD, 35));
+//						g.drawString("" + Karte.this.getMana()
+//									, (Karte.this.getMana() < 10) ? 45 : 30
+//									, 57);
+//					}
+//				};		
+//				
+//				/**
+//				 * fügt JLabel der Karte einen MouseListener hinzu
+//				 * da nicht alle MausFunktionen geutzt werden wird ein Adapter benutzt
+//				 */
+//				cardLabel.addMouseListener(new MouseAdapter() 
+//				{
+//					public void mouseClicked(MouseEvent e)
+//					{
+//						System.out.println("Ich bin " + name);
+//					}
+//				});
+//		
+//		return cardLabel;
+//	}
+
 }

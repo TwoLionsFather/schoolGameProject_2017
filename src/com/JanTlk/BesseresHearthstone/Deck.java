@@ -12,6 +12,7 @@ public class Deck
 
 	private LinkedList<Karte> karten = new LinkedList<Karte>();
 	private int drawCounter = 0;
+
 	private String name;
 	
 	/**
@@ -41,12 +42,12 @@ public class Deck
 	 */
 	public void ziehen()
 	{
-		Karte dCard = this.getKarten().get(drawCounter++);
+		Karte dCard = this.karten.get(drawCounter++);
 		drawCounter = (int) Hearthstone.clamp(drawCounter, 0, karten.size() - 1);
 		
-		if(dCard.getStatus() == Status.Stapel)
+		if(dCard.getStatus() == Status.STAPEL)
 		{
-			dCard.setStatus(Status.Hand);
+			dCard.setStatus(Status.HAND);
 		}
 		
 		return;			
@@ -87,7 +88,7 @@ public class Deck
 		LinkedList<Karte> old = this.getKarten();
 		LinkedList<Karte> temp = new LinkedList<Karte>();		//neue temporäre Liste um gemischtes Deck zu speichern
 		
-		int anzKarten = old.size();					//Anzahl an zu mischenden Karten
+		int anzKarten = old.size();					//Anzahl an zu mischenden Karten, bevor die Liste des Zufalls wegen gekürzt wird
 		
 		for(int i = 0; i < anzKarten; i++) 					//solange Karten zu mischen sind
 		{
@@ -97,7 +98,54 @@ public class Deck
 			old.remove(randomZahl);					//entfernt die Karte aus dem Stapel
 		}
 		
-		this.setKarten(temp);
+		this.karten = temp;
+	}
+	
+	/**
+	 * this is a more advanced shuffel method, since it takes Mana Kost into a count
+	 */
+	public void mischenA() 
+	{
+		Random r = new SecureRandom();
+		LinkedList<Karte> old = this.getKarten();
+		LinkedList<Karte> temp = new LinkedList<Karte>();
+		float[] posValue = new float[old.size()];
+		int anzKarten = old.size();
+		
+		do {
+			//for every card a value based on its mana and some random numberes gets set
+			for (int idx = 0; idx < old.size(); idx++)
+			{
+				posValue[idx] = (float) (1 / (old.get(idx).getMana() + r.nextInt(7)) + r.nextFloat());
+			}
+			
+			//the highest valued card gets added first, low mana <- high score
+			int idxHigh = 0;
+			for (int i = 1; i < old.size(); i++)
+			{
+				if (posValue[i] > posValue[idxHigh]) 
+				{
+					idxHigh = i;
+				}
+			}
+		
+			temp.add(old.get(idxHigh));
+			old.remove(idxHigh);
+			
+		} while (temp.size() < anzKarten * 0.15);	//15% of the deck get stacked that way
+		
+		
+		//the rest is shuffeled random
+		anzKarten = old.size();
+		for(int i = 0; i < anzKarten; i++) 					//solange Karten zu mischen sind
+		{
+			int randomIdx = r.nextInt(old.size());	//neue Zufallszahl im Bereich der noch zu sortierenden Karten
+			
+			temp.add(old.get(randomIdx));			//fügt dem temp(gemischten) Stapel die Karte an der Zufälligen Position zu
+			old.remove(randomIdx);					//entfernt die Karte aus dem Stapel
+		}
+		
+		this.karten = temp;
 	}
 	
 	public boolean isInDeck(Karte cKarte)
@@ -123,6 +171,11 @@ public class Deck
 		Karte playedC = karten.get(idxMovedC);
 		this.karten.remove(idxMovedC);
 		this.karten.add(playedC);	
+	}
+	
+	public void setDrawCounter(int drawCounter) 
+	{
+		this.drawCounter = drawCounter;
 	}
 
 	public void setKarten(LinkedList<Karte> karten) 

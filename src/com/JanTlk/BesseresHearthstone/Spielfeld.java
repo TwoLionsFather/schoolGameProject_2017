@@ -2,12 +2,14 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.io.File;
+import java.util.Random;
 
+import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
@@ -16,15 +18,15 @@ public class Spielfeld
 	private DeckHandler dH;
 	private Deck dPL;
 	private Deck dPC;
-	private int idxMovedC;
 	
-	private boolean playersMove;	
-	private boolean playerFirstMove = true;
-	private boolean attackUpdate;
+	private boolean PCFirstMove;
 	private int[] gameStats;
 	
+	private int idxMovedC;
+	private boolean attackUpdate;
 	private Karte detailedCard;
 	private Rectangle nextRoundB;
+	private Rectangle skipAttacks;
 	
 	private Rectangle [][] kartenFelder;
 	private Karte [][] kartenAufFelder;
@@ -32,9 +34,6 @@ public class Spielfeld
 	private DrawHud hudDrawer;
 	private KI pcController;
 
-	private boolean drawHelp = true;
-	
-	
 	/**
 	 * used to set up the game
 	 * @param c used to redraw
@@ -46,14 +45,25 @@ public class Spielfeld
 		dPL = dH.getPlayerDeck();
 		dPC = dH.getPCDeck();
 		
-		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - 50), 50
-								, 30, 20);
+		nextRoundB = new Rectangle((int) (Hearthstone.BREITE - ((Hearthstone.isDrawhelpActive()) ? 80 : 70))
+								, 70
+								, (Hearthstone.isDrawhelpActive()) ? 50 : 30
+								, (Hearthstone.isDrawhelpActive()) ? 30 : 20);
 		
-		hudDrawer = new DrawHud(new File("Graphics\\HudPlayer.png"), nextRoundB);
+		skipAttacks =  new Rectangle((int) (Hearthstone.BREITE - 70)
+									, (int) (Hearthstone.HOEHE - 70)
+									, 30
+									, 20);
+		
+		hudDrawer = new DrawHud();
 		deckDrawer = new DrawDeck(dH);
 		
 		kartenFelder = deckDrawer.getKartenFelder();
 		kartenAufFelder = new Karte [deckDrawer.getAnzRectInR()][2];
+		
+		Random r = new Random();
+		PCFirstMove = r.nextBoolean();
+		UIInput.setPlayersMove(!PCFirstMove);
 		
 		/**
 		 * 0: playersLife, Leben des Spieler
@@ -72,36 +82,86 @@ public class Spielfeld
 		gameStats[0] = 20;
 		gameStats[3] = 20;
 		
-		gameStats[1] = (playerFirstMove) ? 1 : 0;		
-		gameStats[2] = (playerFirstMove) ? 1 : 0;
+		gameStats[1] = 0;		
+		gameStats[2] = 0;
 		
-		gameStats[4] = (!playerFirstMove) ? 1 : 0;
-		gameStats[5] = (!playerFirstMove) ? 1 : 0;
+		gameStats[4] = 0;
+		gameStats[5] = 0;
 		
 		pcController = new KI(deckDrawer.getAnzRectInR(), kartenFelder, dH);
-		playersMove = playerFirstMove;
+		
+		nextRound(!PCFirstMove);
+		
 	}
 	
 	/**
 	 * used to set up next Round
 	 * this is a project for the future
-	 * @param toggelRound 
 	 * @param playerPC if true, its the players turn
 	 */
-	public void nextRound()
-	{		
+	public void nextRound(boolean playersTurn)
+	{	
+		//Reset detailed Card
+		if (detailedCard != null)
+		{
+			detailedCard.setDisplayed(false);
+			detailedCard = null;
+		}
+		
+		if(playersTurn)
+		{
+			if (gameStats[2] < 5)
+			{
+				gameStats[2]++;
+			}
+			
+			gameStats[1] = gameStats[2];
+			dPL.ziehen();
+			dPL.repaint();
+			return;
+		} 
+		
+		attackUpdate();
+		
+		if (gameStats[5] < 5)
+		{
+			gameStats[5]++;					//increase PC Mana Pool by one
+		}
+		
+		gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
+		dPC.ziehen();					//draws new Card from Deck		
+		attackUpdate = pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
+		
+		if (!attackUpdate)
+		{
+			UIInput.setPlayersMove(true);
+			nextRound(true);			
+		}
+		
+		return;		
+	}
+	
+	/**
+	 * this method is used to performe the attack of every card
+	 */
+	public void attackUpdate() 
+	{
 		//atacking cards get moved back to their origin position
 		for (Karte tempC : dH.getAllCards()) 
 		{
 			switch(tempC.getStatus())
 			{
-			case Attack:
+			case ATTACKC:
 				tempC.damageTick();
 				tempC.placeHome();
 				break;
 				
-			case Layed:
-				tempC.setStatus(Status.Feld);
+			case ATTACKP:
+				tempC.attackPlayer((tempC.getDeck() == dPC), gameStats);
+				break;
+				
+			case LAYED:
+				tempC.setStatus(Status.FELD);
 				break;
 				
 			default:
@@ -110,41 +170,9 @@ public class Spielfeld
 
 		}
 		
-		remDeadCardsFromRectangles();
-		
-		if(attackUpdate)
-		{
-			attackUpdate = false;
-			
-			if (playersMove)
-				playersMove = false;
-			else 
-				playersMove = true;
-			
-			dPL.repaint();
-			nextRound();
-			return;
-		}
-		
-		//if it is PCs move
-		if (playersMove == false)
-		{
-			gameStats[5]++;					//increase PC Mana Pool by one
-			gameStats[4] = gameStats[5]; 	//set Mana Pool PC to max Mana
-			dPC.ziehen();					//draws new Card from Deck		
-			gameStats = pcController.nextRound(kartenAufFelder, gameStats);		//updates gameStats after PK played
-			attackUpdate = true;
-			nextRound();
-		}
-		
-		else if (playersMove)
-		{
-			gameStats[2]++;
-			gameStats[1] = gameStats[2];
-			dPL.ziehen();
-			dPL.repaint();
-		}
-
+		attackUpdate = false;
+		updateCardRectangles();
+		dPC.repaint();
 	}
 	
 	/**
@@ -152,18 +180,234 @@ public class Spielfeld
 	 * @param g the Graphics that every Card in the Game gets drawn with
 	 */
 	public void render(Graphics g) 
-	{		
-		deckDrawer.render(gameStats, playersMove, g);
+	{	
+		if (Hearthstone.gameState == STATE.RESETGAME)
+		{
+			resetGame();			
+			return;
+		}
 		
-		hudDrawer.render(playersMove, detailedCard, gameStats, g);
-		
-		if(drawHelp)
+		if (Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
 		}
 		
+		if (Hearthstone.isDebugMode()) 
+		{
+			drawDebugInfo(g);
+		}		
+
+		drawButtons(g);
+		drawHelpHud(g);
+		deckDrawer.render(gameStats, UIInput.isPlayersMove(), g);
+		hudDrawer.render(UIInput.isPlayersMove(), detailedCard, gameStats, g);
+		
 	}
 	
+	/**
+	 * used to reset Game into start condition
+	 */
+	private void resetGame()
+	{
+		removeAllCards();
+		dH.reset();
+		
+		if (detailedCard != null)
+		{
+			detailedCard.setDisplayed(false);
+			detailedCard = null;
+		}
+		
+		//life
+		gameStats[0] = 20;
+		gameStats[3] = 20;
+		//manaPlayer
+		gameStats[1] = 0;		
+		gameStats[2] = 0;
+		//manaPC
+		gameStats[4] = 0;
+		gameStats[5] = 0;
+		
+		for (int i = 0; i < 5; i++)
+		{
+			dPC.ziehen();
+			dPL.ziehen();
+		}
+				
+		Hearthstone.gameState = STATE.MENU;
+		
+		Random r = new Random();
+		PCFirstMove = r.nextBoolean();
+		nextRound(!PCFirstMove);
+		
+		dPL.repaint();			
+		return;
+	}
+	
+	/**
+	 * the card "Map" gets reset
+	 */
+	private void removeAllCards() 
+	{
+		for (int playerPC = 0; playerPC < 2; playerPC++) 
+		{
+			for (int i = 0; i < kartenAufFelder.length; i++) 
+			{
+				kartenAufFelder[i][playerPC] = null;
+			}
+		}
+	}
+
+	/**
+	 * this draws additional Card info to debug game
+	 * @param g
+	 */
+	private void drawDebugInfo(Graphics g) 
+	{
+		for (int playerPC = 0; playerPC < 2; playerPC++) 
+		{
+			for (int i = 0; i < kartenAufFelder.length; i++) 
+			{
+				if (kartenAufFelder[i][playerPC] != null)
+				{
+					Karte tempC = kartenAufFelder[i][playerPC];
+					
+					int rimC = 6;
+					g.setColor(Color.black);
+					g.drawRect((int) tempC.getHome().getX() - rimC / 2
+							, (int) tempC.getHome().getY() - rimC / 2
+							, (int) tempC.getHome().getWidth() + rimC
+							, (int) tempC.getHome().getHeight() + rimC);
+					
+					if (tempC.getHome() != null)
+					{
+						int rimH = 2;
+						g.setColor(Color.white);
+						g.fillRect((int) tempC.getHome().getX() - rimH / 2
+								, (int) tempC.getHome().getY() - rimH / 2
+								, (int) tempC.getHome().getWidth() + rimH
+								, (int) tempC.getHome().getHeight() + rimH);
+						
+					}
+					
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * draws Card Details
+	 * and other usefull info
+	 * @param g
+	 */
+	private void drawHelpHud(Graphics g) 
+	{	
+		if ((detailedCard != null)
+		&& detailedCard.getStatus() != Status.ABBLAGE)
+		{
+			Rectangle dChome = detailedCard.getBounds();
+			int rimWidth = 3;
+			
+			g.setColor(Color.orange);
+			g.fillRect((int) dChome.getX() - rimWidth
+					, (int) dChome.getY() - rimWidth
+					, (int) dChome.getWidth() + rimWidth * 2
+					, (int) dChome.getHeight() + rimWidth * 2);
+		}
+		
+		for (Karte tCard : dH.getAllCards())
+		{
+			Rectangle dcHome = null;
+			int rimWidth = 3;
+			
+			if (tCard.getHome() != null)
+			{
+				dcHome = tCard.getHome();
+			}
+			
+			switch (tCard.getStatus())
+			{
+			case ATTACKC:
+			case ATTACKP:				
+				g.setColor(Color.darkGray);
+				g.drawRect((int) dcHome.getX() - rimWidth
+						, (int) dcHome.getY() - rimWidth
+						, (int) dcHome.getWidth() + rimWidth * 2
+						, (int) dcHome.getHeight() + rimWidth * 2);
+				
+				g.drawLine((int) dcHome.getX()
+						, (int) dcHome.getY()
+						, (int) (dcHome.getX() + dcHome.getWidth())
+						, (int) (dcHome.getY() + dcHome.getHeight()));
+				break;
+				
+			case FELD:				
+				g.setColor(Color.orange);
+				g.drawRect((int) dcHome.getX() - rimWidth
+						, (int) dcHome.getY() - rimWidth
+						, (int) dcHome.getWidth() + rimWidth * 2
+						, (int) dcHome.getHeight() + rimWidth * 2);
+				break;
+				
+			default:
+				break;
+			
+			}
+			
+		}
+	}
+	
+	/**
+	 * as the name implies, this is used to draw the Buttons on screen
+	 * @param g
+	 */
+	private void drawButtons(Graphics g)
+	{
+		g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+		
+		//next Round Button
+		if (Hearthstone.isDrawhelpActive()
+		|| Hearthstone.isDebugMode())
+		{
+			g.setFont(new Font("Century", Font.PLAIN, 12));
+			g.drawString("Spieler"
+					, (int) (nextRoundB.getX() + nextRoundB.getWidth() / 2 - "Spieler".length() * 3)
+					, (int) (nextRoundB.getY() + nextRoundB.getHeight() / 2 + 6)); 
+		}
+		
+		g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+		g.drawRect((int) nextRoundB.getX()
+				, (int) nextRoundB.getY()
+				, (int) nextRoundB.getWidth()
+				, (int) nextRoundB.getHeight());
+		
+		//skip PCs Attacks Button
+		if (!Hearthstone.isDrawhelpActive()
+		|| Hearthstone.isDebugMode())
+		{
+			g.setFont(new Font("Arial", Font.PLAIN, 10));
+			g.drawString("Skip"
+					, (int) (skipAttacks.getX() + nextRoundB.getWidth() / 2 - "Skip".length() * 2.5)
+					, (int) (skipAttacks.getY() + nextRoundB.getHeight() / 2 + 6));
+			
+			g.setColor((UIInput.isPlayersMove()) ? Color.green : Color.red);
+			g.drawRect((int) skipAttacks.getX()
+					, (int) skipAttacks.getY()
+					, (int) skipAttacks.getWidth()
+					, (int) skipAttacks.getHeight());
+		}
+		
+		//cross out if attackUpdate
+		if (attackUpdate)
+		{
+			g.drawLine((int) nextRoundB.getX()
+					, (int) nextRoundB.getY()
+					, (int) (nextRoundB.getX() + nextRoundB.getWidth())
+					, (int) (nextRoundB.getY() + nextRoundB.getHeight()));
+		}
+	}
+
 	/**
 	 *  used to draw lines around rectangles that cards use to navigate
 	 * @param g graphics component that graphics get drwn on
@@ -220,10 +464,9 @@ public class Spielfeld
 			Karte tKarte = dPL.getKarten().get(i);
 			
 			if (inBounds(cEvent, tKarte.getBounds())
-			&& (tKarte.getStatus() != Status.Abblage)
-			&& (tKarte.getStatus() != Status.Stapel)
-			&& ((tKarte.getStatus() == Status.Hand) ? (gameStats[1] - tKarte.getMana() >= 0) : true)
-			&& playersMove) 
+			&& (tKarte.getStatus() != Status.ABBLAGE)
+			&& (tKarte.getStatus() != Status.STAPEL)
+			&& ((tKarte.getStatus() == Status.HAND) ? (gameStats[1] - tKarte.getMana() >= 0) : true)) 
 			{
 				highestID = i;
 			}
@@ -248,7 +491,7 @@ public class Spielfeld
 	public boolean moveCardAtRect(MouseEvent arg0) 
 	{
 		Point rEvent = arg0.getPoint();
-		
+	
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
@@ -281,20 +524,25 @@ public class Spielfeld
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
 				if(inBounds(rEvent, tempRect.getBounds())
-				&& cardAtRect == null
+				&& ((cardAtRect == movedC) ? true : cardAtRect == null)
 				&& playerPC > 0) 
 				{
 					//Update Players Mana pool and sets Status so card can't attack same Round it's played 
-					if (movedC.getStatus() == Status.Hand)
+					if (movedC.getStatus() == Status.HAND)
 					{
 						gameStats[1] -= movedC.getMana();
-						movedC.setStatus(Status.Layed);
+						movedC.setStatus(Status.LAYED);
 					}
 					
 					else
 					{
 						//in case this card owned a rectangle before, now it no longer does so
 						remCardFromRectangles(movedC);
+					}
+					
+					if (movedC.getStatus() == Status.ATTACKC)
+					{
+						remAttackers();
 					}
 					
 					//sets this cards default location to Recctangles center
@@ -314,8 +562,8 @@ public class Spielfeld
 				else if(inBounds(rEvent, tempRect.getBounds())
 				&& ((cardAtRect != null) ? !cardAtRect.isAttacked() : false)
 				&& playerPC == 0
-				&& movedC.getStatus() != Status.Hand
-				&& movedC.getStatus() != Status.Layed) 
+				&& movedC.getStatus() != Status.HAND
+				&& movedC.getStatus() != Status.LAYED) 
 				{
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
@@ -323,7 +571,26 @@ public class Spielfeld
 												, (int) movedC.getBounds().getHeight()));
 					
 					movedC.attackedCard(cardAtRect);
-					movedC.setStatus(Status.Attack);
+					movedC.setStatus(Status.ATTACKC);
+					return true;
+				}
+				
+				/**
+				 * if move is used to attack Player
+				 */
+				else if(inBounds(rEvent, tempRect.getBounds())
+				&& cardAtRect == null
+				&& allCardsUnderAttack(0)
+				&& playerPC == 0
+				&& movedC.getStatus() != Status.HAND
+				&& movedC.getStatus() != Status.LAYED) 
+				{
+					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
+												, (int) tempRect.getY()
+												, (int) movedC.getBounds().getWidth()
+												, (int) movedC.getBounds().getHeight()));
+					
+					movedC.setStatus(Status.ATTACKP);
 					return true;
 				}
 				
@@ -334,64 +601,76 @@ public class Spielfeld
 	}
 
 	/**
+	 * removes Cards that attack the pc and sends them back home
+	 */
+	private void remAttackers() 
+	{
+		for(int playerPC = 0; playerPC < 2; playerPC++)
+		{
+			for(int i = 0; i < kartenAufFelder.length; i++)
+			{
+				if ((kartenAufFelder[i][playerPC] != null)
+				&& kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKP)
+				{
+					kartenAufFelder[i][playerPC].placeHome();
+					kartenAufFelder[i][playerPC].setStatus(Status.FELD);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * checks if it is possible to attack the enemy player
+	 * @param playerPC if 0, cards on PCs half get checked
+	 * @return true if all cards are under attack
+	 */
+	private boolean allCardsUnderAttack(int playerPC) 
+	{
+		for (int i = 0; i < kartenAufFelder.length; i++)
+		{
+			if ((kartenAufFelder[i][playerPC] != null)
+			&& !kartenAufFelder[i][playerPC].isAttacked())
+			{
+				return false;
+			}
+		}
+			
+		return true;
+	}
+
+	/**
 	 * selects card to be displayed in detail on hud and repaints canvas
 	 * @param arg0 mous position
 	 */
 	public void cardDetailsAt(MouseEvent arg0) 
 	{
 		Point cEvent = arg0.getPoint();
-		int idxDetailedCard = -1;
-		boolean playersDeck = false;
 		
-		for(int i = 0; i < dPL.getAnzKarten(); i++)
+		int idx = -1;
+		for (Karte tCard : dH.getAllCards())
 		{
-			Karte tKarte = dPL.getKarten().get(i);
+			idx++;
 			
-			if(inBounds(cEvent, tKarte.getBounds())) 
+			if(inBounds(cEvent, tCard.getBounds())
+			&& tCard.getStatus() != Status.ABBLAGE
+			&& tCard.getStatus() != Status.STAPEL) 
 			{
-				idxDetailedCard = i;
-				playersDeck = true;
-			}
-		}
-		
-		if (idxDetailedCard == -1)
-		{
-			for(int i = 0; i < dPC.getAnzKarten(); i++)
-			{
-				Karte tKarte = dPC.getKarten().get(i);
-				
-				if(inBounds(cEvent, tKarte.getBounds())) 
+				if (detailedCard != tCard)
 				{
-					idxDetailedCard = i;
-					playersDeck = false;
+					if (detailedCard != null)
+					{
+						detailedCard.setDisplayed(false);
+					}
+					
+					detailedCard = dH.getAllCards().get(idx);
+					detailedCard.setDisplayed(true);
+					detailedCard.getComponent().repaint();
 				}
+				
 			}
-		}		
-		
-		if(idxDetailedCard == -1)
-		{
-			if (detailedCard != null)
-			{
-				detailedCard.setDisplayed(false);
-				detailedCard = null;
-			}
-			return;
 		}
 		
-		Karte atDisplay = (playersDeck) ? dPL.getKarten().get(idxDetailedCard) : dPC.getKarten().get(idxDetailedCard);
-		
-		if (!atDisplay.isDisplayed())
-		{
-			if (detailedCard != null)
-			{
-				detailedCard.setDisplayed(false);
-				detailedCard = null;
-			}
-			
-			atDisplay.setDisplayed(true);
-			detailedCard = atDisplay;			
-			detailedCard.getComponent().repaint();
-		}
 	}
 	
 	/**
@@ -402,11 +681,24 @@ public class Spielfeld
 	public boolean clickedNR(MouseEvent arg0)
 	{
 		Point cEvent = arg0.getPoint();
-		if (inBounds(cEvent, nextRoundB))
-		{
-			playersMove = !playersMove;
-		}
 		return inBounds(cEvent, nextRoundB);
+	}
+	
+	/**
+	 * checks nextRoundButton on clickevent
+	 * @param arg0 clickevent to be tested
+	 * @return true if next round
+	 */
+	public boolean clickedSkipA(MouseEvent arg0)
+	{
+		if (Hearthstone.isDrawhelpActive()
+		&& !Hearthstone.isDebugMode())
+		{
+			return false;
+		}
+		
+		Point cEvent = arg0.getPoint();
+		return inBounds(cEvent, skipAttacks);
 	}
 	
 	/**
@@ -435,28 +727,35 @@ public class Spielfeld
 	}
 	
 	/**
-	 * checks if moved card is checked in on any of the rectangles and delets it from the array
-	 * @param remC the card choosen to get removed
+	 * delets old cards from rect.
 	 */
-	private void remDeadCardsFromRectangles() 
+	public void updateCardRectangles() 
 	{
-		for(int playerPC = 0; playerPC < 2; playerPC++)
+		for (Karte tCard : dH.getAllCards())
 		{
-			for(int i = 0; i < kartenAufFelder.length; i++)
+			if (tCard.getStatus() == Status.ABBLAGE)
 			{
-				if ((kartenAufFelder[i][playerPC] != null) 
-				&& kartenAufFelder[i][playerPC].getStatus() == Status.Abblage)
-				{
-					kartenAufFelder[i][playerPC] = null;
-				}
+				remCardFromRectangles(tCard);
 			}
+			
+			if (dPC.isInDeck(tCard)
+			&& tCard.getStatus() == Status.FELD)
+			{
+				for (int idx = 0; idx < kartenAufFelder.length; idx++)
+				{
+					if(kartenAufFelder[idx][1] == tCard)
+					{
+						kartenAufFelder[idx][1] = null;
+					}
+					
+				}
+
+			}
+			
 		}
+			
 	}
 	
-	public boolean isPlayersMove() 
-	{
-		return playersMove;
-	}
 
 	
 	public Karte getDetailedCard() 
@@ -470,14 +769,19 @@ public class Spielfeld
 		this.detailedCard = detailedCard;
 	}
 
-	public boolean getAttackUpdate()
+	public boolean getAttackUpdate() 
 	{
 		return attackUpdate;
 	}
 
-	public void setAttackUpdate(boolean attackUpdate) 
+	public int[] getGameStats() 
 	{
-		this.attackUpdate = attackUpdate;
+		return gameStats;
+	}
+
+	public DeckHandler getdH() 
+	{
+		return dH;
 	}
 
 }

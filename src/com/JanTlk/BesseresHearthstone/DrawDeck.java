@@ -1,17 +1,26 @@
 package com.JanTlk.BesseresHearthstone;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
+import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 public class DrawDeck 
 {
-	private int anzRectInR = 15;		//How many rectangles are there from left to right
+	private int anzRectInR = 7;		//How many rectangles are there from left to right
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	private Rectangle [][] kartenFelder;
+	
+	private BufferedImage cardBack;
 	
 	private DeckHandler deckHandler;
 	private Deck dPL;
@@ -22,6 +31,16 @@ public class DrawDeck
 		this.dPL = dH.getPlayerDeck();
 		this.dPC = dH.getPCDeck();
 		this.deckHandler = dH;
+		
+		try {
+			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[4])
+															, (Hearthstone.BREITE < 1920) ? 70 : 100
+															, (Hearthstone.BREITE < 1920) ? 140 : 200);
+		} catch (IOException e) {
+			e.printStackTrace();
+			cardBack = null;
+			System.err.println("No Cardback File found");
+		}
 		
 		kartenFelder = new Rectangle [anzRectInR][2];
 		
@@ -38,7 +57,7 @@ public class DrawDeck
 		}	
 		
 	}
-
+	
 	/**
 	 * this displays all Cards on the Game
 	 * @param playersMove if this is true, players Cards will get displayed on top
@@ -46,6 +65,16 @@ public class DrawDeck
 	 */
 	public void render(int[] gameStats, boolean playersMove, Graphics g) 
 	{
+		if ((gameStats[0] <= 0)
+		|| (gameStats[3] <= 0)
+		|| gameStats[7] >= dPL.getAnzKarten()
+		|| gameStats[9] >= dPC.getAnzKarten())
+		{
+			Hearthstone.gameState = STATE.BEATEN;
+			dPC.repaint();
+			return;
+		}
+		
 		//reset counter to start counting while checking Status of every Card
 		gameStats[6] = 0;
 		gameStats[7] = 0;
@@ -65,7 +94,7 @@ public class DrawDeck
 		{
 			switch (tCard.getStatus()) 
 			{
-			case Hand:
+			case HAND:
 				if (tCard.getDeck() == dPL)
 				{
 					handKartenPL.add(tCard);
@@ -77,22 +106,23 @@ public class DrawDeck
 				}
 				break;
 				
-			case Stapel:
-			case Abblage:
+			case STAPEL:
+			case ABBLAGE:
 				if (tCard.getDeck() == dPL)
 				{
-					gameStats[(tCard.getStatus() == Status.Stapel) ? 6 : 7]++;
+					gameStats[(tCard.getStatus() == Status.STAPEL) ? 6 : 7]++;
 				}
 				
 				else if (tCard.getDeck() == dPC)
 				{
-					gameStats[(tCard.getStatus() == Status.Stapel) ? 8 : 9]++;
+					gameStats[(tCard.getStatus() == Status.STAPEL) ? 8 : 9]++;
 				}
 				break;
 				
-			case Feld:
-			case Attack:
-			case Layed:
+			case FELD:
+			case ATTACKC:
+			case ATTACKP:
+			case LAYED:
 				if (tCard.getDeck() == dPL)
 				{
 					fieldKartenPL.add(tCard);
@@ -131,15 +161,33 @@ public class DrawDeck
 	public void drawHand(boolean player, ArrayList<Karte> handCards, Graphics g)
 	{
 		int kartenCount = 0;
+		
+		if (!player 
+		&& !Hearthstone.isDebugMode()
+		&& cardBack != null)
+		{
+			for(Karte tCard : handCards)
+			{
+				g.drawImage(cardBack
+						, (int) (Hearthstone.BREITE / 2 
+														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
+														+ 55 * kartenCount++)
+						, 0
+						, null);
+			}
+			return;
+		}
+		
 		for(Karte tCard : handCards)
 		{
 			tCard.drawCard((int) (Hearthstone.BREITE / 2 
-														- ((tCard.getBounds().getWidth() - 55) * handCards.size()) / 2
+														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
 														+ 55 * kartenCount++)
-						, (int) ((player) ? Hearthstone.HOEHE - (Hearthstone.HOEHE / 5) : 0)
+						, (int) ((player) ? Hearthstone.HOEHE - tCard.getBounds().getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : -10) : 0) // oder /5
 						, g
 						, false);
 		}
+		
 	}
 	
 	/**
@@ -156,6 +204,25 @@ public class DrawDeck
 						, (int) tempC.getBounds().getY()
 						, g
 						, false);
+			
+			//Es ist nicht ostern, doch ostereier suchen macht immer Spaß
+			if (tempC.getCardID() == 16
+			&& !Hearthstone.isDrawhelpActive()
+			&& !Hearthstone.isDebugMode()
+			&& !tempC.isDisplayed()
+			&& tempC.getStatus() == Status.LAYED
+			&& kartenFelder[(anzRectInR / 2) + ((anzRectInR % 2 == 0) ? 1 : 0)][1].contains(tempC.getHome()))
+			{
+				g.setColor(Color.red);
+				g.setFont(new Font("Arial", Font.PLAIN, 20));
+				
+				String EasterEgg = "Fixed it";
+				g.drawString(EasterEgg
+							, (int) tempC.getHome().getX()
+							, (int) tempC.getHome().getY() - 10);
+				
+				System.out.println("_________________┌∩┐(ಠ_ಠ)┌∩┐_________________ Achivement unlocked _________________┌∩┐(ಠ_ಠ)┌∩┐_________________");
+			}
 		}
 	}
 	

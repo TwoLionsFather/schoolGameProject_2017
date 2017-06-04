@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
+import com.JanTlk.BesseresHearthstone.Karten.Status;
 
 /**
  * In this class every card should be added to the game and to a deck
@@ -28,14 +29,14 @@ public class DeckHandler
 		
 		CardCreator cC;
 		try {
-			cC = new CardCreator("Karten.txt", c);
+			cC = new CardCreator(c);
 		} catch (FileNotFoundException e) {
 			System.err.println("Card creator File not Found! \nGame cannot be started!");
 			System.err.println("Please create a Card Creator Text Document.");
 			return;
 		} 
 		
-		for(int i = 1; i <= 13; i++)
+		for(int i = 1; i <= 32; i++)
 		{
 			player.addKarte(cC.nextCard());
 			player.getKarten().getLast().setDeck(player);
@@ -43,16 +44,54 @@ public class DeckHandler
 		
 		pc = player.clone(new Deck("PC")); 
 		
-		player.mischen();
-		pc.mischen();
+		player.mischenA();
+		pc.mischenA();
+		
+//		real random Card shuffel, results in 50/50 Games
+//		player.mischen();
+//		pc.mischen();
+		
 		
 		//Starthand ziehen
-		for(int startKartren = 0; startKartren < 3; startKartren ++)
+		for(int startKartren = 0; startKartren < 5; startKartren ++)
 		{
 			player.ziehen();
-			pc.ziehen();
+			pc.ziehen();                   
 		}
 		
+	}
+	
+	/**
+	 * both Player and PC draw 5 cards, only to use in Debug Mode
+	 */
+	public void refillHands()
+	{
+		for(int startKartren = 0; startKartren < 6; startKartren ++)
+		{
+			player.ziehen();
+			pc.ziehen();                   
+		}
+	}
+	
+	/**
+	 * resets the game
+	 */
+	public void reset()
+	{	
+		for (Karte tCard : getAllCards())
+		{
+			tCard.setStatus(Status.STAPEL);
+			tCard.setAttacked(false);
+			tCard.attackedCard(null);
+			tCard.setDisplayed(false);
+			tCard.setLeben(tCard.getLebenInit());
+			tCard.setSchaden(tCard.getSchadenInit());
+		}
+		
+		player.setDrawCounter(0);
+		pc.setDrawCounter(0);
+		player.mischenA();
+		pc.mischenA();
 	}
 	
 	public LinkedList<Karte> getAllCards()
