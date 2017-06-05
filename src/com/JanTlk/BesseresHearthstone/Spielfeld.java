@@ -115,10 +115,11 @@ public class Spielfeld
 		
 		else if ((gameStats[2] >= 5) || (gameStats[5] >= 5))
 		{
-			DJ.getInstance().enqueue("adapt playing");
+			DJ.getInstance().enqueue("next playing");
 		}
 		
 		//Reset detailed Card
+		updateCardRectangles();
 		if (detailedCard != null)
 		{
 			detailedCard.setDisplayed(false);
@@ -137,6 +138,7 @@ public class Spielfeld
 			dPL.repaint();
 			return;
 		} 
+		
 		attackUpdate();
 		
 		if (gameStats[5] < 5)
@@ -167,12 +169,11 @@ public class Spielfeld
 		{
 			switch(tempC.getStatus())
 			{
-			case ATTACKC:
+			case ATTACK_C:
 				tempC.damageTick();
-				tempC.placeHome();
 				break;
 				
-			case ATTACKP:
+			case ATTACK_E:
 				tempC.attackPlayer((tempC.getDeck() == dPC), gameStats);
 				break;
 				
@@ -219,14 +220,16 @@ public class Spielfeld
 	 */
 	public void resetGame()
 	{
-		removeAllCards();
-		dH.reset();
-		
 		if (detailedCard != null)
 		{
 			detailedCard.setDisplayed(false);
 			detailedCard = null;
 		}
+		
+		attackUpdate();
+		removeAllCards();
+		dH.reset();
+		dPL.repaint();
 		
 		//life
 		gameStats[0] = 20;
@@ -325,8 +328,8 @@ public class Spielfeld
 			
 			switch (tCard.getStatus())
 			{
-			case ATTACKC:
-			case ATTACKP:				
+			case ATTACK_C:
+			case ATTACK_E:				
 				g.setColor(Color.darkGray);
 				g.drawRect((int) dcHome.getX() - rimWidth
 						, (int) dcHome.getY() - rimWidth
@@ -469,7 +472,6 @@ public class Spielfeld
 				&& toTest.getY() > borders.getY()
 				&& toTest.getY() < (borders.getY() + borders.getHeight());
 	}
-
 	
 	/**
 	 * to check if there is a card at the clicked point, saves index of card on top to be the moved card
@@ -537,17 +539,13 @@ public class Spielfeld
 				}
 				
 				//if the moved card was attacking another card this needs to be resetted
-				if(movedC.getAttackCard() != null)
-				{
-					movedC.getAttackCard().setAttacked(false);
-					movedC.attackedCard(null);
-				}
+				movedC.setAttackedCard(null);
 				
 				/**
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
 				if((inBounds(rEvent, tempRect.getBounds()))
-				&& ((cardAtRect == movedC) ? true : (cardAtRect == null))
+				&& ((cardAtRect == movedC) || (cardAtRect == null))
 				&& (playerPC > 0)) 
 				{
 					//Update Players Mana pool and sets Status so card can't attack same Round it's played 
@@ -563,7 +561,7 @@ public class Spielfeld
 						remCardFromRectangles(movedC);
 					}
 					
-					if (movedC.getStatus() == Status.ATTACKC)
+					if (movedC.getStatus() == Status.ATTACK_C)
 					{
 						remAttackers();
 					}
@@ -583,18 +581,18 @@ public class Spielfeld
 				 * if move is used to attack another card
 				 */
 				else if(inBounds(rEvent, tempRect.getBounds())
-				&& ((cardAtRect != null) ? !cardAtRect.isAttacked() : false)
-				&& playerPC == 0
-				&& movedC.getStatus() != Status.HAND
-				&& movedC.getStatus() != Status.LAYED) 
+				&& (cardAtRect != null)
+				&& !cardAtRect.isAttacked()
+				&& (playerPC == 0)
+				&& ((movedC.getStatus() == Status.FELD) || (movedC.getStatus() == Status.ATTACK_C)))
 				{
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-					movedC.attackedCard(cardAtRect);
-					movedC.setStatus(Status.ATTACKC);
+					movedC.setAttackedCard(cardAtRect);
+					movedC.setStatus(Status.ATTACK_C);
 					return true;
 				}
 				
@@ -602,18 +600,17 @@ public class Spielfeld
 				 * if move is used to attack Player
 				 */
 				else if(inBounds(rEvent, tempRect.getBounds())
-				&& cardAtRect == null
+				&& (cardAtRect == null)
 				&& allCardsUnderAttack(0)
-				&& playerPC == 0
-				&& movedC.getStatus() != Status.HAND
-				&& movedC.getStatus() != Status.LAYED) 
+				&& (playerPC == 0)
+				&& (movedC.getStatus() == Status.FELD)) 
 				{
 					movedC.setNewPos(new Rectangle((int) (tempRect.getX() + (tempRect.getWidth() - movedC.getBounds().getWidth()) / 2)
 												, (int) tempRect.getY()
 												, (int) movedC.getBounds().getWidth()
 												, (int) movedC.getBounds().getHeight()));
 					
-					movedC.setStatus(Status.ATTACKP);
+					movedC.setStatus(Status.ATTACK_E);
 					return true;
 				}
 				
@@ -633,10 +630,9 @@ public class Spielfeld
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
 				if ((kartenAufFelder[i][playerPC] != null)
-				&& kartenAufFelder[i][playerPC].getStatus() == Status.ATTACKP)
+				&& (kartenAufFelder[i][playerPC].getStatus() == Status.ATTACK_E))
 				{
 					kartenAufFelder[i][playerPC].placeHome();
-					kartenAufFelder[i][playerPC].setStatus(Status.FELD);
 				}
 			}
 		}
@@ -739,11 +735,9 @@ public class Spielfeld
 		{
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
-				if ((kartenAufFelder[i][playerPC] != null) 
-				&& (kartenAufFelder[i][playerPC] == remC))
+				if (kartenAufFelder[i][playerPC] == remC)
 				{
 					kartenAufFelder[i][playerPC] = null;
-					return;
 				}
 			}
 		}
@@ -761,21 +755,20 @@ public class Spielfeld
 				remCardFromRectangles(tCard);
 			}
 			
-			if (dPC.isInDeck(tCard)
-			&& (tCard.getStatus() == Status.FELD))
+			//removes Temp Cards, used for positioning
+			for (int idx = 0; idx < kartenAufFelder.length; idx++)
 			{
-				for (int idx = 0; idx < kartenAufFelder.length; idx++)
+				if(dPC.isInDeck(tCard)
+				&& (kartenAufFelder[idx][1] == tCard))
 				{
-					if(kartenAufFelder[idx][1] == tCard)
-					{
-						kartenAufFelder[idx][1] = null;
-					}
-					
+					kartenAufFelder[idx][1] = null;
 				}
-
+				
 			}
 			
 		}
+		
+		
 			
 	}
 	

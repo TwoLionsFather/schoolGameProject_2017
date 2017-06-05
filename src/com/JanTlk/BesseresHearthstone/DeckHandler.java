@@ -81,8 +81,7 @@ public class DeckHandler
 		for (Karte tCard : getAllCards())
 		{
 			tCard.setStatus(Status.STAPEL);
-			tCard.setAttacked(false);
-			tCard.attackedCard(null);
+			tCard.setAttackedCard(null);
 			tCard.setDisplayed(false);
 			tCard.setLeben(tCard.getLebenInit());
 			tCard.setSchaden(tCard.getSchadenInit());

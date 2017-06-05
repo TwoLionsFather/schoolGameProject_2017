@@ -60,8 +60,8 @@ public class KI
 				break;
 				
 			case FELD:
-			case ATTACKC:
-			case ATTACKP:
+			case ATTACK_C:
+			case ATTACK_E:
 				if (deck.isInDeck(tCard))
 				{
 					ownCs.add(tCard);
@@ -123,7 +123,6 @@ public class KI
 			if (tempC.getStatus() == Status.FELD)
 			{
 				int posAttack = nextAttackField();
-								
 				kartenAufFelder[posAttack][1] = tempC;
 				Rectangle attackPos = kartenFelder[posAttack][1];
 				
@@ -136,7 +135,7 @@ public class KI
 											, (int) tempC.getBounds().getWidth()
 											, (int) tempC.getBounds().getHeight()));
 				
-				tempC.setStatus(Status.ATTACKP);
+				tempC.setStatus(Status.ATTACK_E);
 				attacked = true;
 				System.out.printf("%20s attacks player for %d\n", tempC.getName(), tempC.getSchaden());
 			}
@@ -269,9 +268,8 @@ public class KI
 												, (int) ownCard.getBounds().getWidth()
 												, (int) ownCard.getBounds().getHeight()));
 			attacked = true;
-			ownCard.attackedCard(targetCard);
-			targetCard.setAttacked(true);
-			ownCard.setStatus(Status.ATTACKC);
+			ownCard.setAttackedCard(targetCard);
+			ownCard.setStatus(Status.ATTACK_C);
 			enemysCs.remove(idxTop);
 		} //for (Karte ownCard : ownCs)
 		
@@ -460,9 +458,8 @@ public class KI
 														, (int) attackingCard.getBounds().getWidth()
 														, (int) attackingCard.getBounds().getHeight()));
 					attacked = true;
-					attackingCard.attackedCard(attackedCard);
-					attackedCard.setAttacked(true);
-					attackingCard.setStatus(Status.ATTACKC);
+					attackingCard.setAttackedCard(attackedCard);
+					attackingCard.setStatus(Status.ATTACK_C);
 					ownCs.remove(attackingCard);
 					enemysCs.remove(attackedCard);
 					

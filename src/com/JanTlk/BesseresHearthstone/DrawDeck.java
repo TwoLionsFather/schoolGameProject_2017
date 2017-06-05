@@ -120,8 +120,8 @@ public class DrawDeck
 				break;
 				
 			case FELD:
-			case ATTACKC:
-			case ATTACKP:
+			case ATTACK_C:
+			case ATTACK_E:
 			case LAYED:
 				if (tCard.getDeck() == dPL)
 				{

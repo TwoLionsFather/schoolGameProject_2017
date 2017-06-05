@@ -6,7 +6,7 @@ public enum Status
 	, HAND
 	, LAYED
 	, FELD
-	, ATTACKC	
-	, ATTACKP
+	, ATTACK_C	
+	, ATTACK_E
 	, ABLAGE;
 }

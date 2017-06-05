@@ -115,31 +115,30 @@ public class Karte extends JPanel
 	 */
 	public void damageTick()
 	{
-		if (attackCard == null)
+		if (this.attackCard == null)
 		{
 			return;
 		}
 		
 		this.leben = this.leben - attackCard.getSchaden();
-		attackCard.setLeben(attackCard.getLeben() - this.schaden);
+		this.attackCard.setLeben(attackCard.getLeben() - this.schaden);
 		
 		if(this.leben <= 0)
 		{
 			this.status = Status.ABLAGE;
 		}
 		
-		else 
+		if(this.attackCard.getLeben() <= 0)
 		{
-			this.status = Status.FELD;
+			this.attackCard.setStatus(Status.ABLAGE);
 		}
 		
-		if(attackCard.getLeben() <= 0)
-		{
-			attackCard.setStatus(Status.ABLAGE);
-		}
+		setAttackedCard(null);
 		
-		attackCard.setAttacked(false);
-		attackCard = null;
+		if (this.status != Status.ABLAGE)
+		{
+			placeHome();
+		}
 	}
 	
 	/**
@@ -333,8 +332,8 @@ public class Karte extends JPanel
 		}
 		
 		//only set status to field if card returned from attack
-		if ((this.status != Status.LAYED)
-		&& this.status != Status.ABLAGE)
+		if ((this.status == Status.ATTACK_E)
+		|| (this.status == Status.ATTACK_C))
 		{
 			this.status = Status.FELD;
 		}
@@ -347,8 +346,7 @@ public class Karte extends JPanel
 	 */
 	public void setHome(Rectangle homeRect) 
 	{
-		this.attackCard = null;
-		this.isAttacked = false;
+		setAttackedCard(null);
 		this.homeRect = homeRect;
 		placeHome();
 		this.component.repaint();
@@ -390,12 +388,23 @@ public class Karte extends JPanel
 	 * sets the card beeing targeted by this card and the status of the attacked card as beeing attacked
 	 * @param karte the  card beeing attacked
 	 */
-	public void attackedCard(Karte karte) 
+	public void setAttackedCard(Karte karte) 
 	{
-		if (karte != null)
+		if (karte == this.attackCard)
 		{
-			this.attackCard = karte;
-			karte.setAttacked(true);
+			return;
+		}
+		
+		if (this.attackCard != null)
+		{
+			attackCard.setAttacked(false);
+		}
+		
+		this.attackCard = karte;
+		
+		if (this.attackCard != null)
+		{
+			this.attackCard.setAttacked(true);
 		}
 	}
 	
@@ -408,7 +417,6 @@ public class Karte extends JPanel
 	{
 		gameStats[(playerPC) ? 0 : 3] -= schaden;
 		placeHome();
-		return;
 	}
 	
 	public String getName()

@@ -71,6 +71,7 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 			if (Hearthstone.gameState == STATE.GAME
 			&& Hearthstone.isDebugMode())
 			{
+				spielfeld.resetGame();
 				Hearthstone.gameState = STATE.RESETGAME;
 				hs.repaint();
 			}
