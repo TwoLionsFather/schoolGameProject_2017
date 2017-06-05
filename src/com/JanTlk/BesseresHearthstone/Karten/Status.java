@@ -8,5 +8,5 @@ public enum Status
 	, FELD
 	, ATTACKC	
 	, ATTACKP
-	, ABBLAGE;
+	, ABLAGE;
 }

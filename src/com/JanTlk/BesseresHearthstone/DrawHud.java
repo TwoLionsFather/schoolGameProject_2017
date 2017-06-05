@@ -53,7 +53,7 @@ public class DrawHud {
 
 		g.setFont(new Font("Century", Font.BOLD, (Hearthstone.BREITE < 1920) ? 12 : 14));
 		// Overlay on Hud texture
-		if ((cardInDetail != null) && cardInDetail.getStatus() != Status.ABBLAGE) {
+		if ((cardInDetail != null) && cardInDetail.getStatus() != Status.ABLAGE) {
 			g.setColor((cardInDetail.getDeck().toString().contains("PC") ? Color.red : Color.green));
 
 			// lifeDisplay Player

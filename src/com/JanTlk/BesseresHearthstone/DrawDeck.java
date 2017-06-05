@@ -107,7 +107,7 @@ public class DrawDeck
 				break;
 				
 			case STAPEL:
-			case ABBLAGE:
+			case ABLAGE:
 				if (tCard.getDeck() == dPL)
 				{
 					gameStats[(tCard.getStatus() == Status.STAPEL) ? 6 : 7]++;

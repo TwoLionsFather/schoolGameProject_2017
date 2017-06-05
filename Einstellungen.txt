@@ -1,6 +1,6 @@
 1920
 16/9
-Default 
+TestGame
 
 Default / ProMode / Debug / TestGame
 

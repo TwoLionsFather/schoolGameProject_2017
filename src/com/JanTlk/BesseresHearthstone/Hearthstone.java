@@ -100,8 +100,6 @@ public class Hearthstone extends Canvas
 		loadingB.setValue(11);
 		loadingB.setString("Setting up Window");
 		new Fenster(BREITE, HOEHE, TITEL, this);
-		
-		DJ.getInstance().enqueue("adapt menu");
 		loadingF.dispose();
 	}
 	
@@ -289,6 +287,11 @@ public class Hearthstone extends Canvas
 	@Override
 	public void paint(Graphics g)
 	{
+		if (gameState == STATE.RESETGAME)
+		{
+			spielfeld.resetGame();
+		}
+		
 		this.requestFocus();
 		
 		BufferStrategy bs = this.getBufferStrategy();
@@ -299,9 +302,7 @@ public class Hearthstone extends Canvas
 		
 		Graphics gb = bs.getDrawGraphics();
 		
-		if (gameState == STATE.GAME
-		&& gameState != STATE.BEATEN
-		|| gameState == STATE.RESETGAME)
+		if (gameState == STATE.GAME)
 		{
 			gb.drawImage(background, 0, 0, null);	
 			spielfeld.render(gb);
@@ -309,6 +310,10 @@ public class Hearthstone extends Canvas
 		
 		else
 		{
+			if (gameState != STATE.BEATEN)
+			{
+				DJ.getInstance().enqueue("adapt menu");
+			}
 			menu.render(spielfeld.getGameStats()[0] > spielfeld.getGameStats()[3] ,gb);
 		}
 

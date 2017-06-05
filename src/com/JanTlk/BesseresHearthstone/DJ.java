@@ -12,6 +12,7 @@ public class DJ extends Thread
 	private String currentPlayList;
 	private String nextPlayList;
 	private int soundLevel;
+	private int fadeIncrement;
 	
 	/**
 	 * nowhere but in this call a DJ can be created
@@ -55,7 +56,7 @@ public class DJ extends Thread
 				Scanner tS = new Scanner(totalCommand);
 				String cmd = tS.next();
 				
-				if (true || Hearthstone.isDebugMode())
+				if (Hearthstone.isDebugMode())
 				{
 					System.out.printf("DJ gets command to: %s!\n", totalCommand);
 				}
@@ -67,8 +68,22 @@ public class DJ extends Thread
 				
 				else if (cmd.equalsIgnoreCase("next"))
 				{
-					DjukeBox.preloadFromPlayList(currentPlayList);
-					DjukeBox.switchPlayList(soundLevel);
+					if (tS.hasNext())
+					{
+						String selectedPL = tS.next();
+						if (!selectedPL.equalsIgnoreCase(currentPlayList))
+						{
+							currentPlayList = selectedPL;
+							DjukeBox.preloadFromPlayList(currentPlayList);
+						}
+					}
+					
+					else
+					{
+						DjukeBox.preloadFromPlayList(currentPlayList);
+						DjukeBox.switchPlayList(soundLevel);
+					}
+					
 				}
 				
 				else if (cmd.equalsIgnoreCase("adapt"))
@@ -81,11 +96,13 @@ public class DJ extends Thread
 						DjukeBox.preloadFromPlayList(nextPlayList);
 						if (DjukeBox.isPlaying())
 						{
+							fadeIncrement = -5;
 							enqueue("fadeout");
 						}
 						
 						else
 						{
+							fadeIncrement = 0;
 							soundLevel = 100;
 							DjukeBox.switchPlayList(soundLevel);
 						}
@@ -94,9 +111,14 @@ public class DJ extends Thread
 				
 				else if (cmd.equalsIgnoreCase("fadeout"))
 				{
+					if (fadeIncrement >= 0)
+					{
+						continue;
+					}
+					
 					if (soundLevel > 0)
 					{
-						soundLevel -= 10;
+						soundLevel += fadeIncrement;
 						DjukeBox.setSoundLevel(soundLevel);
 						sleep(100);
 						enqueue("fadeout");
@@ -104,24 +126,32 @@ public class DJ extends Thread
 					
 					else 
 					{
+						soundLevel = 0;
+						fadeIncrement = 10;
 						currentPlayList = nextPlayList;
 						DjukeBox.switchPlayList(soundLevel);
 						enqueue("fadein");
-						if (Hearthstone.isDebugMode())
-						{
-							System.out.printf("DJ.run Changeing Playlist to %s\n", nextPlayList);
-						}
 					}
 				}
 				
 				else if (cmd.equalsIgnoreCase("fadein"))
 				{
+					if (fadeIncrement <= 0)
+					{
+						continue;
+					}
+					
 					if (soundLevel < 100)
 					{
-						soundLevel += 10;
+						soundLevel += fadeIncrement;
 						DjukeBox.setSoundLevel(soundLevel);
 						sleep(100);
 						enqueue("fadein");
+					}
+					else
+					{
+						soundLevel = 100;
+						fadeIncrement = 0;
 					}
 				}
 				
@@ -131,6 +161,11 @@ public class DJ extends Thread
 			}
 		}
 		
+	}
+
+	public String getCurrentPL() 
+	{
+		return currentPlayList;
 	}
 	
 }

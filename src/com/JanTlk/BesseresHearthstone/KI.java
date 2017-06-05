@@ -1,6 +1,7 @@
 package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
@@ -296,7 +297,7 @@ public class KI
 		boolean attacked = false;
 		boolean[][] isBest = new boolean[ownCs.size()][enemysCs.size()];	//if own card is the best attacker for en enemy this is set true
 		double[][] score = new double[ownCs.size()][enemysCs.size()];
-		int idxHighestOwn = -1;	//should throw an exception in case of error
+		ArrayList<Integer> idxHighestOwn = new ArrayList<Integer>();	//should throw an exception in case of error
 		
 		//setup of score array, this is final and won't get changed after init, indexed are needed
 		//for every enemy
@@ -331,18 +332,58 @@ public class KI
 				}
 				
 				//if the score is higher than current topScore or there is no top score yet 
-				if ((idxOwnC == 0)
-				|| score[idxOwnC][idxEnemy] >= score[idxHighestOwn][idxEnemy])
+				if ((idxHighestOwn.isEmpty())
+				|| (score[idxOwnC][idxEnemy] >= score[idxHighestOwn.get(0)][idxEnemy]))
 				{
-					idxHighestOwn = idxOwnC;
+					if (idxHighestOwn.isEmpty()
+					|| (score[idxOwnC][idxEnemy] == score[idxHighestOwn.get(0)][idxEnemy]))					
+					{
+						idxHighestOwn.add(idxOwnC);
+					}
+					
+					else 
+					{
+						idxHighestOwn.clear();
+						idxHighestOwn.add(idxOwnC);
+					}
 				}
 			}
 			
 			//the highest scoreing own card for every enemy gets stored
-			isBest[idxHighestOwn][idxEnemy] = true;
+			for (Integer idxBest : idxHighestOwn)
+			{
+				isBest[idxBest][idxEnemy] = true;
+			}
+			
+		}
+		
+		if (Hearthstone.isDebugMode())
+		{
+			for (int i = 0; i < isBest.length; i++)
+			{
+				System.out.println("Own: " + ownCs.get(i).getName());
+				for (int j = 0; j < isBest[i].length; j++)
+				{
+					System.out.print("[ " + ((isBest[i][j]) ? "x" : "o") + " ]");
+				}
+				System.out.println();
+			}
 		}
 		
 		isBest = findBestA(score, isBest, enemysCs.size(), ownCs.size());
+		
+		if (Hearthstone.isDebugMode())
+		{
+			for (int i = 0; i < isBest.length; i++)
+			{
+				System.out.println("Own: " + ownCs.get(i).getName());
+				for (int j = 0; j < isBest[i].length; j++)
+				{
+					System.out.print("[ " + ((isBest[i][j]) ? "x" : "o") + " ]");
+				}
+				System.out.println();
+			}
+		}
 		
 		attacked = attackA(isBest, score, enemysCs, ownCs);
 		
@@ -381,18 +422,20 @@ public class KI
 					for (int i = 0; i < potOwnC.length; i++)
 					{
 						//if there is another own card, that would want to attack this card...
-						if(potOwnC[i] && i != idxOwnC)
+						if(potOwnC[i] && (i != idxOwnC))
 						{
 							//if the other Card has a higher score for the card
 							if (score[i][idxEnemy] > score[idxOwnC][idxEnemy])
 							{
 								//the potential own card is no longer a valid choice
 								potOwnC[idxOwnC] = false;
+								isBest[idxOwnC][idxEnemy] = false;
 							}
 							//if the score is lower, the card is not an alternative
 							else 
 							{
 								potOwnC[i] = false;
+								isBest[idxOwnC][idxEnemy] = false;
 							}
 						}
 					}
@@ -423,7 +466,7 @@ public class KI
 					ownCs.remove(attackingCard);
 					enemysCs.remove(attackedCard);
 					
-//					advancedC(enemysCs, ownCs);
+					advancedC(enemysCs, ownCs);
 				}
 			}
 		}
@@ -493,10 +536,11 @@ public class KI
 								
 								if (idxSecoundHighest < 0)
 								{
-									break;
+									continue;
 								}
 								
 								isBest[idxSecoundHighest][idxEnemy] = true;
+								isBest[idxOwnC][idxEnemy] = true;
 							}
 						}
 					}

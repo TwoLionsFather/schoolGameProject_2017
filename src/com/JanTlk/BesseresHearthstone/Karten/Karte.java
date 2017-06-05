@@ -125,7 +125,7 @@ public class Karte extends JPanel
 		
 		if(this.leben <= 0)
 		{
-			this.status = Status.ABBLAGE;
+			this.status = Status.ABLAGE;
 		}
 		
 		else 
@@ -135,7 +135,7 @@ public class Karte extends JPanel
 		
 		if(attackCard.getLeben() <= 0)
 		{
-			attackCard.setStatus(Status.ABBLAGE);
+			attackCard.setStatus(Status.ABLAGE);
 		}
 		
 		attackCard.setAttacked(false);
@@ -326,7 +326,7 @@ public class Karte extends JPanel
 	 */
 	public void placeHome() 
 	{
-		if(this.status != Status.ABBLAGE)
+		if(this.status != Status.ABLAGE)
 		{
 			bounds = homeRect;
 			moved = true;
@@ -334,7 +334,7 @@ public class Karte extends JPanel
 		
 		//only set status to field if card returned from attack
 		if ((this.status != Status.LAYED)
-		&& this.status != Status.ABBLAGE)
+		&& this.status != Status.ABLAGE)
 		{
 			this.status = Status.FELD;
 		}

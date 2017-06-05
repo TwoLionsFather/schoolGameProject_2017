@@ -101,6 +101,23 @@ public class Spielfeld
 	 */
 	public void nextRound(boolean playersTurn)
 	{	
+		if ((gameStats[3] - gameStats[0] > 10)
+		|| (gameStats[0] <= 5))
+		{
+			DJ.getInstance().enqueue("adapt losing");
+		}
+		
+		else if ((gameStats[0] - gameStats[3] > 10)
+		|| (gameStats[3] <= 5))
+		{
+			DJ.getInstance().enqueue("adapt winning");
+		}
+		
+		else if ((gameStats[2] >= 5) || (gameStats[5] >= 5))
+		{
+			DJ.getInstance().enqueue("adapt playing");
+		}
+		
 		//Reset detailed Card
 		if (detailedCard != null)
 		{
@@ -179,13 +196,7 @@ public class Spielfeld
 	 * @param g the Graphics that every Card in the Game gets drawn with
 	 */
 	public void render(Graphics g) 
-	{	
-		if (Hearthstone.gameState == STATE.RESETGAME)
-		{
-			resetGame();			
-			return;
-		}
-		
+	{			
 		if (Hearthstone.isDrawhelpActive())
 		{
 			drawGuideLines(g);
@@ -206,7 +217,7 @@ public class Spielfeld
 	/**
 	 * used to reset Game into start condition
 	 */
-	private void resetGame()
+	public void resetGame()
 	{
 		removeAllCards();
 		dH.reset();
@@ -357,7 +368,7 @@ public class Spielfeld
 		}
 		
 		if ((detailedCard != null)
-		&& detailedCard.getStatus() != Status.ABBLAGE)
+		&& (detailedCard.getStatus() != Status.ABLAGE))
 		{
 			Rectangle dChome = detailedCard.getBounds();
 			int rimWidth = 2;
@@ -475,8 +486,8 @@ public class Spielfeld
 		{
 			Karte tKarte = dPL.getKarten().get(i);
 			
-			if (inBounds(cEvent, tKarte.getBounds())
-			&& (tKarte.getStatus() != Status.ABBLAGE)
+			if ((inBounds(cEvent, tKarte.getBounds()))
+			&& (tKarte.getStatus() != Status.ABLAGE)
 			&& (tKarte.getStatus() != Status.STAPEL)
 			&& ((tKarte.getStatus() == Status.HAND) ? (gameStats[1] - tKarte.getMana() >= 0) : true)) 
 			{
@@ -535,9 +546,9 @@ public class Spielfeld
 				/**
 				 * moved from to a field and sets default location to the selected rectangle 
 				 */
-				if(inBounds(rEvent, tempRect.getBounds())
-				&& ((cardAtRect == movedC) ? true : cardAtRect == null)
-				&& playerPC > 0) 
+				if((inBounds(rEvent, tempRect.getBounds()))
+				&& ((cardAtRect == movedC) ? true : (cardAtRect == null))
+				&& (playerPC > 0)) 
 				{
 					//Update Players Mana pool and sets Status so card can't attack same Round it's played 
 					if (movedC.getStatus() == Status.HAND)
@@ -665,8 +676,8 @@ public class Spielfeld
 			idx++;
 			
 			if(inBounds(cEvent, tCard.getBounds())
-			&& tCard.getStatus() != Status.ABBLAGE
-			&& tCard.getStatus() != Status.STAPEL) 
+			&& (tCard.getStatus() != Status.ABLAGE)
+			&& (tCard.getStatus() != Status.STAPEL)) 
 			{
 				if (detailedCard != tCard)
 				{
@@ -729,7 +740,7 @@ public class Spielfeld
 			for(int i = 0; i < kartenAufFelder.length; i++)
 			{
 				if ((kartenAufFelder[i][playerPC] != null) 
-				&& kartenAufFelder[i][playerPC] == remC)
+				&& (kartenAufFelder[i][playerPC] == remC))
 				{
 					kartenAufFelder[i][playerPC] = null;
 					return;
@@ -745,13 +756,13 @@ public class Spielfeld
 	{
 		for (Karte tCard : dH.getAllCards())
 		{
-			if (tCard.getStatus() == Status.ABBLAGE)
+			if (tCard.getStatus() == Status.ABLAGE)
 			{
 				remCardFromRectangles(tCard);
 			}
 			
 			if (dPC.isInDeck(tCard)
-			&& tCard.getStatus() == Status.FELD)
+			&& (tCard.getStatus() == Status.FELD))
 			{
 				for (int idx = 0; idx < kartenAufFelder.length; idx++)
 				{
@@ -767,8 +778,6 @@ public class Spielfeld
 		}
 			
 	}
-	
-
 	
 	public Karte getDetailedCard() 
 	{

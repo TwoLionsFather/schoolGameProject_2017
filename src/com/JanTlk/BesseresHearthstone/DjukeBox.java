@@ -161,8 +161,18 @@ public class DjukeBox	//later should Run under own thread
 	 */
 	public static void stopBackGround()
 	{
+		if (playingBG == null)
+		{
+			return;
+		}
+		
 		//overrides old LineListener
-		playingBG.removeLineListener(nextSongOnEnd);
+		if (nextSongOnEnd != null)
+		{
+			playingBG.removeLineListener(nextSongOnEnd);
+			nextSongOnEnd = null;
+		}
+		
 		playingBG.stop();
 		playingBG.setFramePosition(0); 
 	}
@@ -207,6 +217,13 @@ public class DjukeBox	//later should Run under own thread
 		ArrayList<String> paths = musicFiles.get(nextPlayList);
 		Random r = new Random();
 		
+		if ((playingBG != null)
+		&& (nextSongOnEnd != null))
+		{
+			playingBG.removeLineListener(nextSongOnEnd);
+			nextSongOnEnd = null;
+		}
+		
 		try {
 			AudioInputStream ais = AudioSystem.getAudioInputStream(getAudioFile(paths.get(r.nextInt(paths.size()))));
 			AudioFormat format = ais.getFormat();
@@ -226,9 +243,11 @@ public class DjukeBox	//later should Run under own thread
 	public static void setSoundLevel(int soundLevel)
 	{
 		if (playingBG != null)
-		{
+		{			
+			System.out.printf("DjukeBox.setSoundLevel(%d)\n", soundLevel);
+			float fadeCurve = (float) (Math.sin(0.01 * soundLevel * Math.PI / 2.0));
 			FloatControl gainControl = (FloatControl) playingBG.getControl(FloatControl.Type.MASTER_GAIN);
-			gainControl.setValue((float) (-25 + 0.25 * soundLevel));	//sL 0 = -50 db
+			gainControl.setValue((float) (-50 + 50.0 * fadeCurve));
 		}
 	}
 
@@ -241,8 +260,12 @@ public class DjukeBox	//later should Run under own thread
 		{
 			if (playingBG != null)
 			{
-				playingBG.removeLineListener(nextSongOnEnd);
-				nextSongOnEnd = null;
+				if (nextSongOnEnd != null)
+				{
+					playingBG.removeLineListener(nextSongOnEnd);
+					nextSongOnEnd = null;
+				}
+				
 				playingBG.close();
 			}
 			
