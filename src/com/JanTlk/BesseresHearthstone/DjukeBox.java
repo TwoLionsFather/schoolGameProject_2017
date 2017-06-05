@@ -10,28 +10,28 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineListener;
 
-import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
-
-public class DjukeBox implements Runnable	//later should Run under own thread
+public class DjukeBox	//later should Run under own thread
 {
 	private static HashMap<String, Clip> sfx;
-	private static HashMap<String, ArrayList<Clip>> musicMap;
-	private Spielfeld spielfeld;
+	private static HashMap<String, ArrayList<String>> musicFiles;
+	private static Clip playingBG;
+	private static Clip preloadedBG;
+	
+	private static LineListener nextSongOnEnd;
 	
 	/**
 	 * all Audio and SoundFiles get imported and setup to be played later on
 	 * @param spielfeld this is used to determine current game situation, to adpot music accordingly
 	 */
-	public DjukeBox(Spielfeld spielfeld) 
+	public DjukeBox() 
 	{
-		this.spielfeld = spielfeld;
-		
 		ArrayList<String> audioFiles = new ArrayList<String>();
-		audioFiles.add("sfx_CardShuffling");			//UIInput.mouseClicked
-		audioFiles.add("menu_TheFirstSteps");		//First File is set to be background Music
+		audioFiles.add("sfx_CardShuffling");
+		audioFiles.add("menu_TheFirstSteps");
 		audioFiles.add("losing_EmhyrVarEmreis");
 		audioFiles.add("losing_RedInBlack");
 		audioFiles.add("menu_CantinaRag");
@@ -43,7 +43,7 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 		audioFiles.add("winning_TheTrail");
 		
 		audioImport(audioFiles);
-		playBackGround();
+		DJ.getInstance().start();
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 		}
 		
 		sfx = new HashMap<String, Clip>(sfx_Paths.size());
-		musicMap = new HashMap<String, ArrayList<Clip>>(5);		//for the 5 different "playlists"
+		musicFiles = new HashMap<String, ArrayList<String>>(5);
 		
 		if (Hearthstone.isDebugMode())
 		{
@@ -85,7 +85,6 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 		sortImportMusic(music_Paths);
 		importSFX(sfx_Paths);
 		
-		
 	}
 	
 	/**
@@ -93,7 +92,7 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 	 * @param path the audioFiles path
 	 * @return a new AudioFile from that path
 	 */
-	private File getAudioFile(String path)
+	private static File getAudioFile(String path)
 	{
 		return new File("Sounds\\GwintAudio_" + path + ".wav");
 	}
@@ -130,119 +129,42 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 	 */
 	private void sortImportMusic(ArrayList<String> music_Paths) 
 	{
-		ArrayList<Clip> menu = new ArrayList<Clip>();
-		ArrayList<Clip> start = new ArrayList<Clip>();
-		ArrayList<Clip> play = new ArrayList<Clip>();
-		ArrayList<Clip> los = new ArrayList<Clip>();
-		ArrayList<Clip> win = new ArrayList<Clip>();
+		musicFiles.put("menu", new ArrayList<String>());
+		musicFiles.put("start", new ArrayList<String>());
+		musicFiles.put("playing", new ArrayList<String>());
+		musicFiles.put("losing", new ArrayList<String>());
+		musicFiles.put("winning", new ArrayList<String>());
 		
 		for (String path : music_Paths)
 		{
 			try {
-				AudioInputStream ais = AudioSystem.getAudioInputStream(getAudioFile(path));
-				AudioFormat format = ais.getFormat();
-				DataLine.Info info = new DataLine.Info(Clip.class, format);
-				
-				if (path.contains("menu_"))
+				String typ = path.substring(0, path.indexOf("_"));
+				if (musicFiles.containsKey(typ))
 				{
-					menu.add((Clip) AudioSystem.getLine(info));
-					menu.get(menu.size() - 1).open(ais);
+					musicFiles.get(typ).add(path);
 				}
-				
-				else if (path.contains("start_"))
+				else 
 				{
-					start.add((Clip) AudioSystem.getLine(info));
-					start.get(start.size() - 1).open(ais);
-				}
-				
-				else if (path.contains("playing_"))
-				{
-					play.add((Clip) AudioSystem.getLine(info));
-					play.get(play.size() - 1).open(ais);
-				}
-				
-				else if (path.contains("losing_"))
-				{
-					los.add((Clip) AudioSystem.getLine(info));
-					los.get(los.size() - 1).open(ais);
-				}
-				
-				else if (path.contains("winning_"))
-				{
-					win.add((Clip) AudioSystem.getLine(info));
-					win.get(win.size() - 1).open(ais);
+					System.err.printf("DjukeBox.sortImprtMusic %s of Typ %s not assinged", path, typ);
 				}
 				
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.println("Error Loading: " + path);
 			}
-		}
-		
-		musicMap.put("menu", menu);
-		musicMap.put("start", start);
-		musicMap.put("playing", play);
-		musicMap.put("losing", los);
-		musicMap.put("winning", win);
+		}	
 		
 	}
 
-	/**
-	 * starts Background Loop
-	 */
-	public static void playBackGround()
-	{
-		Clip playing;
-		if (Hearthstone.gameState == STATE.MENU)
-		{
-			Random r = new Random();
-			playing = musicMap.get("menu").get(r.nextInt(musicMap.get("menu").size()));
-			playing.start();
-			
-			playing.addLineListener(new LineListener()
-			{
-				@Override
-				public void update(LineEvent arg0) 
-				{
-					if (arg0.getType() == LineEvent.Type.STOP)
-					{
-						playing.stop();
-						playing.setFramePosition(0);
-						playBackGround();
-					}
-				}
-			});
-		}
-		
-		else if (Hearthstone.gameState == STATE.GAME)
-		{
-			Random r = new Random();
-			playing = musicMap.get("playing").get(r.nextInt(musicMap.get("playing").size()));
-			playing.start();
-			
-			playing.addLineListener(new LineListener()
-			{
-				@Override
-				public void update(LineEvent arg0) 
-				{
-					if (arg0.getType() == LineEvent.Type.STOP)
-					{
-						playing.stop();
-						playing.setFramePosition(0);
-						playBackGround();
-					}
-				}
-			});
-		}
-	}
-	
 	/**
 	 * stops Background loop
 	 */
 	public static void stopBackGround()
 	{
-		musicMap.get("menu").get(0).stop();
-		musicMap.get("menu").get(0).setFramePosition(0); 
+		//overrides old LineListener
+		playingBG.removeLineListener(nextSongOnEnd);
+		playingBG.stop();
+		playingBG.setFramePosition(0); 
 	}
 	
 	/**
@@ -274,10 +196,84 @@ public class DjukeBox implements Runnable	//later should Run under own thread
 			
 		});
 	}
+	
+	/**
+	 * loads next Clip to be played
+	 * @param nextPlayList next song is from this playlist
+	 */
 
-	@Override
-	public void run() 
+	public static void preloadFromPlayList(String nextPlayList) 
 	{
+		ArrayList<String> paths = musicFiles.get(nextPlayList);
+		Random r = new Random();
 		
+		try {
+			AudioInputStream ais = AudioSystem.getAudioInputStream(getAudioFile(paths.get(r.nextInt(paths.size()))));
+			AudioFormat format = ais.getFormat();
+			DataLine.Info info = new DataLine.Info(Clip.class, format);
+			preloadedBG = (Clip) AudioSystem.getLine(info);
+			preloadedBG.open(ais);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.err.println("Error Loading next song from Playlist: " + nextPlayList);
+		}
+	}
+
+	/**
+	 * sets current volume (-50db ... 0db)
+	 * @param soundLevel between 0 - 100% 
+	 */
+	public static void setSoundLevel(int soundLevel)
+	{
+		if (playingBG != null)
+		{
+			FloatControl gainControl = (FloatControl) playingBG.getControl(FloatControl.Type.MASTER_GAIN);
+			gainControl.setValue((float) (-25 + 0.25 * soundLevel));	//sL 0 = -50 db
+		}
+	}
+
+	/**
+	 * switches to next preloaded song if there is one
+	 */
+	public static void switchPlayList(int soundLevel) 
+	{
+		if (preloadedBG != null)
+		{
+			if (playingBG != null)
+			{
+				playingBG.removeLineListener(nextSongOnEnd);
+				nextSongOnEnd = null;
+				playingBG.close();
+			}
+			
+			playingBG = preloadedBG;
+			
+			setSoundLevel(soundLevel);
+			playingBG.start();
+			
+			nextSongOnEnd = new LineListener()
+			{
+				@Override
+				public void update(LineEvent arg0) 
+				{ 
+					if (arg0.getType() == LineEvent.Type.STOP)
+					{
+						DJ.getInstance().enqueue("next");
+					}
+				}
+			};
+			
+			playingBG.addLineListener(nextSongOnEnd);
+			
+			preloadedBG = null;
+		}		
+	}
+
+	/**
+	 * @return true if song is playing
+	 */
+	public static boolean isPlaying() 
+	{
+		return playingBG != null;
 	}
 }

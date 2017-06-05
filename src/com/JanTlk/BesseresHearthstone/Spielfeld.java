@@ -120,7 +120,6 @@ public class Spielfeld
 			dPL.repaint();
 			return;
 		} 
-		
 		attackUpdate();
 		
 		if (gameStats[5] < 5)

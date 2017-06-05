@@ -486,8 +486,8 @@ public class KI
 										if (countLeak < 10)
 										{
 											idxOwnC = 0;	
+											countLeak++;
 										}
-										countLeak++;
 									}
 								}
 								

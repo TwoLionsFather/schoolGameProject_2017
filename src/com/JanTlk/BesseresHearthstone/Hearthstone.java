@@ -88,7 +88,7 @@ public class Hearthstone extends Canvas
 		
 		loadingB.setValue(9);
 		loadingB.setString("Setting up music");
-		new DjukeBox(spielfeld);
+		new DjukeBox();
 		
 		loadingB.setValue(10);
 		loadingB.setString("Setting up User Input");
@@ -100,7 +100,8 @@ public class Hearthstone extends Canvas
 		loadingB.setValue(11);
 		loadingB.setString("Setting up Window");
 		new Fenster(BREITE, HOEHE, TITEL, this);
-		DjukeBox.playBackGround();
+		
+		DJ.getInstance().enqueue("adapt menu");
 		loadingF.dispose();
 	}
 	
