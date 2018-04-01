@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secoundTry;
+package com.JanTlk.BesseresHearthstone.secondTry;
 
 import java.io.File;
 
