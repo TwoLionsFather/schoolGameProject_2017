@@ -1,8 +1,8 @@
 1920
 16/9
-Default 
+Debug 
 
-Default / ProMode / Debug / TestGame
+Default / ProMode / Debug / DebugHard
 
 Die erste Zeile ist die Breite des Spielfensters
 Die zweite Zeile ist entweder die Höhe oder das Bildverhältnis, geschrieben als x/y
@@ -28,13 +28,13 @@ drawHelp = false;
 //advanced AI gets used and no help gets shown, this mode also enabeles the skip feature on return key or HUD button
 								
 Debug ---------------------------------------------------------------------------------------------
-gameState = STATE.GAME;
-//game starts directly ingame
+gameState STATE.MENU;
 debug = true;			
 //only for developing, all cards get shown, easy game reset / card redraw
 drawHelp = true;
 				
-TestGame ---------------------------------------------------------------------------------------------
-gameState = STATE.MENU;
+DebugHard---------------------------------------------------------------------------------------------
+gameState = STATE.GAME;
+//game starts directly ingame
 debug = true;
 drawHelp = false;

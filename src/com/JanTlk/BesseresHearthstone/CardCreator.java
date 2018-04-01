@@ -14,19 +14,19 @@ import javax.imageio.ImageIO;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
-public class CardCreator 
+public class CardCreator
 {
 	private Component mainComponent;
-	
+
 	private String cardName;
 	private Typ cardTyp;
 	private boolean cardLeg;
 	private int cardMana;
 	private int cardAttack;
-	private int cardLife;	
+	private int cardLife;
 	private BufferedImage cardTexture;
 	private Karte nextCard;
-	
+
 	private int[] spaltenZeilenPic;
 	private int[] spalteZeile;
 	private Rectangle cardProps;
@@ -35,22 +35,21 @@ public class CardCreator
 	private String line;
 	private Scanner s;
 
-	public CardCreator(Component c) throws FileNotFoundException 
+	public CardCreator(Component c) throws FileNotFoundException
 	{
 		mainComponent = c;
 		cardProps = new Rectangle(220, 414);
 		spaltenZeilenPic = new int[]{21, 2};
 		spalteZeile = new int[]{0, 0};
-		
+
 		try {
 			allCards = ImageIO.read(Hearthstone.allImportedFiles[3]);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("no Graphics File");
 		}
-		
+
 		br = new BufferedReader(new FileReader(Hearthstone.allImportedFiles[2]));
-		
 	}
 
 	/**
@@ -72,10 +71,10 @@ public class CardCreator
 			System.err.println("Card cound't be created");
 			return null;
 		}
-		
+
 		s = new Scanner (line);
-		s.useDelimiter(";");	
-		
+		s.useDelimiter(";");
+
 		for (int data = 0; data <= 6 && s.hasNext(); data++)
 		{
 			switch (data)
@@ -117,20 +116,20 @@ public class CardCreator
 														, (int) cardProps.getHeight() * spalteZeile[1]
 														, (int) cardProps.getWidth()
 														, (int) cardProps.getHeight());
-			
+
 			spalteZeile[0]++;
 			if(spalteZeile[0] > spaltenZeilenPic[0])
 			{
 				spalteZeile[0] = 0;
-				spalteZeile[1]++;				
+				spalteZeile[1]++;
 			}
-			
-			
+
+
 			cardTexture = Hearthstone.rescaledBufferedimage(subImage
 															, (Hearthstone.BREITE < 1920) ? 70 : 100
 															, (Hearthstone.BREITE < 1920) ? 140 : 200);
 		}
-		
+
 		else
 		{
 			try {
@@ -139,7 +138,7 @@ public class CardCreator
 				System.err.println("The Default BluePrint for emergencies got lost!");
 			}
 		}
-		
+
 		nextCard = new Karte(cardName
 							, cardTyp
 							, cardLeg
@@ -147,10 +146,10 @@ public class CardCreator
 							, cardAttack
 							, cardLife
 							, null);
-		
+
 		nextCard.setCardImage(cardTexture);
 		nextCard.setComponent(mainComponent);
-		
+
 		//Debugg output
 //		System.out.println(nextCard.toString());
 		return nextCard;
