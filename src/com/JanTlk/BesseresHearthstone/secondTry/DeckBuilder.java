@@ -9,7 +9,7 @@ import java.util.Scanner;
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
 
-public class DeckBuilder
+public class DeckBuilder implements DeckDataContainer
 {
 	public ArrayList<Card> cards;
 
@@ -21,7 +21,7 @@ public class DeckBuilder
 
 	public Deck getDeckFromCards()
 	{
-		Deck newDeck = new Deck(cards);
+		Deck newDeck = new Deck(cloneCards());
 		newDeck.shuffle();
 		return newDeck;
 	}
@@ -74,5 +74,35 @@ public class DeckBuilder
 		} catch (IOException e) {
 			System.err.println("DeckBuilder.importCards Error Reading File: \"Karten.txt\"");
 		}
+	}
+
+	private ArrayList<Card> cloneCards()
+	{
+		ArrayList<Card> clonedCards = new ArrayList<Card>();
+		for(Card tempCard : cards)
+		{
+			clonedCards.add(new Card(tempCard.getName()
+									, tempCard.isLegendary()
+									, tempCard.getTyp()
+									, tempCard.getMana()
+									, tempCard.getInitDamage()
+									,tempCard.getInitLife()));
+		}
+		return clonedCards;
+	}
+
+	@Override
+	public ArrayList<String> getCardNames()
+	{
+		ArrayList<String> cardNames = new ArrayList<String>();
+		for(Card tempCard : cards)
+			cardNames.add(tempCard.getName());
+		return cardNames;
+	}
+
+	@Override
+	public int getDeckSize()
+	{
+		return this.cards.size();
 	}
 }

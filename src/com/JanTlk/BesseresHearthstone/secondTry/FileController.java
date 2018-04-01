@@ -26,6 +26,11 @@ public class FileController
         return ALL_IMPORTED_FILES.get(filename);
     }
 
+    public static void closeFile(String filename)
+    {
+    	ALL_IMPORTED_FILES.remove(filename);
+    }
+
     public static void addFilePath(String path)
     {
         FILEPATHS.add(path);

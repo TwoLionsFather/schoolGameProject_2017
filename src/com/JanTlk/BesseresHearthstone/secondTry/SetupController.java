@@ -8,7 +8,7 @@ public class SetupController
 
 		progressWindow.displayLoadingMessage("LoadingFiles");
 		try {
-			new SetupFiles();
+			new FileLoader();
 		} catch (FileLoadingIncompletException e) {
 //			Forward to window for error messages
 			System.err.println("File Loading incomplet -> Files missing...");
@@ -24,17 +24,20 @@ public class SetupController
 		}
 
 		progressWindow.displayLoadingMessage("Setup Cards");
-		DeckBuilder deckBuilder = new DeckBuilder();
+		DeckDataContainer deckBuilder = new DeckBuilder();
 		progressWindow.advanceProgressBar();
 		if(gameSetup.isDebugMode())
 		{
 			printTestCardDeck(deckBuilder);
 		}
 
-		progressWindow.displayLoadingMessage("Setup Testures");
-		new TextureLoader(gameSetup);
+		progressWindow.displayLoadingMessage("Setup Textures");
+		new TextureLoader(gameSetup, deckBuilder);
 		progressWindow.advanceProgressBar();
-
+		if(gameSetup.isDebugMode())
+		{
+			checkCardImages(deckBuilder);
+		}
 
 	}
 
@@ -47,26 +50,32 @@ public class SetupController
 		System.out.println("--------------------------");
 	}
 
-	private void printTestCardDeck(DeckBuilder deckBuilder)
+	private void printTestCardDeck(DeckDataContainer deckData)
 	{
 		System.out.println("Cards in Play: ");
-		int newLineCounter = 0;
-		for (Card tempCard : deckBuilder.getDeckFromCards().getCards())
+		for (int idx = 0; idx < deckData.getDeckSize(); idx++)
 		{
-			newLineCounter++;
-			System.out.print(tempCard.getName() + ", ");
-			if(newLineCounter > 4)
-			{
-				System.out.println();
-				newLineCounter = 0;
-			}
-
+			System.out.print(deckData.getCardNames().get(idx) + ((idx % 4 == 0) ? "\n" : ", "));
 		}
 		System.out.println();
 	}
 
+	private void checkCardImages(DeckDataContainer deckData)
+	{
+		boolean allTexturesExist = true;
+		for(String cardname : deckData.getCardNames())
+		{
+			if (TextureController.getTexture(cardname) == null)
+			{
+				System.err.println("Loading was incomplete for: " + cardname);
+				allTexturesExist = false;
+			}
+		}
 
-
-
+		if (allTexturesExist)
+			System.out.println("Every Card also has a texture Object");
+		else
+			System.err.println("There is a Problem with the card's textures");
+	}
 
 }

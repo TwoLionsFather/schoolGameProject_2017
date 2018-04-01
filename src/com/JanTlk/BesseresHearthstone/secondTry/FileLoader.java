@@ -2,13 +2,13 @@ package com.JanTlk.BesseresHearthstone.secondTry;
 
 import java.io.File;
 
-public class SetupFiles
+public class FileLoader
 {
 	/**
 	 * imports all Files from array lists paths and adds them to the game files
 	 * @throws FileLoadingIncompletException if not all Files have been found
 	 */
-	public SetupFiles() throws FileLoadingIncompletException
+	public FileLoader() throws FileLoadingIncompletException
 	{
 		FileController.addFilePath("Einstellungen.txt"); //
 		FileController.addFilePath("Graphics\\backGround.png"); //
