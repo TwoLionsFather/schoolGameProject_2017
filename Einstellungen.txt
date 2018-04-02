@@ -1,5 +1,5 @@
-1920
-16/9
+1400
+4/3
 Debug 
 
 Default / ProMode / Debug / DebugHard

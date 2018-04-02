@@ -23,7 +23,7 @@ public class Fenster extends Canvas
 	{
 		JFrame frame = new JFrame(titel);
 
-		//Das Fenster kann nur noch in der festgelegten grÃ¶ÃŸe sein und wird normal geschlossen
+		//Das Fenster kann nur noch in der festgelegten größe sein und wird normal geschlossen
 		frame.setPreferredSize(new Dimension((int) breite, (int) hoehe));
 		frame.setMaximumSize(new Dimension((int) breite, (int) hoehe));
 		frame.setMinimumSize(new Dimension((int) breite, (int) hoehe));

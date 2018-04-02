@@ -1,4 +1,4 @@
-package com.Tlk.BesseresHearthstone.secondTry.Startup;
+package com.Tlk.BesseresHearthstone.secondTry.WindowRelated;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -21,7 +21,7 @@ public class LoadingWindowController implements ErrorDiplay
 
 	public LoadingWindowController(int ammountOfLoadingOperations)
 	{
-		loadingFrame = new JFrame("Loading Gwint");
+		loadingFrame = new JFrame("Loading Game");
 		loadingBar = new JProgressBar(0, ammountOfLoadingOperations);
 		errorTextField = new JTextArea();
 		errorField = new JScrollPane(errorTextField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

@@ -2,6 +2,7 @@ package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
 import java.io.File;
 
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
 import com.Tlk.BesseresHearthstone.secondTry.FileController;
 
 public class FileLoader
@@ -41,7 +42,7 @@ public class FileLoader
 			if(!tempFile.exists())
 			{
 				FILE_LOADING_ERROR = true;
-				System.err.println("File at " + path + " expected");
+				ErrorHandler.displayErrorMessage("File at " + path + " expected");
 			}
 
 			FileController.addFileImport(fileName, tempFile);

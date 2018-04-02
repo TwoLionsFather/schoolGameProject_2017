@@ -1,9 +1,16 @@
 package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
 import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
+import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.secondTry.TextureController;
 import com.Tlk.BesseresHearthstone.secondTry.CardRelated.DeckBuilder;
 import com.Tlk.BesseresHearthstone.secondTry.CardRelated.DeckDataContainer;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.LiveGameDataController;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.LoadingWindowController;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.MenueUI;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.SceneContainer;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.SceneController;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.WindowCreator;
 
 public class SetupController
 {
@@ -22,7 +29,8 @@ public class SetupController
 		progressWindow.advanceProgressBar();
 
 		progressWindow.displayLoadingMessage("Setting Game Options");
-		GameDataContainer gameSetup = new SetupFileInterpreter();
+		GameDataContainer gameSetup = new SetupFileInterpreter();	//Todo: Implement to directly setup LiveGameDataController
+		SceneController.getSceneController().resizeJLayeredPane(gameSetup);
 		progressWindow.advanceProgressBar();
 		if(gameSetup.isDebugMode())
 		{
@@ -45,6 +53,17 @@ public class SetupController
 			checkCardImages(deckBuilder);
 		}
 
+		progressWindow.displayLoadingMessage("Setup Window");
+		LiveGameDataController liveGameData = new LiveGameDataController(gameSetup);
+		SceneController.getSceneController().setGameStateController(liveGameData);
+		new MenueUI(liveGameData);
+		new WindowCreator(liveGameData);
+		progressWindow.advanceProgressBar();
+		if(gameSetup.isDebugMode())
+		{
+			checkSceneLayout();
+		}
+
 		progressWindow.closeWindow();
 	}
 
@@ -52,7 +71,7 @@ public class SetupController
 	{
 		System.out.println("GameSettings: ");
 		System.out.println(gameSetup.getHEIGHT() + " x " + gameSetup.getWIDTH());
-		System.out.println(gameSetup.getGAMESTATE().toString());
+		System.out.println(gameSetup.getGameState().toString());
 		System.out.println("EasyMode: " + ((Boolean) gameSetup.isEasyMode()).toString());
 		System.out.println("--------------------------");
 	}
@@ -88,6 +107,13 @@ public class SetupController
 		{
 			ErrorHandler.displayErrorMessage("There is a Problem with the card's textures");
 		}
+	}
+
+	private void checkSceneLayout()
+	{
+		if (SceneController.getSceneController().getSceneMap().isEmpty())
+			ErrorHandler.displayErrorMessage("No scenes have been created");
+		System.out.println(((SceneContainer) SceneController.getSceneController().getSceneMap().get(STATE.MENU)).getScene().toString());
 	}
 
 }

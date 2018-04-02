@@ -20,7 +20,7 @@ public class TextureLoader
 
 	public TextureLoader(GameDataContainer gameSetup, DeckDataContainer deckData)
 	{
-		loadFileToTextureController("GameIcon.png", 0, 0);
+		loadFileToTextureController("GameIcon.png", 30, 30);
 		loadBackgrounds(gameSetup);
 		createCardImages(gameSetup, deckData);
 	}

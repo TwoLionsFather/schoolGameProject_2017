@@ -127,7 +127,7 @@ public class SetupFileInterpreter implements GameDataContainer
 	}
 
 	@Override
-	public STATE getGAMESTATE()
+	public STATE getGameState()
 	{
 		return this.GAMESTATE;
 	}
@@ -142,5 +142,11 @@ public class SetupFileInterpreter implements GameDataContainer
 	public boolean isEasyMode()
 	{
 		return this.easyMode;
+	}
+
+	@Override
+	public String getTITLE()
+	{
+		return "";
 	}
 }

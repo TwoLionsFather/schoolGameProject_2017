@@ -26,15 +26,15 @@ public class Hearthstone extends Canvas
 
 	public static File[] allImportedFiles;
 
-	public enum STATE
-	{
-		MENU()
-		, END()
-		, GAME()
-		, HELP()
-		, BEATEN()
-		, RESETGAME();
-	}
+//	public enum STATE
+//	{
+//		MENU()
+//		, END()
+//		, GAME()
+//		, HELP()
+//		, BEATEN()
+//		, RESETGAME();
+//	}
 
 	public static final String TITEL = "Gwint";	//Titel für das Spiel
 	public static float BREITE; 			// 1920 für Fullscreen
