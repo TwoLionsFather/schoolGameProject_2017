@@ -1,4 +1,6 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry;
+
+import com.Tlk.BesseresHearthstone.secondTry.Startup.SetupController;
 
 public class MainGameClass
 {

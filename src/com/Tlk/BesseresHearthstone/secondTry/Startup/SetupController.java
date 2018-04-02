@@ -1,17 +1,23 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.Startup;
+
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
+import com.Tlk.BesseresHearthstone.secondTry.TextureController;
+import com.Tlk.BesseresHearthstone.secondTry.CardRelated.DeckBuilder;
+import com.Tlk.BesseresHearthstone.secondTry.CardRelated.DeckDataContainer;
 
 public class SetupController
 {
 	public SetupController()
 	{
 		LoadingWindowController progressWindow = new LoadingWindowController(4);
+		ErrorHandler.setERROR_DISPLAY(progressWindow);
 
 		progressWindow.displayLoadingMessage("LoadingFiles");
 		try {
 			new FileLoader();
 		} catch (FileLoadingIncompletException e) {
 //			Forward to window for error messages
-			System.err.println("File Loading incomplet -> Files missing...");
+			ErrorHandler.displayErrorMessage("File Loading incomplet -> Files missing...");
 		}
 		progressWindow.advanceProgressBar();
 
@@ -39,6 +45,7 @@ public class SetupController
 			checkCardImages(deckBuilder);
 		}
 
+		progressWindow.closeWindow();
 	}
 
 	private void printGameSettingsToConsole(GameDataContainer gameSetup)
@@ -67,15 +74,20 @@ public class SetupController
 		{
 			if (TextureController.getTexture(cardname) == null)
 			{
-				System.err.println("Loading was incomplete for: " + cardname);
+				ErrorHandler.displayErrorMessage("Loading was incomplete for: " + cardname);
 				allTexturesExist = false;
 			}
 		}
 
 		if (allTexturesExist)
+		{
 			System.out.println("Every Card also has a texture Object");
+			System.out.println("----------------------------------------------------------------");
+		}
 		else
-			System.err.println("There is a Problem with the card's textures");
+		{
+			ErrorHandler.displayErrorMessage("There is a Problem with the card's textures");
+		}
 	}
 
 }

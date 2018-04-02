@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.CardRelated;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
+import com.Tlk.BesseresHearthstone.secondTry.FileController;
 
 
 public class DeckBuilder implements DeckDataContainer
@@ -35,7 +37,7 @@ public class DeckBuilder implements DeckDataContainer
 			while((line != null)
 			&& !line.isEmpty())
 			{
-				CardCreator cardCreator = new CardCreator();
+				CardBluePrint cardCreator = new CardBluePrint();
 				scanner = new Scanner(line);
 				scanner.useDelimiter(";");
 				for (int dataPoint = 0; dataPoint < 4 && scanner.hasNext(); dataPoint++)
@@ -60,7 +62,7 @@ public class DeckBuilder implements DeckDataContainer
 						cardCreator.setInitLife(scanner.nextInt());
 						break;
 					default:
-						System.err.println("DeckBuilder.importCards Input Error during Card creation");
+						ErrorHandler.displayErrorMessage("Input Error during Card creation");
 						break;
 					}
 				}
@@ -72,7 +74,7 @@ public class DeckBuilder implements DeckDataContainer
 
 			fileInput.close();
 		} catch (IOException e) {
-			System.err.println("DeckBuilder.importCards Error Reading File: \"Karten.txt\"");
+			ErrorHandler.displayErrorMessage("Error Reading File: \"Karten.txt\"");
 		}
 	}
 

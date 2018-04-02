@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

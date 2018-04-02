@@ -1,6 +1,6 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
-import com.JanTlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
+import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 
 public interface GameDataContainer
 {

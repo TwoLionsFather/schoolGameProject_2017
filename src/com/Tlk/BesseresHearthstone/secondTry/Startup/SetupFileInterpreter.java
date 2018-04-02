@@ -1,11 +1,13 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-import com.JanTlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
+import com.Tlk.BesseresHearthstone.secondTry.FileController;
+import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 
 
 public class SetupFileInterpreter implements GameDataContainer
@@ -41,8 +43,7 @@ public class SetupFileInterpreter implements GameDataContainer
 
 				if(lineEmpty(line))
 				{
-					System.err.println("Config File ran out of lines -> loading Defaults");
-
+					ErrorHandler.displayErrorMessage("Config File ran out of lines -> loading Defaults");
 				}
 
 				Scanner s = new Scanner(line);
@@ -103,7 +104,7 @@ public class SetupFileInterpreter implements GameDataContainer
 
 			fileInput.close();
 		} catch (IOException e) {
-			System.err.println("No Settings File Found -> Loading Defaults");
+			ErrorHandler.displayErrorMessage("No Settings File Found -> Loading Defaults");
 			loadDefaultGameSettings();
 		}
 	}

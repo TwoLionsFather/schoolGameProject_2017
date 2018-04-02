@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.CardRelated;
 
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
 

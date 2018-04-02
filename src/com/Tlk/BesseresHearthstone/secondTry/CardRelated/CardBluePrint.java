@@ -1,8 +1,8 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.CardRelated;
 
 import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
-public class CardCreator
+public class CardBluePrint
 {
 	private String name;
 	private boolean isLegendary;
@@ -12,7 +12,7 @@ public class CardCreator
 	private int initDamage;
 	private int initLife;
 
-	public CardCreator() {	}
+	public CardBluePrint() {	}
 
 	public Card createCard()
 	{

@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.CardRelated;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;

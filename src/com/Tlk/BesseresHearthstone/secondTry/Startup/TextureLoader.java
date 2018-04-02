@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -9,6 +9,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import com.JanTlk.BesseresHearthstone.Hearthstone;
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
+import com.Tlk.BesseresHearthstone.secondTry.FileController;
+import com.Tlk.BesseresHearthstone.secondTry.TextureController;
+import com.Tlk.BesseresHearthstone.secondTry.CardRelated.DeckDataContainer;
 
 public class TextureLoader
 {
@@ -49,6 +53,7 @@ public class TextureLoader
 
 		for (int zeile = 0; zeile < zeilenTextur; zeile++)
 		{
+			boolean ERR_FLAG = false;
 			for(int spalte = 0; spalte < spaltenTextur; spalte++)
 			{
 				BufferedImage cutout = getCardBluePrint(); //init in case no other texture has been found
@@ -64,12 +69,21 @@ public class TextureLoader
 																					, cardDimension.width
 																					, cardDimension.height);
 				}
+
+				if (cutout == null) //no images have been found
+				{
+					ERR_FLAG = true;
+					break;
+				}
+
 				cutout = rescaledBufferedimage(cutout
 						, (gameSetup.getWIDTH() < 1920) ? 70 : 100
 						, (gameSetup.getWIDTH() < 1920) ? 140 : 200);
 
 				TextureController.addTexture(cardname, cutout);
 			}
+			if(ERR_FLAG)
+				break;
 		}
 
 		//Icon Loading
@@ -85,7 +99,7 @@ public class TextureLoader
 		try {
 			return ImageIO.read(FileController.getFile("CardBluePrint.png"));
 		} catch (IOException e) {
-			System.err.println("TextureLoader.createCardImages CardBluePrint Image not found -> no texture :(");
+			ErrorHandler.displayErrorMessage("CardBluePrint Image not found -> no texture :(");
 		}
 		return null;
 	}
@@ -111,6 +125,7 @@ public class TextureLoader
 			}
 			TextureController.addTexture(filename, texture);
 		} catch (IOException e) {
+			ErrorHandler.displayErrorMessage(filename + " not found");
 			System.err.println("TextureLoader.loadFileToTextoreController " + filename + " not found");
 		} finally {
 			FileController.closeFile(filename);
@@ -125,12 +140,6 @@ public class TextureLoader
 	{
 
 		Image img = bimg.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-//		no need to transform if Image is already a bufferedImage
-//	    if (img instanceof BufferedImage)
-//	    {
-//	        return (BufferedImage) img;
-//	    }
 
 	    // Create a bufferedImage with transparency that will take the resized graphics
 	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);

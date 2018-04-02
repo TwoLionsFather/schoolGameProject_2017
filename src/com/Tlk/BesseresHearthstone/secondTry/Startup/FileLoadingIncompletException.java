@@ -1,4 +1,4 @@
-package com.JanTlk.BesseresHearthstone.secondTry;
+package com.Tlk.BesseresHearthstone.secondTry.Startup;
 
 public class FileLoadingIncompletException extends Exception
 {
