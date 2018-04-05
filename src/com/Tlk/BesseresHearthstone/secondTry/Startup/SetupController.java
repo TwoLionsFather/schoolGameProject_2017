@@ -24,7 +24,6 @@ public class SetupController
 		try {
 			new FileLoader();
 		} catch (FileLoadingIncompletException e) {
-//			Forward to window for error messages
 			ErrorHandler.displayErrorMessage("File Loading incomplet -> Files missing...");
 		}
 		progressWindow.advanceProgressBar();
@@ -56,9 +55,10 @@ public class SetupController
 
 		progressWindow.displayLoadingMessage("Setup Window");
 		LiveGameDataController liveGameData = new LiveGameDataController(gameSetup);
-		SceneController.getSceneController().setGameStateController(liveGameData);
-		new HelpUI();
+		new GameUI(liveGameData);
+		new HelpUI(liveGameData);
 		new MenueUI(liveGameData);
+		initFirstPanel(liveGameData.getGameState());
 		new WindowCreator(liveGameData);
 		progressWindow.advanceProgressBar();
 		if(gameSetup.isDebugMode())
@@ -67,6 +67,16 @@ public class SetupController
 		}
 
 		progressWindow.closeWindow();
+	}
+
+	private void initFirstPanel(STATE state)
+	{
+		try {
+			SceneController.getSceneController().getSceneMap().get(state).getPanel().setVisible(true);
+		} catch (NullPointerException e) {
+			ErrorHandler.displayErrorMessage("Initial Scene couldn't be loaded");
+		}
+
 	}
 
 	private void printGameSettingsToConsole(GameDataContainer gameSetup)

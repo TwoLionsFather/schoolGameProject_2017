@@ -2,9 +2,39 @@ package com.Tlk.BesseresHearthstone.secondTry.WindowRelated;
 
 import javax.swing.JPanel;
 
-public interface SceneContainer
+import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
+
+public abstract class SceneContainer
 {
-	public JPanel getPanel();
-	public void activate();
-	public void deactivate();
+	private JPanel scene;
+
+	/**
+	 * default SceneSize is full windowSize
+	 */
+	protected SceneContainer()
+	{
+		scene = new JPanel();
+		scene.setVisible(false);
+		scene.setSize(SceneController.getSceneController().getMaxSceneSize());
+	}
+
+	protected void linkWithState(STATE state)
+	{
+		SceneController.getSceneController().addScene(state, this);
+	}
+
+	public JPanel getPanel()
+	{
+		return scene;
+	}
+
+	public void activate()
+	{
+		scene.setVisible(true);
+	}
+
+	public void deactivate()
+	{
+		scene.setVisible(false);
+	}
 }

@@ -1,5 +1,6 @@
 package com.Tlk.BesseresHearthstone.secondTry.WindowRelated;
 
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
 import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.secondTry.Startup.GameDataContainer;
 
@@ -52,10 +53,15 @@ public class LiveGameDataController implements GameDataContainer, GameStateContr
 	}
 
 	@Override
-	public void setGameState(STATE gameState)
+	public void setGameState(STATE newState)
 	{
-		this.gameState = gameState;
-		SceneController.getSceneController().update();
+		try {
+			SceneController.getSceneController().update(this.gameState, newState);
+			this.gameState = newState;
+		} catch (Exception e) {
+			ErrorHandler.displayErrorMessage(e.getMessage());
+		}
+
 	}
 
 	@Override

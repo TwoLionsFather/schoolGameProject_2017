@@ -1,51 +1,27 @@
 package com.Tlk.BesseresHearthstone.secondTry.WindowRelated;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.secondTry.TextureController;
 
-public class HelpUI implements SceneContainer
+public class HelpUI extends SceneContainer
 {
-	private SceneController sceneController = SceneController.getSceneController();
-	private JPanel helpSheet;
-
-	public HelpUI()
+	public HelpUI(GameStateController stateController)
 	{
-		loadHelpSheet();
-	}
-
-	private void loadHelpSheet()
-	{
-		this.helpSheet = new JPanel();
-		this.helpSheet.setSize(sceneController.getMaxSceneSize());
+//		expand more complex user help interface
 		JLabel helpSheetLabel = new JLabel();
 		helpSheetLabel.setIcon(new ImageIcon(TextureController.getTexture("helpSheet.png")));
 		helpSheetLabel.setSize(helpSheetLabel.getSize());
-		this.helpSheet.add(helpSheetLabel);
-		this.helpSheet.setVisible(false);
-		this.sceneController.addScene(STATE.HELP, this);
-	}
 
-	@Override
-	public JPanel getPanel()
-	{
-		return this.helpSheet;
-	}
+		JButton returnToMenu = new JButton();
+		returnToMenu.setAction(new ReturnToMenuAction(stateController));
 
-	@Override
-	public void activate()
-	{
-		this.helpSheet.setVisible(true);
+		this.getPanel().add(returnToMenu);
+		this.getPanel().add(helpSheetLabel);
+		this.linkWithState(STATE.HELP);
 	}
-
-	@Override
-	public void deactivate()
-	{
-		this.helpSheet.setVisible(false);
-	}
-
 
 }

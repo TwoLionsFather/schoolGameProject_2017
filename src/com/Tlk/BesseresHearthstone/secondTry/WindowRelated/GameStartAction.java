@@ -5,12 +5,12 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
-import com.Tlk.BesseresHearthstone.secondTry.TextureController;
 import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
+import com.Tlk.BesseresHearthstone.secondTry.TextureController;
 
 public class GameStartAction extends AbstractAction
 {
-	private static final long serialVersionUID = -2175910140063436578L;
+	private static final long serialVersionUID = 1L;
 	private GameStateController stateController;
 
 	public GameStartAction(GameStateController liveGameData)
@@ -22,7 +22,7 @@ public class GameStartAction extends AbstractAction
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e)
+	public void actionPerformed(ActionEvent arg0)
 	{
 		stateController.setGameState(STATE.GAME);
 	}
