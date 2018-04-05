@@ -1,9 +1,11 @@
 package com.Tlk.BesseresHearthstone.secondTry.WindowRelated;
 
+import java.awt.Dimension;
 import java.util.HashMap;
 
 import javax.swing.JLayeredPane;
 
+import com.Tlk.BesseresHearthstone.secondTry.ErrorHandler;
 import com.Tlk.BesseresHearthstone.secondTry.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.secondTry.Startup.GameDataContainer;
 
@@ -15,12 +17,13 @@ public class SceneController
 	private JLayeredPane scenes;
 	private HashMap<STATE, SceneContainer> linkedStateScene;
 	private GameStateController gameStateController;
+	private SceneContainer currentScene;
 
 	private SceneController()
 	{
-		 scenes = new JLayeredPane();
-		 scenes.setLayout(null);
-		 linkedStateScene = new HashMap<STATE, SceneContainer>();
+		scenes = new JLayeredPane();
+		scenes.setLayout(null);
+		linkedStateScene = new HashMap<STATE, SceneContainer>();
 	}
 
 	public static SceneController getSceneController()
@@ -36,20 +39,39 @@ public class SceneController
 
 	public void update()
 	{
-		linkedStateScene.get(gameStateController.getGameState()).getScene().setVisible(true);
-		scenes.moveToFront(linkedStateScene.get(gameStateController.getGameState()).getScene());
+		if (currentScene != null)
+		{
+			currentScene.deactivate();
+		}
+
+		try {
+			STATE newSTATE = gameStateController.getGameState();
+			SceneContainer newScene = linkedStateScene.get(newSTATE);
+			newScene.activate();
+			scenes.moveToFront(newScene.getPanel());
+			currentScene = newScene;
+		} catch (NullPointerException e) {
+			ErrorHandler.displayErrorMessage("The Scene for Game State: " + gameStateController.getGameState().toString() + " has not been loaded");
+			currentScene.activate();
+		}
+
 	}
 
 	//only this package should add and create scenes
-	public void addScene(STATE state, SceneContainer sceneManager)
+	public void addScene(STATE state, SceneContainer sceneContainer)
 	{
-		linkedStateScene.put(state, sceneManager);
-		scenes.add(sceneManager.getScene());
+		linkedStateScene.put(state, sceneContainer);
+		scenes.add(sceneContainer.getPanel());
 	}
 
 	public void setGameStateController(GameStateController liveGameData)
 	{
 		gameStateController = liveGameData;
+	}
+
+	public Dimension getMaxSceneSize()
+	{
+		return this.scenes.getSize();
 	}
 
 	public JLayeredPane getLayeredPane()

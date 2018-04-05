@@ -10,7 +10,10 @@ public class ErrorHandler
 	public static void displayErrorMessage(String message)
 	{
 		ERR_MESSAGES.add(message);
-		ERROR_DISPLAY.outputErrorMessage(message + "\n");
+		if (ERROR_DISPLAY == null)
+			System.err.println(message);
+		else
+			ERROR_DISPLAY.outputErrorMessage(message + "\n");
 	}
 
 	public static void setERROR_DISPLAY(ErrorDiplay display)

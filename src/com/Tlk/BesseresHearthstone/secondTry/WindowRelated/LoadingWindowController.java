@@ -61,6 +61,7 @@ public class LoadingWindowController implements ErrorDiplay
 		if(ErrorHandler.isErrorDetected())
 			JOptionPane.showMessageDialog(null, errorTextField.getText(), "Setup Error Acknowlage", JOptionPane.ERROR_MESSAGE, null);
 		ErrorHandler.clearErrorHistory();
+		ErrorHandler.setERROR_DISPLAY(null);
 	}
 
 }

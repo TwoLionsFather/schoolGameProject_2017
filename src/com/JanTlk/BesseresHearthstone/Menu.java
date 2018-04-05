@@ -9,13 +9,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Menu 
+public class Menu
 {
 	private Rectangle[] buttons;
 	private BufferedImage helpSheet;
 	private BufferedImage playerWin;
 	private BufferedImage pcWin;
-	
+
 	public Menu()
 	{
 		try {
@@ -30,7 +30,7 @@ public class Menu
 			pcWin = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[8])
 														, (int) Hearthstone.BREITE
 														, (int) Hearthstone.HOEHE);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			playerWin = null;
@@ -49,7 +49,7 @@ public class Menu
 		}
 
 	}
-	
+
 	/**
 	 *  draws menu and buttons on the screen, MouseInputClass handles their effect
 	 * @param gameStats this is needed to check if game is over
@@ -61,46 +61,46 @@ public class Menu
 		g.fillRect(0, 0
 				, (int) Hearthstone.BREITE
 				, (int) Hearthstone.HOEHE);
-		
+
 		switch (Hearthstone.gameState)
 		{
 		case MENU:
 			for (int i = 0; i < buttons.length; i++)
 			{
 				Rectangle button = buttons[i];
-				
+
 				g.setColor(Color.white);
 				g.drawRect((int) button.getX()
 						, (int) button.getY()
 						, (int) button.getWidth()
 						, (int) button.getHeight());
-				
+
 				g.setFont(new Font("Menü", Font.BOLD, 25));
-				
+
 				switch(i)
 				{
-				case 0: 
+				case 0:
 					g.drawString("Spielen"
 							, (int) (button.getX() +  button.getWidth() / 2 - "Spielen".length() * 6)
 							, (int) (button.getY() +  button.getHeight() / 2 + 12));
 					break;
-					
-				case 1: 
+
+				case 1:
 					g.drawString("Anleitung"
 							, (int) (button.getX() +  button.getWidth() / 2 - "Anleitung".length() * 6)
 							, (int) (button.getY() +  button.getHeight() / 2 + 12));
 					break;
-					
-				case 2: 
+
+				case 2:
 					g.drawString("Beenden"
 							, (int) (button.getX() +  button.getWidth() / 2 - "Beenden".length() * 6)
 							, (int) (button.getY() +  button.getHeight() / 2 + 12));
 					break;
 				}
-				
+
 			}
 			break;
-		
+
 		case END:
 			g.setColor(Color.white);
 			g.setFont(new Font("Ende", Font.BOLD, 50));
@@ -108,7 +108,7 @@ public class Menu
 						, (int) Hearthstone.BREITE / 2 - "Spiel Ende".length() * 10
 						, (int) Hearthstone.HOEHE / 2);
 			break;
-			
+
 		case HELP:
 			if (helpSheet != null)
 			{
@@ -117,8 +117,8 @@ public class Menu
 						, 0
 						, null);
 			}
-			
-			else 
+
+			else
 			{
 				g.setColor(Color.white);
 				g.setFont(new Font("Arial", Font.PLAIN, 12));;
@@ -126,23 +126,23 @@ public class Menu
 						, (int) Hearthstone.BREITE / 2 - ("No Help File".length() * 5)
 						, (int) Hearthstone.HOEHE / 2 - 6);
 			}
-			
+
 			break;
-			
+
 		case BEATEN:
 			if (playerW
 			&& playerWin != null)
 			{
 				g.drawImage(playerWin, 0, 0, null);
 			}
-			
+
 			else if (!playerW
 			&& playerWin != null)
 			{
 				g.drawImage(pcWin, 0, 0, null);
-						
+
 			}
-			else 
+			else
 			{
 				g.setColor(Color.white);
 				g.setFont(new Font("Ende", Font.BOLD, 50));
@@ -151,15 +151,15 @@ public class Menu
 							, (int) Hearthstone.HOEHE / 2);
 			}
 			break;
-			
-		default: 
+
+		default:
 			break;
 		}
-		
-		
+
+
 	}
 
-	public Rectangle[] getButtons() 
+	public Rectangle[] getButtons()
 	{
 		return buttons;
 	}

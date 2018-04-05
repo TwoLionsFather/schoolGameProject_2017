@@ -11,11 +11,10 @@ import com.Tlk.BesseresHearthstone.secondTry.Startup.GameDataContainer;
 
 public class WindowCreator
 {
-	private JFrame gameMainFrame;
 
 	public WindowCreator(GameDataContainer gameData)
 	{
-		gameMainFrame = new JFrame(gameData.getTITLE());
+		JFrame gameMainFrame = new JFrame(gameData.getTITLE());
 
 		Dimension windowSize = new Dimension((int) gameData.getWIDTH(), (int) gameData.getHEIGHT());
 		gameMainFrame.setPreferredSize(windowSize);

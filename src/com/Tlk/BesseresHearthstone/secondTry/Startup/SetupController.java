@@ -10,6 +10,7 @@ import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.LoadingWindowControll
 import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.MenueUI;
 import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.SceneContainer;
 import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.SceneController;
+import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.HelpUI;
 import com.Tlk.BesseresHearthstone.secondTry.WindowRelated.WindowCreator;
 
 public class SetupController
@@ -56,6 +57,7 @@ public class SetupController
 		progressWindow.displayLoadingMessage("Setup Window");
 		LiveGameDataController liveGameData = new LiveGameDataController(gameSetup);
 		SceneController.getSceneController().setGameStateController(liveGameData);
+		new HelpUI();
 		new MenueUI(liveGameData);
 		new WindowCreator(liveGameData);
 		progressWindow.advanceProgressBar();
@@ -113,7 +115,7 @@ public class SetupController
 	{
 		if (SceneController.getSceneController().getSceneMap().isEmpty())
 			ErrorHandler.displayErrorMessage("No scenes have been created");
-		System.out.println(((SceneContainer) SceneController.getSceneController().getSceneMap().get(STATE.MENU)).getScene().toString());
+		System.out.println(((SceneContainer) SceneController.getSceneController().getSceneMap().get(STATE.MENU)).getPanel().toString());
 	}
 
 }

@@ -30,13 +30,13 @@ public class TextureLoader
 	 */
 	private void loadBackgrounds(GameDataContainer gameSetup)
 	{
-		int fullscreenWidth = (int) gameSetup.getWIDTH();
-		int fullscreenHeight = (int) gameSetup.getHEIGHT();
+		int maxWidth = (int) gameSetup.getWIDTH();
+		int maxHight = (int) gameSetup.getHEIGHT();
 
-		loadFileToTextureController("backGround.png", fullscreenWidth, fullscreenHeight);
-		loadFileToTextureController("EndScreenW.png", fullscreenWidth, fullscreenHeight);
-		loadFileToTextureController("EndScreenL.png", fullscreenWidth, fullscreenHeight);
-		loadFileToTextureController("helpSheet.png", fullscreenWidth, fullscreenHeight);
+		loadFileToTextureController("backGround.png", maxWidth, maxHight);
+		loadFileToTextureController("EndScreenW.png", maxWidth, maxHight);
+		loadFileToTextureController("EndScreenL.png", maxWidth, maxHight);
+		loadFileToTextureController("helpSheet.png", maxWidth, maxHight);
 	}
 
 	/**

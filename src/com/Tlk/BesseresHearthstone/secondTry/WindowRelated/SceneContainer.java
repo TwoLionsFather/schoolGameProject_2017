@@ -4,5 +4,7 @@ import javax.swing.JPanel;
 
 public interface SceneContainer
 {
-	public JPanel getScene();
+	public JPanel getPanel();
+	public void activate();
+	public void deactivate();
 }
