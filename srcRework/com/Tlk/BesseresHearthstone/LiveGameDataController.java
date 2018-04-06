@@ -1,6 +1,10 @@
 package com.Tlk.BesseresHearthstone;
 
 import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 import com.Tlk.BesseresHearthstone.WindowRelated.SceneController;
 
@@ -20,6 +24,12 @@ public class LiveGameDataController implements GameDataContainer, GameStateContr
 		this.gameState = gameSetup.getGameState();
 		this.debugMode = gameSetup.isDebugMode();
 		this.easyMode = gameSetup.isEasyMode();
+	}
+
+	public boolean isLargeSize()
+	{
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		return (this.WIDTH >= screenSize.getWidth()) && (this.HEIGHT >= screenSize.getHeight());
 	}
 
 	@Override

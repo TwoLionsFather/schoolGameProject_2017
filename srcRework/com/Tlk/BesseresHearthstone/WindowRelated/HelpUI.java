@@ -5,9 +5,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import com.Tlk.BesseresHearthstone.GameStateController;
+import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.TextureController;
 import com.Tlk.BesseresHearthstone.ButtonActions.ReturnToMenuAction;
-import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
 
 public class HelpUI extends SceneContainer
 {

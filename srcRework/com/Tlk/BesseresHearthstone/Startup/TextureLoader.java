@@ -17,6 +17,7 @@ import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 
 public class TextureLoader
 {
+	//set as field to quicken future searches
 	private final Dimension cardDimension = new Dimension(220, 414);
 
 	public TextureLoader(GameDataContainer gameSetup, DeckDataContainer deckData)
@@ -37,7 +38,7 @@ public class TextureLoader
 		loadFileToTextureController("backGround.png", maxWidth, maxHight);
 		loadFileToTextureController("EndScreenW.png", maxWidth, maxHight);
 		loadFileToTextureController("EndScreenL.png", maxWidth, maxHight);
-		loadFileToTextureController("helpSheet.png", maxWidth, maxHight);
+		loadFileToTextureController("helpSheet.png", maxWidth - 10, maxHight - 50);
 	}
 
 	/**

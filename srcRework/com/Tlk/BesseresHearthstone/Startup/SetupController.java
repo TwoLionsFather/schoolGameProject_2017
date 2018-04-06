@@ -1,16 +1,18 @@
 package com.Tlk.BesseresHearthstone.Startup;
 
+import java.util.HashMap;
+
 import com.Tlk.BesseresHearthstone.GameDataContainer;
 import com.Tlk.BesseresHearthstone.LiveGameDataController;
 import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
 import com.Tlk.BesseresHearthstone.TextureController;
+import com.Tlk.BesseresHearthstone.CardRelated.CardRepresentation;
 import com.Tlk.BesseresHearthstone.CardRelated.DeckBuilder;
 import com.Tlk.BesseresHearthstone.CardRelated.DeckDataContainer;
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 import com.Tlk.BesseresHearthstone.ErrorHandling.FileLoadingIncompletException;
 import com.Tlk.BesseresHearthstone.WindowRelated.GameUI;
 import com.Tlk.BesseresHearthstone.WindowRelated.HelpUI;
-import com.Tlk.BesseresHearthstone.WindowRelated.LoadingWindowController;
 import com.Tlk.BesseresHearthstone.WindowRelated.MenueUI;
 import com.Tlk.BesseresHearthstone.WindowRelated.SceneContainer;
 import com.Tlk.BesseresHearthstone.WindowRelated.SceneController;
@@ -32,7 +34,8 @@ public class SetupController
 		progressWindow.advanceProgressBar();
 
 		progressWindow.displayLoadingMessage("Setting Game Options");
-		GameDataContainer gameSetup = new SetupFileInterpreter();	//Todo: Implement to directly setup LiveGameDataController
+//		Implement to directly setup LiveGameDataController
+		GameDataContainer gameSetup = new SetupFileInterpreter();
 		SceneController.getSceneController().resizeJLayeredPane(gameSetup);
 		progressWindow.advanceProgressBar();
 		if(gameSetup.isDebugMode())
@@ -69,6 +72,8 @@ public class SetupController
 			checkSceneLayout();
 		}
 
+
+		CardRepresentation exampleDisplay = new CardRepresentation(liveGameData);
 		progressWindow.closeWindow();
 	}
 
@@ -126,9 +131,26 @@ public class SetupController
 
 	private void checkSceneLayout()
 	{
-		if (SceneController.getSceneController().getSceneMap().isEmpty())
-			ErrorHandler.displayErrorMessage("No scenes have been created");
-		System.out.println(((SceneContainer) SceneController.getSceneController().getSceneMap().get(STATE.MENU)).getPanel().toString());
+		HashMap<STATE, SceneContainer> stateSceneMap = SceneController.getSceneController().getSceneMap();
+		if(checkStateMissing(STATE.MENU, stateSceneMap))
+			ErrorHandler.displayErrorMessage("No MenuScene created");
+
+		if(checkStateMissing(STATE.HELP, stateSceneMap))
+			ErrorHandler.displayErrorMessage("No HelpScene created");
+
+		if(checkStateMissing(STATE.GAME, stateSceneMap))
+			ErrorHandler.displayErrorMessage("No GameScene created");
+
+		if(checkStateMissing(STATE.BEATEN, stateSceneMap))
+			ErrorHandler.displayErrorMessage("No WinningScreen created");
+
+		if(checkStateMissing(STATE.END, stateSceneMap))
+			ErrorHandler.displayErrorMessage("No LoosingScreen created");
 	}
 
+	private boolean checkStateMissing(STATE state, HashMap<STATE, SceneContainer> stateSceneMap)
+	{
+		return (!stateSceneMap.containsKey(state)
+				|| (stateSceneMap.get(STATE.MENU).getPanel() == null));
+	}
 }

@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import com.JanTlk.BesseresHearthstone.Hearthstone;
 import com.Tlk.BesseresHearthstone.GameDataContainer;
 import com.Tlk.BesseresHearthstone.TextureController;
 
@@ -27,8 +26,8 @@ public class WindowCreator
 		gameMainFrame.setIconImage(TextureController.getTexture("GameIcon.png"));
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		if (Hearthstone.BREITE >= screenSize.getWidth()
-		&& Hearthstone.HOEHE >= screenSize.getHeight())
+		if (windowSize.getWidth() >= screenSize.getWidth()
+		&& windowSize.getHeight() >= screenSize.getHeight())
 		{
 			gameMainFrame.setUndecorated(true);
 		}

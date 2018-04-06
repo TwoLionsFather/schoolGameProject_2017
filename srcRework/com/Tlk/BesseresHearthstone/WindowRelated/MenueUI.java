@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import com.Tlk.BesseresHearthstone.GameStateController;
+import com.Tlk.BesseresHearthstone.ButtonActions.CloseGameAction;
 import com.Tlk.BesseresHearthstone.ButtonActions.GameStartAction;
 import com.Tlk.BesseresHearthstone.ButtonActions.HelpScreenAction;
 import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
@@ -39,6 +40,12 @@ public class MenueUI extends SceneContainer
 		helpButton.setForeground(Color.YELLOW);
 		helpButton.setSize(startGame.getSize());
 		buttonPanel.add(helpButton);
+
+		JButton closeGame = new JButton();
+		closeGame.setAction(new CloseGameAction());
+		closeGame.setBackground(Color.DARK_GRAY);
+		closeGame.setForeground(Color.YELLOW);
+		buttonPanel.add(closeGame);
 
 		this.linkWithState(STATE.MENU);
 	}
