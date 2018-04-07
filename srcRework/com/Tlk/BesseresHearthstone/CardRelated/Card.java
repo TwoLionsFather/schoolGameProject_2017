@@ -1,12 +1,15 @@
 package com.Tlk.BesseresHearthstone.CardRelated;
 
+import java.util.ArrayList;
+
 public class Card
 {
 	private final String name;
+	private ArrayList<Card> currentLocation;
+
 	private final boolean isLegendary;
 	private final Typ typ;
 	private final int mana;
-
 	private final int initDamage;
 	private final int initLife;
 	private int damage;
@@ -14,7 +17,6 @@ public class Card
 
 	public Card(String name, boolean isLegendary, Typ typ, int mana, int initDamage, int initLife)
 	{
-		super();
 		this.name = name;
 		this.isLegendary = isLegendary;
 		this.typ = typ;
@@ -25,9 +27,25 @@ public class Card
 		this.life = initLife;
 	}
 
+	public void resetCard()
+	{
+		this.damage = this.initDamage;
+		this.life = this.initLife;
+	}
+
 	public String getName()
 	{
 		return name;
+	}
+
+	public ArrayList<Card> getCurrentLocation()
+	{
+		return currentLocation;
+	}
+
+	public void setCurrentLocation(ArrayList<Card> currentLocation)
+	{
+		this.currentLocation = currentLocation;
 	}
 
 	public boolean isLegendary()
@@ -65,5 +83,9 @@ public class Card
 		return life;
 	}
 
+	public void setLife(int life)
+	{
+		this.life = life;
+	}
 
 }

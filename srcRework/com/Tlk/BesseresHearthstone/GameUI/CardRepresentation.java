@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 
 import com.Tlk.BesseresHearthstone.LiveGameDataController;
 import com.Tlk.BesseresHearthstone.TextureController;
+import com.Tlk.BesseresHearthstone.ActionsAndListeners.CardListener;
 import com.Tlk.BesseresHearthstone.CardRelated.Card;
 import com.Tlk.BesseresHearthstone.CardRelated.Typ;
 
@@ -29,7 +30,7 @@ public class CardRepresentation
 		testDisplay(gameData);
 	}
 
-	public CardRepresentation(Card displayCard, LiveGameDataController gameData)
+	public CardRepresentation(Card displayCard, GameUI ui)
 	{
 		this.card = displayCard;
 
@@ -45,15 +46,15 @@ public class CardRepresentation
 		this.cardDisplay.add(mainTexture);
 
 
-		int logoTop = (int) (texture.getHeight() * 0.82);
-		int textTop = (int) (texture.getHeight() * 0.78);
-		Font dataFont = new CardFont(gameData.isLargeSize() ? 18 : 15);
+		int logoTop = (int) (texture.getHeight() * 0.83);
+		int textTop = (int) (texture.getHeight() * 0.79);
+		Font dataFont = new CardFont(16);
 
 		//----------------------------------------------------------------------
 		JLabel attackLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_attack.png")));
 		attackLogo.setSize(attackLogo.getPreferredSize());
 		//Left Top Corner
-		attackLogo.setLocation((int) (mainTexture.getWidth() * 0.43)
+		attackLogo.setLocation((int) (mainTexture.getWidth() * 0.47)
 							, logoTop);
 		this.addToOverlay(attackLogo);
 
@@ -62,14 +63,14 @@ public class CardRepresentation
 		attackValue.setForeground(this.chooseColor(this.card.getDamage(), this.card.getInitDamage()));
 		attackValue.setSize(attackValue.getPreferredSize());
 		//Right Top Corner - Width
-		attackValue.setLocation((int) (mainTexture.getWidth() * 0.41) - (int) attackValue.getWidth()
+		attackValue.setLocation((int) (mainTexture.getWidth() * 0.45) - (int) attackValue.getWidth()
 							, textTop);
 		this.addToOverlay(attackValue);
 
 		JLabel lifeLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_life.png")));
 		lifeLogo.setSize(lifeLogo.getPreferredSize());
 		//Right Top Corner - Width
-		lifeLogo.setLocation((int) (mainTexture.getWidth() * 0.75) - lifeLogo.getWidth()
+		lifeLogo.setLocation((int) (mainTexture.getWidth() * 0.76) - lifeLogo.getWidth()
 							, logoTop);
 		this.addToOverlay(lifeLogo);
 
@@ -91,6 +92,10 @@ public class CardRepresentation
 							, (int) (mainTexture.getHeight() * 0.01));
 		this.addToOverlay(manaValue);
 
+//		remove if after Testphase
+		if (ui != null)
+			this.getCardDisplay().addMouseListener(new CardListener(displayCard, ui));
+
 		this.cardDisplay.setVisible(true);
 	}
 
@@ -103,7 +108,6 @@ public class CardRepresentation
 			return Color.RED;
 		else
 			return Color.GREEN;
-
 	}
 
 	private void addToOverlay(Component component)
@@ -121,7 +125,7 @@ public class CardRepresentation
 		testScene.setLayout(null);
 
 		Card cardExample = new Card("Philippa Eilhart", false, Typ.Monster, 5, 28, 9);
-		CardRepresentation testCard = new CardRepresentation(cardExample, gameData);
+		CardRepresentation testCard = new CardRepresentation(cardExample, null);
 
 		testScene.add(testCard.getCardDisplay());
 		testScene.setVisible(true);

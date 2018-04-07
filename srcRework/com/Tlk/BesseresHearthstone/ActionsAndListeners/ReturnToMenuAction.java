@@ -1,4 +1,4 @@
-package com.Tlk.BesseresHearthstone.ButtonActions;
+package com.Tlk.BesseresHearthstone.ActionsAndListeners;
 
 import java.awt.event.ActionEvent;
 

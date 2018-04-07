@@ -4,7 +4,6 @@ import com.Tlk.BesseresHearthstone.Startup.SetupController;
 
 public class MainGameClass
 {
-
 	public enum STATE
 	{
 		MENU()

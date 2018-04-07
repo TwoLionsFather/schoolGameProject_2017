@@ -10,9 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 import com.Tlk.BesseresHearthstone.GameStateController;
-import com.Tlk.BesseresHearthstone.ButtonActions.CloseGameAction;
-import com.Tlk.BesseresHearthstone.ButtonActions.GameStartAction;
-import com.Tlk.BesseresHearthstone.ButtonActions.HelpScreenAction;
+import com.Tlk.BesseresHearthstone.ActionsAndListeners.CloseGameAction;
+import com.Tlk.BesseresHearthstone.ActionsAndListeners.GameStartAction;
+import com.Tlk.BesseresHearthstone.ActionsAndListeners.HelpScreenAction;
 import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
 
 public class MenueUI extends SceneContainer

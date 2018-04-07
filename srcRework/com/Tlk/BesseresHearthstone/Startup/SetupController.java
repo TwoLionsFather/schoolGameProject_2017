@@ -2,11 +2,12 @@ package com.Tlk.BesseresHearthstone.Startup;
 
 import java.util.HashMap;
 
+import com.Tlk.BesseresHearthstone.GameController;
 import com.Tlk.BesseresHearthstone.GameDataContainer;
 import com.Tlk.BesseresHearthstone.LiveGameDataController;
 import com.Tlk.BesseresHearthstone.MainGameClass.STATE;
+import com.Tlk.BesseresHearthstone.Player;
 import com.Tlk.BesseresHearthstone.TextureController;
-import com.Tlk.BesseresHearthstone.CardRelated.DeckBuilder;
 import com.Tlk.BesseresHearthstone.CardRelated.DeckDataContainer;
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 import com.Tlk.BesseresHearthstone.ErrorHandling.FileLoadingIncompletException;
@@ -44,7 +45,7 @@ public class SetupController
 		}
 
 		progressWindow.displayLoadingMessage("Setup Cards");
-		DeckDataContainer deckBuilder = new DeckBuilder();
+		DeckBuilder deckBuilder = new DeckBuilder();
 		progressWindow.advanceProgressBar();
 		if(gameSetup.isDebugMode())
 		{
@@ -61,7 +62,12 @@ public class SetupController
 
 		progressWindow.displayLoadingMessage("Setup Window");
 		LiveGameDataController liveGameData = new LiveGameDataController(gameSetup);
-		new GameUI(liveGameData);
+		Player p1 = new Player("Spieler", deckBuilder.getDeckFromCards());
+		Player p2 = new Player("Computer Spieler", deckBuilder.getDeckFromCards());
+		GameController controller = new GameController(p1, p2, liveGameData);
+
+		//SceneCreation
+		new GameUI(controller);
 		new HelpUI(liveGameData);
 		new MenueUI(liveGameData);
 		initFirstPanel(liveGameData.getGameState());
@@ -71,10 +77,10 @@ public class SetupController
 		{
 			checkSceneLayout();
 		}
-
-
-		CardRepresentation exampleDisplay = new CardRepresentation(liveGameData);
 		progressWindow.closeWindow();
+
+//		testOutCardRepresentation
+		new CardRepresentation(liveGameData);
 	}
 
 	private void initFirstPanel(STATE state)

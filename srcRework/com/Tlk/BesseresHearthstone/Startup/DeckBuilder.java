@@ -1,4 +1,4 @@
-package com.Tlk.BesseresHearthstone.CardRelated;
+package com.Tlk.BesseresHearthstone.Startup;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.Tlk.BesseresHearthstone.FileController;
+import com.Tlk.BesseresHearthstone.CardRelated.Card;
+import com.Tlk.BesseresHearthstone.CardRelated.CardBluePrint;
+import com.Tlk.BesseresHearthstone.CardRelated.Deck;
+import com.Tlk.BesseresHearthstone.CardRelated.DeckDataContainer;
+import com.Tlk.BesseresHearthstone.CardRelated.Typ;
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 
 
