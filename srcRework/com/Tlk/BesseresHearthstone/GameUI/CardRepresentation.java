@@ -1,4 +1,4 @@
-package com.Tlk.BesseresHearthstone.CardRelated;
+package com.Tlk.BesseresHearthstone.GameUI;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 
 import com.Tlk.BesseresHearthstone.LiveGameDataController;
 import com.Tlk.BesseresHearthstone.TextureController;
+import com.Tlk.BesseresHearthstone.CardRelated.Card;
+import com.Tlk.BesseresHearthstone.CardRelated.Typ;
 
 public class CardRepresentation
 {
@@ -41,34 +43,40 @@ public class CardRepresentation
 		mainTexture.setSize(texture.getWidth(), texture.getHeight());
 		this.cardDisplay.add(mainTexture);
 
+
+		int logoTop = (int) (texture.getHeight() * 0.82);
+		int textTop = (int) (texture.getHeight() * 0.78);
+		Font dataFont = new CardFont(gameData.isLargeSize() ? 18 : 15);
+
 		//----------------------------------------------------------------------
-		JLabel attackLogo = new JLabel();
-		attackLogo.setIcon(new ImageIcon(TextureController.getTexture("v_attack.png")));
-		attackLogo.setLocation(((this.card.getDamage() < 10) ? 18 : 23) + (gameData.isLargeSize() ? 5 : 10)
-							, (mainTexture.getHeight() - (gameData.isLargeSize() ? 27 : 36)));
-		attackLogo.setSize(attackLogo.getIcon().getIconWidth(), attackLogo.getIcon().getIconHeight());
+		JLabel attackLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_attack.png")));
+		attackLogo.setSize(attackLogo.getPreferredSize());
+		//Left Top Corner
+		attackLogo.setLocation((int) (mainTexture.getWidth() * 0.33)
+							, logoTop);
 		this.addToOverlay(attackLogo);
 
 		JLabel attackValue = new JLabel(this.card.getDamage() + "");
-		attackValue.setFont(new Font("Century", Font.BOLD, gameData.isLargeSize() ? 16 : 18));
+		attackValue.setFont(dataFont);
 		attackValue.setSize(attackValue.getPreferredSize());
-		attackValue.setLocation(28 + (gameData.isLargeSize() ? 7 : 0) - (int) attackValue.getPreferredSize().getWidth()
-							, (mainTexture.getHeight() - (gameData.isLargeSize() ? 15 : 25)));
+		//Right Top Corner - Width
+		attackValue.setLocation((int) (mainTexture.getWidth() * 0.31) - (int) attackValue.getWidth()
+							, textTop);
 		this.addToOverlay(attackValue);
 
-		JLabel lifeLogo = new JLabel();
-		lifeLogo.setVisible(true);
-		lifeLogo.setIcon(new ImageIcon(TextureController.getTexture("v_life.png")));
-		lifeLogo.setSize(lifeLogo.getIcon().getIconWidth(), lifeLogo.getIcon().getIconHeight());
-		lifeLogo.setLocation(mainTexture.getWidth() - lifeLogo.getWidth() - ((this.card.getDamage() < 10) ? 22 : 27) + (gameData.isLargeSize() ? -3 : 1)
-							, mainTexture.getHeight() - (gameData.isLargeSize() ? 27 : 36));
+		JLabel lifeLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_life.png")));
+		lifeLogo.setSize(lifeLogo.getPreferredSize());
+		//Right Top Corner - Width
+		lifeLogo.setLocation((int) (mainTexture.getWidth() * 0.70) - lifeLogo.getWidth()
+							, logoTop);
 		this.addToOverlay(lifeLogo);
 
 		JLabel lifeValue = new JLabel(this.card.getDamage() + "");
-		lifeValue.setFont(new Font("Century", Font.BOLD, gameData.isLargeSize() ? 16 : 18));
+		lifeValue.setFont(dataFont);
 		lifeValue.setSize(lifeValue.getPreferredSize());
-		lifeValue.setLocation(lifeValue.getWidth() - ((this.card.getLife() < 10) ? 22 : 27) + (gameData.isLargeSize() ? 5 : 0)
-							, lifeValue.getHeight() - (gameData.isLargeSize() ? 15 : 25));
+		//Left Top Corner
+		lifeValue.setLocation((int) (mainTexture.getWidth() * 0.72)
+							, textTop);
 		this.addToOverlay(lifeValue);
 
 		this.cardDisplay.setVisible(true);
@@ -84,11 +92,11 @@ public class CardRepresentation
 	{
 		JFrame testDisplay = new JFrame();
 		JPanel testScene = new JPanel();
-		testDisplay.setSize(1000, 750);
-		testScene.setSize(1000, 750);
+		testDisplay.setSize(250, 300);
+		testScene.setSize(250, 300);
 		testScene.setLayout(null);
 
-		Card cardExample = new Card("Geralt of Riva", true, Typ.Monster, 5, 28, 9);
+		Card cardExample = new Card("Philippa Eilhart", true, Typ.Monster, 5, 28, 9);
 		CardRepresentation testCard = new CardRepresentation(cardExample, gameData);
 
 		testScene.add(testCard.getCardDisplay());
