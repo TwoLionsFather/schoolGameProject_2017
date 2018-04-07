@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
 import com.Tlk.BesseresHearthstone.FileController;
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 

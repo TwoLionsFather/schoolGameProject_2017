@@ -1,7 +1,5 @@
 package com.Tlk.BesseresHearthstone.CardRelated;
 
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
-
 public class Card
 {
 	private final String name;

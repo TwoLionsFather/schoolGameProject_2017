@@ -1,6 +1,5 @@
 package com.Tlk.BesseresHearthstone.CardRelated;
 
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
 
 public class CardBluePrint
 {

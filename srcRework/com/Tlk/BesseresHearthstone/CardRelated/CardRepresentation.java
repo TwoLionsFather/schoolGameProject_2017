@@ -12,9 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-import com.JanTlk.BesseresHearthstone.Hearthstone;
-import com.JanTlk.BesseresHearthstone.Karten.Karte;
-import com.JanTlk.BesseresHearthstone.Karten.Typ;
 import com.Tlk.BesseresHearthstone.LiveGameDataController;
 import com.Tlk.BesseresHearthstone.TextureController;
 
@@ -44,17 +41,19 @@ public class CardRepresentation
 		mainTexture.setSize(texture.getWidth(), texture.getHeight());
 		this.cardDisplay.add(mainTexture);
 
+		//----------------------------------------------------------------------
 		JLabel attackLogo = new JLabel();
 		attackLogo.setIcon(new ImageIcon(TextureController.getTexture("v_attack.png")));
-		attackLogo.setLocation(((this.card.getDamage() < 10) ? 18 : 23) + (!gameData.isLargeSize() ? 5 : 10)
-							, (mainTexture.getHeight() - (!gameData.isLargeSize() ? 27 : 36)));
+		attackLogo.setLocation(((this.card.getDamage() < 10) ? 18 : 23) + (gameData.isLargeSize() ? 5 : 10)
+							, (mainTexture.getHeight() - (gameData.isLargeSize() ? 27 : 36)));
 		attackLogo.setSize(attackLogo.getIcon().getIconWidth(), attackLogo.getIcon().getIconHeight());
 		this.addToOverlay(attackLogo);
 
 		JLabel attackValue = new JLabel(this.card.getDamage() + "");
 		attackValue.setFont(new Font("Century", Font.BOLD, gameData.isLargeSize() ? 16 : 18));
-		attackValue.setLocation(((this.card.getDamage() < 10) ? 18 : 23) + (!gameData.isLargeSize() ? 7 : 0)
-							, (mainTexture.getHeight() - (!gameData.isLargeSize() ? 15 : 25)));
+		attackValue.setSize(attackValue.getPreferredSize());
+		attackValue.setLocation(28 + (gameData.isLargeSize() ? 7 : 0) - (int) attackValue.getPreferredSize().getWidth()
+							, (mainTexture.getHeight() - (gameData.isLargeSize() ? 15 : 25)));
 		this.addToOverlay(attackValue);
 
 		JLabel lifeLogo = new JLabel();
@@ -67,6 +66,7 @@ public class CardRepresentation
 
 		JLabel lifeValue = new JLabel(this.card.getDamage() + "");
 		lifeValue.setFont(new Font("Century", Font.BOLD, gameData.isLargeSize() ? 16 : 18));
+		lifeValue.setSize(lifeValue.getPreferredSize());
 		lifeValue.setLocation(lifeValue.getWidth() - ((this.card.getLife() < 10) ? 22 : 27) + (gameData.isLargeSize() ? 5 : 0)
 							, lifeValue.getHeight() - (gameData.isLargeSize() ? 15 : 25));
 		this.addToOverlay(lifeValue);
@@ -88,7 +88,7 @@ public class CardRepresentation
 		testScene.setSize(1000, 750);
 		testScene.setLayout(null);
 
-		Card cardExample = new Card("Geralt of Riva", true, Typ.Monster, 5, 8, 9);
+		Card cardExample = new Card("Geralt of Riva", true, Typ.Monster, 5, 28, 9);
 		CardRepresentation testCard = new CardRepresentation(cardExample, gameData);
 
 		testScene.add(testCard.getCardDisplay());
