@@ -1,5 +1,6 @@
 package com.Tlk.BesseresHearthstone.GameUI;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
@@ -52,34 +53,57 @@ public class CardRepresentation
 		JLabel attackLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_attack.png")));
 		attackLogo.setSize(attackLogo.getPreferredSize());
 		//Left Top Corner
-		attackLogo.setLocation((int) (mainTexture.getWidth() * 0.33)
+		attackLogo.setLocation((int) (mainTexture.getWidth() * 0.43)
 							, logoTop);
 		this.addToOverlay(attackLogo);
 
 		JLabel attackValue = new JLabel(this.card.getDamage() + "");
 		attackValue.setFont(dataFont);
+		attackValue.setForeground(this.chooseColor(this.card.getDamage(), this.card.getInitDamage()));
 		attackValue.setSize(attackValue.getPreferredSize());
 		//Right Top Corner - Width
-		attackValue.setLocation((int) (mainTexture.getWidth() * 0.31) - (int) attackValue.getWidth()
+		attackValue.setLocation((int) (mainTexture.getWidth() * 0.41) - (int) attackValue.getWidth()
 							, textTop);
 		this.addToOverlay(attackValue);
 
 		JLabel lifeLogo = new JLabel(new ImageIcon(TextureController.getTexture("v_life.png")));
 		lifeLogo.setSize(lifeLogo.getPreferredSize());
 		//Right Top Corner - Width
-		lifeLogo.setLocation((int) (mainTexture.getWidth() * 0.70) - lifeLogo.getWidth()
+		lifeLogo.setLocation((int) (mainTexture.getWidth() * 0.75) - lifeLogo.getWidth()
 							, logoTop);
 		this.addToOverlay(lifeLogo);
 
-		JLabel lifeValue = new JLabel(this.card.getDamage() + "");
+		JLabel lifeValue = new JLabel(this.card.getLife() + "");
 		lifeValue.setFont(dataFont);
+		lifeValue.setForeground(this.chooseColor(this.card.getLife(), this.card.getInitLife()));
 		lifeValue.setSize(lifeValue.getPreferredSize());
 		//Left Top Corner
-		lifeValue.setLocation((int) (mainTexture.getWidth() * 0.72)
+		lifeValue.setLocation((int) (mainTexture.getWidth() * 0.78)
 							, textTop);
 		this.addToOverlay(lifeValue);
 
+		JLabel manaValue = new JLabel(this.card.getMana() + "");
+		manaValue.setForeground(this.card.isLegendary() ? Color.WHITE : Color.BLACK);
+		manaValue.setFont(dataFont);
+		manaValue.setSize(manaValue.getPreferredSize());
+		//Right Top Corner
+		manaValue.setLocation((int) (mainTexture.getWidth() * 0.22) - manaValue.getWidth()
+							, (int) (mainTexture.getHeight() * 0.01));
+		this.addToOverlay(manaValue);
+
 		this.cardDisplay.setVisible(true);
+	}
+
+	private Color chooseColor(int now, int init)
+	{
+		if (now == init)
+			return Color.BLACK;
+
+		else if (now < init)
+			return Color.RED;
+		else
+			return Color.GREEN;
+
 	}
 
 	private void addToOverlay(Component component)
@@ -96,7 +120,7 @@ public class CardRepresentation
 		testScene.setSize(250, 300);
 		testScene.setLayout(null);
 
-		Card cardExample = new Card("Philippa Eilhart", true, Typ.Monster, 5, 28, 9);
+		Card cardExample = new Card("Philippa Eilhart", false, Typ.Monster, 5, 28, 9);
 		CardRepresentation testCard = new CardRepresentation(cardExample, gameData);
 
 		testScene.add(testCard.getCardDisplay());
