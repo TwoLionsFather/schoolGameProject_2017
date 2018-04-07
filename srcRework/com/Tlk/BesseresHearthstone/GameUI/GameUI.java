@@ -16,6 +16,8 @@ public class GameUI extends SceneContainer implements UserInterface
 	{
 		this.linkWithState(STATE.GAME);
 
+		new FieldRepresentation(controller.getP1().getCardsOnField(), controller.getP2().getCardsOnField(), controller);
+
 		JButton nextTurn = new JButton();
 		nextTurn.setLocation(10, 10);
 		nextTurn.setAction(new AcceptTurnAction(this));

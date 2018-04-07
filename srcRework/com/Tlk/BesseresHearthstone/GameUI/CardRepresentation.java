@@ -30,7 +30,7 @@ public class CardRepresentation
 		testDisplay(gameData);
 	}
 
-	public CardRepresentation(Card displayCard, GameUI ui)
+	public CardRepresentation(Card displayCard)
 	{
 		this.card = displayCard;
 
@@ -92,10 +92,6 @@ public class CardRepresentation
 							, (int) (mainTexture.getHeight() * 0.01));
 		this.addToOverlay(manaValue);
 
-//		remove if after Testphase
-		if (ui != null)
-			this.getCardDisplay().addMouseListener(new CardListener(displayCard, ui));
-
 		this.cardDisplay.setVisible(true);
 	}
 
@@ -125,7 +121,7 @@ public class CardRepresentation
 		testScene.setLayout(null);
 
 		Card cardExample = new Card("Philippa Eilhart", false, Typ.Monster, 5, 28, 9);
-		CardRepresentation testCard = new CardRepresentation(cardExample, null);
+		CardRepresentation testCard = new CardRepresentation(cardExample);
 
 		testScene.add(testCard.getCardDisplay());
 		testScene.setVisible(true);

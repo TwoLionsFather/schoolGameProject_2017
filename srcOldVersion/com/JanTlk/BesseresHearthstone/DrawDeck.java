@@ -14,24 +14,24 @@ import com.JanTlk.BesseresHearthstone.Hearthstone.STATE;
 import com.JanTlk.BesseresHearthstone.Karten.Karte;
 import com.JanTlk.BesseresHearthstone.Karten.Status;
 
-public class DrawDeck 
+public class DrawDeck
 {
 	private int anzRectInR = 7;		//How many rectangles are there from left to right
 	private float rectHoehe = Hearthstone.HOEHE / 12 * 3;
 	private Rectangle [][] kartenFelder;
-	
+
 	private BufferedImage cardBack;
-	
+
 	private DeckHandler deckHandler;
 	private Deck dPL;
 	private Deck dPC;
-	
-	public DrawDeck(DeckHandler dH) 
+
+	public DrawDeck(DeckHandler dH)
 	{
 		this.dPL = dH.getPlayerDeck();
 		this.dPC = dH.getPCDeck();
 		this.deckHandler = dH;
-		
+
 		try {
 			this.cardBack = Hearthstone.rescaledBufferedimage(ImageIO.read(Hearthstone.allImportedFiles[4])
 															, (Hearthstone.BREITE < 1920) ? 70 : 100
@@ -41,9 +41,9 @@ public class DrawDeck
 			cardBack = null;
 			System.err.println("No Cardback File found");
 		}
-		
+
 		kartenFelder = new Rectangle [anzRectInR][2];
-		
+
 		for(int playerPC = 0; playerPC < 2; playerPC++)
 		{
 			for(int spalte = 0; spalte < kartenFelder.length; spalte++)
@@ -51,19 +51,19 @@ public class DrawDeck
 				kartenFelder[spalte][playerPC] = new Rectangle((int) Hearthstone.BREITE / anzRectInR * spalte
 															, (int) (Hearthstone.HOEHE / 2 - ((playerPC > 0) ? 0 : rectHoehe)) //If Rectangle is on Playerside, do not substract the rectangles height
 															, (int) (Hearthstone.BREITE / anzRectInR)
-															, (int) rectHoehe);	
+															, (int) rectHoehe);
 			}
-			
-		}	
-		
+
+		}
+
 	}
-	
+
 	/**
 	 * this displays all Cards on the Game
 	 * @param playersMove if this is true, players Cards will get displayed on top
 	 * @param g no comment needed
 	 */
-	public void render(int[] gameStats, boolean playersMove, Graphics g) 
+	public void render(int[] gameStats, boolean playersMove, Graphics g)
 	{
 		if ((gameStats[0] <= 0)
 		|| (gameStats[3] <= 0)
@@ -74,51 +74,51 @@ public class DrawDeck
 			dPC.repaint();
 			return;
 		}
-		
+
 		//reset counter to start counting while checking Status of every Card
 		gameStats[6] = 0;
 		gameStats[7] = 0;
 		gameStats[8] = 0;
 		gameStats[9] = 0;
-		
+
 		//Collection of Cards that get displayed on top/bottom of the screen
 		ArrayList<Karte> handKartenPL = new ArrayList<Karte>();
 		ArrayList<Karte> handKartenPC = new ArrayList<Karte>();
 
 		//these lists collect all field cards and displays them
 		ArrayList<Karte> fieldKartenPL = new ArrayList<Karte>();
-		ArrayList<Karte> fieldKartenPC = new ArrayList<Karte>();		
-		
+		ArrayList<Karte> fieldKartenPC = new ArrayList<Karte>();
+
 		//checks status of every card in the game and adds its to the correct list
 		for(Karte tCard : deckHandler.getAllCards())
 		{
-			switch (tCard.getStatus()) 
+			switch (tCard.getStatus())
 			{
 			case HAND:
 				if (tCard.getDeck() == dPL)
 				{
 					handKartenPL.add(tCard);
 				}
-				
+
 				else if (tCard.getDeck() == dPC)
 				{
 					handKartenPC.add(tCard);
 				}
 				break;
-				
+
 			case STAPEL:
 			case ABLAGE:
 				if (tCard.getDeck() == dPL)
 				{
 					gameStats[(tCard.getStatus() == Status.STAPEL) ? 6 : 7]++;
 				}
-				
+
 				else if (tCard.getDeck() == dPC)
 				{
 					gameStats[(tCard.getStatus() == Status.STAPEL) ? 8 : 9]++;
 				}
 				break;
-				
+
 			case FELD:
 			case ATTACK_C:
 			case ATTACK_E:
@@ -127,31 +127,31 @@ public class DrawDeck
 				{
 					fieldKartenPL.add(tCard);
 				}
-				
+
 				else if (tCard.getDeck() == dPC)
 				{
 					fieldKartenPC.add(tCard);
 				}
 				break;
-			}			
+			}
 		}
-		
+
 		if (playersMove)
 		{
 			drawField(fieldKartenPC, g);
 			drawField(fieldKartenPL, g);
 		}
-		
+
 		else
 		{
 			drawField(fieldKartenPL, g);
 			drawField(fieldKartenPC, g);
 		}
-		
+
 		drawHand(true, handKartenPL, g);
-		drawHand(false, handKartenPC, g);		
+		drawHand(false, handKartenPC, g);
 	}
-	
+
 	/**
 	 * draws handCards, thus the cards both players have on their hand
 	 * @param player if player is set, the cards are visible and on the bottom of the screen
@@ -161,15 +161,15 @@ public class DrawDeck
 	public void drawHand(boolean player, ArrayList<Karte> handCards, Graphics g)
 	{
 		int kartenCount = 0;
-		
-		if (!player 
+
+		if (!player
 		&& !Hearthstone.isDebugMode()
 		&& cardBack != null)
 		{
 			for(Karte tCard : handCards)
 			{
 				g.drawImage(cardBack
-						, (int) (Hearthstone.BREITE / 2 
+						, (int) (Hearthstone.BREITE / 2
 														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
 														+ 55 * kartenCount++)
 						, 0
@@ -177,19 +177,19 @@ public class DrawDeck
 			}
 			return;
 		}
-		
+
 		for(Karte tCard : handCards)
 		{
-			tCard.drawCard((int) (Hearthstone.BREITE / 2 
+			tCard.drawCard((int) (Hearthstone.BREITE / 2
 														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
 														+ 55 * kartenCount++)
 						, (int) ((player) ? Hearthstone.HOEHE - tCard.getBounds().getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : -10) : 0) // oder /5
 						, g
 						, false);
 		}
-		
+
 	}
-	
+
 	/**
 	 * draws cards on Field and in Battle
 	 * these Cards know their location  themselfes
@@ -204,8 +204,8 @@ public class DrawDeck
 						, (int) tempC.getBounds().getY()
 						, g
 						, false);
-			
-			//Es ist nicht ostern, doch ostereier suchen macht immer Spaß
+
+			//Es ist nicht ostern, doch ostereier suchen macht immer SpaÃŸ
 			if (tempC.getCardID() == 16
 			&& !Hearthstone.isDrawhelpActive()
 			&& !Hearthstone.isDebugMode()
@@ -215,25 +215,25 @@ public class DrawDeck
 			{
 				g.setColor(Color.red);
 				g.setFont(new Font("Arial", Font.PLAIN, 20));
-				
+
 				String EasterEgg = "Fixed it";
 				g.drawString(EasterEgg
 							, (int) tempC.getHome().getX()
 							, (int) tempC.getHome().getY() - 10);
-				
-				System.out.println("_________________┌∩┐(ಠ_ಠ)┌∩┐_________________ Achivement unlocked _________________┌∩┐(ಠ_ಠ)┌∩┐_________________");
+
+				System.out.println("_________________â”Œâˆ©â”�(à² _à² )â”Œâˆ©â”�_________________ Achivement unlocked _________________â”Œâˆ©â”�(à² _à² )â”Œâˆ©â”�_________________");
 			}
 		}
 	}
-	
-	
-	
-	public Rectangle[][] getKartenFelder() 
+
+
+
+	public Rectangle[][] getKartenFelder()
 	{
 		return kartenFelder;
 	}
 
-	public int getAnzRectInR() 
+	public int getAnzRectInR()
 	{
 		return anzRectInR;
 	}

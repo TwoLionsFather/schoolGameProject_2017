@@ -9,19 +9,17 @@ import com.Tlk.BesseresHearthstone.GameUI.UserInterface;
 
 public class CardListener implements MouseListener
 {
-	private final Card card;
-	private final UserInterface ui;
 
-	public CardListener(Card card, GameUI ui)
+	private Card card;
+	public CardListener(Card card)
 	{
 		this.card = card;
-		this.ui = ui;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0)
 	{
-		this.ui.setFocusedCard(this.card);
+
 	}
 
 	@Override
