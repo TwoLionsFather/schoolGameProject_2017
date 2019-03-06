@@ -11,7 +11,7 @@ import com.Tlk.BesseresHearthstone.TextureController;
 import com.Tlk.BesseresHearthstone.CardRelated.DeckDataContainer;
 import com.Tlk.BesseresHearthstone.ErrorHandling.ErrorHandler;
 import com.Tlk.BesseresHearthstone.ErrorHandling.FileLoadingIncompletException;
-import com.Tlk.BesseresHearthstone.GameUI.CardRepresentation;
+import com.Tlk.BesseresHearthstone.GameUI.CardDisplayRepresentation;
 import com.Tlk.BesseresHearthstone.GameUI.GameUI;
 import com.Tlk.BesseresHearthstone.WindowRelated.HelpUI;
 import com.Tlk.BesseresHearthstone.WindowRelated.MenueUI;
@@ -80,7 +80,7 @@ public class SetupController
 		progressWindow.closeWindow();
 
 //		testOutCardRepresentation
-		new CardRepresentation(liveGameData);
+		new CardDisplayRepresentation(liveGameData);
 	}
 
 	private void initFirstPanel(STATE state)

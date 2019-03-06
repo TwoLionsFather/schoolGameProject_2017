@@ -16,9 +16,9 @@ public class Player
 
 	public Player (String name, Deck deck)
 	{
-		this.cardController = new CardLocationController(this);
 		this.deck = deck;
 		this.name = name;
+		this.cardController = new CardLocationController(this);
 		this.mana = 0;
 		this.life = 20;
 	}

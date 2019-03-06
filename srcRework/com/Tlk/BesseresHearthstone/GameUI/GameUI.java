@@ -8,7 +8,7 @@ import com.Tlk.BesseresHearthstone.ActionsAndListeners.AcceptTurnAction;
 import com.Tlk.BesseresHearthstone.CardRelated.Card;
 import com.Tlk.BesseresHearthstone.WindowRelated.SceneContainer;
 
-public class GameUI extends SceneContainer implements UserInterface
+public class GameUI extends SceneContainer
 {
 
 	private GameController controller;
@@ -16,7 +16,7 @@ public class GameUI extends SceneContainer implements UserInterface
 	{
 		this.linkWithState(STATE.GAME);
 
-		new FieldRepresentation(controller.getP1().getCardsOnField(), controller.getP2().getCardsOnField(), controller);
+		new BattleFieldRepresentation(controller);
 
 		JButton nextTurn = new JButton();
 		nextTurn.setLocation(10, 10);
@@ -25,16 +25,5 @@ public class GameUI extends SceneContainer implements UserInterface
 		this.getPanel().add(nextTurn);
 	}
 
-	@Override
-	public void setFocusedCard(Card focusedCard)
-	{
-
-	}
-
-	@Override
-	public void unsetFocusedCard()
-	{
-
-	}
 
 }

@@ -20,11 +20,17 @@ public class CardHolder
 		return card;
 	}
 
-	public void setCard(Card card, FieldRepresentation field)
+	public void setCard(Card card)
 	{
-		CardRepresentation cardRepresentation = new CardRepresentation(card);
+		CardDisplayRepresentation cardRepresentation = new CardDisplayRepresentation(card);
 		this.display = cardRepresentation.getCardDisplay();
 		this.display.addMouseListener(new CardListener(card));
+	}
+
+	public void removeCard()
+	{
+		this.card = null;
+		this.display = new JPanel();
 	}
 
 	public JPanel getDisplay()

@@ -11,11 +11,11 @@ public class GameController
 	private final Player p2;
 	private Player atPlay;
 
-	private GameStateController controller;
+	private GameStateController  gameStateController;
 
 	public GameController(Player p1, Player p2, GameStateController controller)
 	{
-		this.controller = controller;
+		this.gameStateController = controller;
 		this.p1 = p1;
 		this.p2 = p2;
 
@@ -25,19 +25,15 @@ public class GameController
 			p2.drawCard();
 		}
 
-		Random r = new Random();
-		if(r.nextBoolean())
-			this.setTurn(this.p1);
-		else
-			this.setTurn(this.p2);
+		giveTurnToStartPlayer();
 	}
 
 	public void cardFight(Card cardOne, Card cardTwo)
 	{
 		cardOne.setLife(cardOne.getLife() - cardTwo.getDamage());
 		cardTwo.setLife(cardTwo.getLife() - cardOne.getDamage());
-		p1.checkCard(cardOne);
-		p2.checkCard(cardTwo);
+		this.p1.checkCard(cardOne);
+		this.p2.checkCard(cardTwo);
 	}
 
 	public void attackPlayer(Card card)
@@ -48,16 +44,9 @@ public class GameController
 			this.p1.setLife(this.p1.getLife() - card.getDamage());
 
 		if(this.p1.getLife() <= 0)
-			this.controller.setGameState(STATE.END);
+			this.gameStateController.setGameState(STATE.END);
 		else if(this.p2.getLife() <= 0)
-			this.controller.setGameState(STATE.BEATEN);
-	}
-
-	private void setTurn(Player player)
-	{
-		player.setMana(player.getMana() + 1);
-		player.drawCard();
-		this.atPlay = player;
+			this.gameStateController.setGameState(STATE.BEATEN);
 	}
 
 	public void nextTurn()
@@ -66,6 +55,22 @@ public class GameController
 			setTurn(this.p2);
 		else
 			setTurn(this.p1);
+	}
+
+	private void giveTurnToStartPlayer()
+	{
+		Random r = new Random();
+		if(r.nextBoolean())
+			this.setTurn(this.p1);
+		else
+			this.setTurn(this.p2);
+	}
+
+	private void setTurn(Player player)
+	{
+		player.setMana(player.getMana() + 1);
+		player.drawCard();
+		this.atPlay = player;
 	}
 
 	public Player getP1()
