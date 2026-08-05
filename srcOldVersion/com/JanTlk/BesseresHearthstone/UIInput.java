@@ -83,6 +83,10 @@ public class UIInput extends KeyAdapter implements MouseMotionListener, MouseLis
 				spielfeld.getdH().refillHands();
 				hs.repaint();
 			}
+			break;
+			
+		default:
+			hs.repaint();
 		}
 		
 		e.consume();

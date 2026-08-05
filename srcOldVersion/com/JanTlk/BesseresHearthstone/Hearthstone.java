@@ -103,37 +103,38 @@ public class Hearthstone extends Canvas
 
 		DJ.getInstance().enqueue("adapt menu");
 		loadingF.dispose();
+		this.repaint();
 	}
 
 	/**
-	 * "G\\backGround.png"[0];
-	 * "G\\CardBluePrint.png"[1];
+	 * "G/backGround.png"[0];
+	 * "G/CardBluePrint.png"[1];
 	 * "Karten.txt"[2];
-	 * "G\\allCards.png"[3];
-	 * "G\\CardBack.png"[4];
-	 * "G\\HudPlayer.png"[5];
-	 * "G\\helpSheet.png"[6];
-	 * "G\\playerWin.png"[7];
-	 * "G\\pcWin.png"[8];
-	 * "G\\v_attack.png"[9];
-	 * "G\\v_life.png"[10];
-	 * "Graphics\\GameIcon.png"[11];
+	 * "G/allCards.png"[3];
+	 * "G/CardBack.png"[4];
+	 * "G/HudPlayer.png"[5];
+	 * "G/helpSheet.png"[6];
+	 * "G/playerWin.png"[7];
+	 * "G/pcWin.png"[8];
+	 * "G/v_attack.png"[9];
+	 * "G/v_life.png"[10];
+	 * "Graphics/GameIcon.png"[11];
 	 */
 	private void importFiles(JFrame loading)
 	{
 		ArrayList<String> paths = new ArrayList<String>();
-		paths.add("Graphics\\backGround.png"); //Hearthstone.Hearthstone
-		paths.add("Graphics\\CardBluePrint.png"); //CardCreator.nextCard
+		paths.add("Graphics/background.png"); //Hearthstone.Hearthstone
+		paths.add("Graphics/CardBluePrint.png"); //CardCreator.nextCard
 		paths.add("Karten.txt"); //CardCreator.CardCreator
-		paths.add("Graphics\\allCards.png"); //CardCreator.CardCreator
-		paths.add("Graphics\\CardBack.png"); //DrawDeck.DrawDeck
-		paths.add("Graphics\\HudPlayer.png"); //Spielfeld.Spielfeld
-		paths.add("Graphics\\helpSheet.png"); //Menu.Menu
-		paths.add("Graphics\\EndScreenW.png"); //Menu.Menu
-		paths.add("Graphics\\EndScreenL.png"); //Menu.Menu
-		paths.add("Graphics\\v_attack.png"); //Karte.Karte
-		paths.add("Graphics\\v_life.png"); //Karte.Karte
-		paths.add("Graphics\\GameIcon.png"); //Fenster:Fenster
+		paths.add("Graphics/allCards.png"); //CardCreator.CardCreator
+		paths.add("Graphics/CardBack.png"); //DrawDeck.DrawDeck
+		paths.add("Graphics/HudPlayer.png"); //Spielfeld.Spielfeld
+		paths.add("Graphics/helpSheet.png"); //Menu.Menu
+		paths.add("Graphics/EndScreenW.png"); //Menu.Menu
+		paths.add("Graphics/EndScreenL.png"); //Menu.Menu
+		paths.add("Graphics/v_attack.png"); //Karte.Karte
+		paths.add("Graphics/v_life.png"); //Karte.Karte
+		paths.add("Graphics/GameIcon.png"); //Fenster:Fenster
 
 		JProgressBar loadingB = new JProgressBar(0, paths.size()-1);
 		loadingB.setValue(0);

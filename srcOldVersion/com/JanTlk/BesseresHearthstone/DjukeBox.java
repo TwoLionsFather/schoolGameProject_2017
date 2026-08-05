@@ -94,7 +94,7 @@ public class DjukeBox	//later should Run under own thread
 	 */
 	private static File getAudioFile(String path)
 	{
-		return new File("Sounds\\GwintAudio_" + path + ".wav");
+		return new File("Sounds/GwintAudio_" + path + ".wav");
 	}
 
 	/**

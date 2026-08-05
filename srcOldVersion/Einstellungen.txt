@@ -1,11 +1,11 @@
-1400
+1920
 16/9
 Debug 
 
 Default / ProMode / Debug / DebugHard
 
 Die erste Zeile ist die Breite des Spielfensters
-Die zweite Zeile ist entweder die Höhe oder das Bildverhältnis, geschrieben als x/y
+Die zweite Zeile ist entweder die Hï¿½he oder das Bildverhï¿½ltnis, geschrieben als x/y
 In der dritten Zeile wird der Spielmodus gesetzt
 Unten sind die Effekte der Auswahl beschrieben
 
