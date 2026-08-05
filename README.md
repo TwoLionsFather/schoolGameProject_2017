@@ -1,6 +1,9 @@
 # schoolGameProject_2017
 Intended to become a better Hearthstone one day...
 
+<img width="1844" height="1035" alt="image" src="https://github.com/user-attachments/assets/893ede95-64d0-4b5b-9cec-e3c46490bc90" />
+
+
 this is a short explenation of how to add a card:
 First locate the Karte.txt File in the main Folder and open it.
 
