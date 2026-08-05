@@ -2,6 +2,9 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.io.IOException;
 
@@ -23,7 +26,7 @@ public class Fenster extends Canvas
 	{
 		JFrame frame = new JFrame(titel);
 
-		//Das Fenster kann nur noch in der festgelegten größe sein und wird normal geschlossen
+		//Das Fenster kann nur noch in der festgelegten grï¿½ï¿½e sein und wird normal geschlossen
 		frame.setPreferredSize(new Dimension((int) breite, (int) hoehe));
 		frame.setMaximumSize(new Dimension((int) breite, (int) hoehe));
 		frame.setMinimumSize(new Dimension((int) breite, (int) hoehe));
@@ -46,6 +49,15 @@ public class Fenster extends Canvas
 		frame.setLocationRelativeTo(null);
 		frame.add(spiel);
 		frame.setVisible(true);
+
+//		EventQueue.invokeLater(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				frame.toFront();
+//				frame.repaint();
+//			}
+//		});
 	}
 
 }

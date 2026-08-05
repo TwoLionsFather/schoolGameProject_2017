@@ -181,9 +181,9 @@ public class DrawDeck
 		for(Karte tCard : handCards)
 		{
 			tCard.drawCard((int) (Hearthstone.BREITE / 2
-														- ((tCard.getBounds().getWidth() - ((Hearthstone.BREITE < 1920) ? 40 : 55)) * handCards.size()) / 2
-														+ 55 * kartenCount++)
-						, (int) ((player) ? Hearthstone.HOEHE - tCard.getBounds().getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : -10) : 0) // oder /5
+														- (tCard.getBounds().getWidth() * handCards.size()) / 2
+														+ tCard.getBounds().getWidth() * kartenCount++)
+						, (int) ((player) ? Hearthstone.HOEHE - tCard.getBounds().getHeight() - ((Hearthstone.BREITE < 1920) ? 30 : 20) : 0) // oder /5
 						, g
 						, false);
 		}

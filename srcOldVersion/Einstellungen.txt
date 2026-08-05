@@ -1,6 +1,6 @@
 1920
 16/9
-Debug 
+ProMode 
 
 Default / ProMode / Debug / DebugHard
 

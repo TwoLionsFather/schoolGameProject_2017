@@ -128,14 +128,14 @@ public class DrawHud {
 		String lifePC = String.format("%15s %5d", "Leben PC", gameStats[3]);
 
 		g.drawString(lifePC,
-				(int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - ((Hearthstone.BREITE < 1920) ? -9 : 20)),
+				(int) (hud.getX() + hud.getWidth() - lifePC.length() * 7 - ((Hearthstone.BREITE < 1920) ? -9 : 3)),
 				(int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 70 : 85)));
 
 		// manaDisplay PC
 		String manaPC = String.format("%15s %5d", "Mana PC Max", gameStats[5]);
 
 		g.drawString(manaPC,
-				(int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - ((Hearthstone.BREITE < 1920) ? -12 : 20)),
+				(int) (hud.getX() + hud.getWidth() - manaPC.length() * 8 - ((Hearthstone.BREITE < 1920) ? -12 : 1)),
 				(int) (hud.getY() + hud.getHeight() - ((Hearthstone.BREITE < 1920) ? 43 : 53)));
 
 	}

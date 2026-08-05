@@ -2,6 +2,7 @@ package com.JanTlk.BesseresHearthstone;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -104,6 +105,7 @@ public class Hearthstone extends Canvas
 		DJ.getInstance().enqueue("adapt menu");
 		loadingF.dispose();
 		this.repaint();
+		
 	}
 
 	/**
